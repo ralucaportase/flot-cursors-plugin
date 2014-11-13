@@ -435,11 +435,139 @@ describe("Flot cursors", function () {
             expect(cursors[1].y).toBe(expectedY2);
         });
 
-        it('should be become floating on mouse down');
-        it('should be become nonfloating on mouse up when floating');
+        it('should be become floating on mouse down and nonfloting on mouseup', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
 
-        it('should be possible to drag cursors with the mouse');
-        it('should be possible to drag cursors with the mouse while the chart updates');
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            var eventHolder = $('#placeholder').find('.flot-overlay');
+            eventHolder.trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.locked).toBe(false);
+
+            eventHolder.trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect(cursor.locked).toBe(true);
+        });
+
+        it('should be possible to drag cursors with the mouse', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            var eventHolder = $('#placeholder').find('.flot-overlay');
+            eventHolder.trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            cursorX += 13;
+            cursorY += 5;
+
+            eventHolder.trigger(new $.Event('mousemove', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            eventHolder.trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.x).toBe(50 + 13);
+            expect(cursor.y).toBe(60 + 5);
+        });
+
+        it('should be possible to drag cursors with the mouse while the chart updates', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            var updateChart = function () {
+                plot.setData([[[0, 1.2], [1, 1.1], [2, 1]]]);
+                plot.setupGrid();
+                plot.draw();
+            };
+
+            jasmine.clock().tick(20);
+
+            var eventHolder = $('#placeholder').find('.flot-overlay');
+            eventHolder.trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            cursorX += 13;
+            cursorY += 5;
+
+            updateChart();
+            jasmine.clock().tick(20);
+
+            eventHolder.trigger(new $.Event('mousemove', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            eventHolder.trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.x).toBe(50 + 13);
+            expect(cursor.y).toBe(60 + 5);
+        });
     });
 
     describe('Snapping', function () {});
