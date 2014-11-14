@@ -406,8 +406,7 @@ describe("Flot cursors", function () {
     });
 
     describe('Mouse interactions', function () {
-
-        it('should be become floating on mouse down and nonfloating on mouseup', function () {
+        it('should be become floating on mouse down on cursor manipulator and nonfloating on mouseup', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -444,7 +443,81 @@ describe("Flot cursors", function () {
             expect(cursor.locked).toBe(true);
         });
 
-        it('should be possible to drag cursors with the mouse', function () {
+        xit('should be become floating on mouse down on cursor vertical line and nonfloating on mouseup', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 20;
+
+            jasmine.clock().tick(20);
+
+            var eventHolder = $('#placeholder').find('.flot-overlay');
+            eventHolder.trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.locked).toBe(false);
+
+            eventHolder.trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect(cursor.locked).toBe(true);
+        });
+
+        xit('should be become floating on mouse down on cursor horizontal line and nonfloating on mouseup', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 30;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            var eventHolder = $('#placeholder').find('.flot-overlay');
+            eventHolder.trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.locked).toBe(false);
+
+            eventHolder.trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect(cursor.locked).toBe(true);
+        });
+
+        it('should be possible to drag cursors with the mouse from the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -488,7 +561,7 @@ describe("Flot cursors", function () {
             expect(cursor.y).toBe(60 + 5);
         });
 
-        it('should be possible to drag cursors with the mouse while the chart updates', function () {
+        it('should be possible to drag cursors with the mouse from the cursor manipulator while the chart updates', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -541,7 +614,7 @@ describe("Flot cursors", function () {
             expect(cursor.y).toBe(60 + 5);
         });
 
-        it('should be highlighted on mouse over', function () {
+        it('should be highlighted on mouse over the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -570,7 +643,7 @@ describe("Flot cursors", function () {
             expect(cursor.highlighted).toBe(true);
         });
 
-        it('should change the mouse pointer on mouse over', function () {
+        it('should change the mouse pointer on mouse over the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -598,7 +671,7 @@ describe("Flot cursors", function () {
             expect($('#placeholder').css('cursor')).toBe('pointer');
         });
 
-        it('should change the mouse pointer on drag', function () {
+        it('should change the mouse pointer on drag with the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
