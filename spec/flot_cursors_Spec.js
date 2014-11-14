@@ -135,37 +135,6 @@ describe("Flot cursors", function () {
 
     it('should be possible to specify the cursor shape');
     it('should display the cursor label when told so');
-    it('should be highlighted on mouse over', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    mode: 'xy',
-                    color: 'blue',
-                    position: {
-                        relativeX: 50,
-                        relativeY: 60
-                    }
-                }
-            ]
-        });
-
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
-
-        jasmine.clock().tick(20);
-
-        $('#placeholder').find('.flot-overlay').trigger(new $.Event('mousemove', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
-
-        var cursor = plot.getCursors()[0];
-        expect(cursor.highlighted).toBe(true);
-    });
-
-    it('should change the mouse cursor on mouse over');
-    it('should change the mouse cursor on drag');
 
     describe('Intersections', function () {
         it('should find intersections with a plot', function () {
@@ -434,8 +403,11 @@ describe("Flot cursors", function () {
             expect(cursors[1].x).toBe(expectedX2);
             expect(cursors[1].y).toBe(expectedY2);
         });
+    });
 
-        it('should be become floating on mouse down and nonfloting on mouseup', function () {
+    describe('Mouse interactions', function () {
+
+        it('should be become floating on mouse down and nonfloating on mouseup', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
                     {
@@ -567,6 +539,98 @@ describe("Flot cursors", function () {
             var cursor = plot.getCursors()[0];
             expect(cursor.x).toBe(50 + 13);
             expect(cursor.y).toBe(60 + 5);
+        });
+
+        it('should be highlighted on mouse over', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            $('#placeholder').find('.flot-overlay').trigger(new $.Event('mousemove', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            var cursor = plot.getCursors()[0];
+            expect(cursor.highlighted).toBe(true);
+        });
+
+        it('should change the mouse pointer on mouse over', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            $('#placeholder').find('.flot-overlay').trigger(new $.Event('mousemove', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect($('#placeholder').css('cursor')).toBe('pointer');
+        });
+
+        it('should change the mouse pointer on drag', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            relativeX: 50,
+                            relativeY: 60
+                        }
+                    }
+                ]
+            });
+
+            var cursorX = plot.offset().left + 50;
+            var cursorY = plot.offset().top + 60;
+
+            jasmine.clock().tick(20);
+
+            $('#placeholder').find('.flot-overlay').trigger(new $.Event('mousedown', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect($('#placeholder').css('cursor')).toBe('move');
+
+            $('#placeholder').find('.flot-overlay').trigger(new $.Event('mouseup', {
+                pageX: cursorX,
+                pageY: cursorY
+            }));
+
+            expect($('#placeholder').css('cursor')).toBe('default');
         });
     });
 

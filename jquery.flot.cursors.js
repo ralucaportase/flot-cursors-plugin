@@ -182,6 +182,7 @@ The plugin also adds some public methods:
             if (freeCursor) {
                 // lock the free cursor to current position
                 freeCursor.locked = true;
+                plot.getPlaceholder().css('cursor', 'default');
                 freeCursor.x = mouseX;
                 freeCursor.y = mouseY;
                 plot.triggerRedrawOverlay();
@@ -199,6 +200,8 @@ The plugin also adds some public methods:
 
                 if (freeCursor) {
                     freeCursor.locked = false;
+                    plot.getPlaceholder().css('cursor', 'move');
+                    plot.triggerRedrawOverlay();
                 }
             }
         }
@@ -221,6 +224,7 @@ The plugin also adds some public methods:
                 freeCursor.locked = true;
                 freeCursor.x = mouseX;
                 freeCursor.y = mouseY;
+                plot.getPlaceholder().css('cursor', 'default');
                 plot.triggerRedrawOverlay();
             }
         }
@@ -236,11 +240,13 @@ The plugin also adds some public methods:
                     if ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4)) {
                         if (!cursor.highlighted) {
                             cursor.highlighted = true;
+                            plot.getPlaceholder().css('cursor', 'pointer');
                             plot.triggerRedrawOverlay();
                         }
                     } else {
                         if (cursor.highlighted) {
                             cursor.highlighted = false;
+                            plot.getPlaceholder().css('cursor', 'default');
                             plot.triggerRedrawOverlay();
                         }
                     }
