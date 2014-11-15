@@ -166,18 +166,25 @@ The plugin also adds some public methods:
             */
         }
 
+        var findFreeCursor = function (cursors) {
+            var result;
+
+            cursors.forEach(function (cursor) {
+                if (!cursor.locked) {
+                    if (!result)
+                        result = cursor;
+                }
+            });
+
+            return result;
+        };
+
         function onMouseDown(e) {
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-            var freeCursor = null;
 
-            cursors.forEach(function (cursor) {
-                if (!cursor.locked) {
-                    if (!freeCursor)
-                        freeCursor = cursor;
-                }
-            });
+            var freeCursor = findFreeCursor(cursors);
 
             if (freeCursor) {
                 // lock the free cursor to current position
@@ -210,14 +217,7 @@ The plugin also adds some public methods:
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-            var freeCursor = null;
-
-            cursors.forEach(function (cursor) {
-                if (!cursor.locked) {
-                    if (!freeCursor)
-                        freeCursor = cursor;
-                }
-            });
+            var freeCursor = findFreeCursor(cursors);
 
             if (freeCursor) {
                 // lock the free cursor to current position
@@ -271,11 +271,12 @@ The plugin also adds some public methods:
             eventHolder.mousemove(onMouseMove);
         });
 
-        function drawIntersections(plot, ctx, cursor) {
+        function findIntersections(plot, cursor) {
             var pos = plot.c2p({
                 left: cursor.x,
                 top: cursor.y
             });
+
             var intersections = {
                 cursor: cursor.name,
                 points: []
@@ -288,6 +289,7 @@ The plugin also adds some public methods:
             }
 
             var i, j, dataset = plot.getData();
+
             for (i = 0; i < dataset.length; ++i) {
 
                 var series = dataset[i];
@@ -313,22 +315,31 @@ The plugin also adds some public methods:
                 }
                 pos.y = y;
                 pos.y1 = y;
+
                 intersections.points.push({
                     x: pos.x,
                     y: pos.y
                 });
-                var coord = plot.p2c(pos);
+            }
+
+            return intersections;
+        }
+
+
+        function drawIntersections(plot, ctx, cursor) {
+            cursor.intersections.points.forEach(function (point) {
+                var coord = plot.p2c(point);
                 ctx.fillStyle = 'darkgray';
                 ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
-                ctx.fillText(y.toFixed(2), coord.left + 8, coord.top + 8);
-            }
-            cursor.intersections = intersections;
-            update.push(intersections);
+                ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
+            });
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             var i = 0;
             update = [];
+            var intersections;
+
             cursors.forEach(function (cursor) {
                 var c = plot.getOptions().cursors[i];
 
@@ -369,12 +380,18 @@ The plugin also adds some public methods:
                         else ctx.fillStyle = c.color;
                         ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
                     }
+
+                    intersections = findIntersections(plot, cursor);
+                    cursor.intersections = intersections;
+                    update.push(intersections);
+
                     drawIntersections(plot, ctx, cursor);
                     ctx.stroke();
                 }
                 ctx.restore();
                 i++;
             });
+
             plot.getPlaceholder().trigger('cursorupdates', [update]);
         });
 
