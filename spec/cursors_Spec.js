@@ -153,5 +153,4 @@ describe("Flot cursors", function () {
     it('should be possible to specify the cursor shape');
     it('should display the cursor label when told so');
 
-    describe('Snapping', function () {});
 });
