@@ -97,7 +97,7 @@ The plugin also adds some public methods:
                     y: 0,
                     locked: true,
                     highlighted: false,
-                    mode: 'xy',
+                    mode: cursor.mode || 'xy',
                     position: cursor.position
                 };
 
@@ -179,10 +179,43 @@ The plugin also adds some public methods:
             return result;
         };
 
+        function hasVerticalLine(cursor) {
+            return (cursor.mode.indexOf('x') != -1);
+        }
+
+        function hasHorizontalLine(cursor) {
+            return (cursor.mode.indexOf('y') != -1);
+        }
+
+        function mouseOverCursorManipulator(e, plot, cursor) {
+            var offset = plot.offset();
+            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+            return ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4));
+        }
+
+        function mouseOverCursorVerticalLine(e, plot, cursor) {
+            var offset = plot.offset();
+            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+            return (hasVerticalLine(cursor) && (mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > 0) && (mouseY < plot.height()));
+        }
+
+        function mouseOverCursorHorizontalLine(e, plot, cursor) {
+            var offset = plot.offset();
+            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+            return (hasHorizontalLine(cursor) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4) && (mouseX > 0) && (mouseY < plot.width()));
+        }
+
         function onMouseDown(e) {
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+            var dragmode;
 
             var freeCursor = findFreeCursor(cursors);
 
@@ -197,16 +230,29 @@ The plugin also adds some public methods:
                 // find nearby cursor and unlock it
                 cursors.forEach(function (cursor) {
                     if (cursor.locked) {
-                        if ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4)) {
+                        if (mouseOverCursorManipulator(e, plot, cursor)) {
                             if (!freeCursor) {
                                 freeCursor = cursor;
+                                dragmode = 'xy';
+                            }
+                        } else if (mouseOverCursorVerticalLine(e, plot, cursor)) {
+                            if (!freeCursor) {
+                                freeCursor = cursor;
+                                dragmode = 'x';
+                            }
+                        } else if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
+                            if (!freeCursor) {
+                                freeCursor = cursor;
+                                dragmode = 'y';
                             }
                         }
+
                     }
                 });
 
                 if (freeCursor) {
                     freeCursor.locked = false;
+                    freeCursor.dragmode = dragmode;
                     plot.getPlaceholder().css('cursor', 'move');
                     plot.triggerRedrawOverlay();
                 }
@@ -222,8 +268,12 @@ The plugin also adds some public methods:
             if (freeCursor) {
                 // lock the free cursor to current position
                 freeCursor.locked = true;
-                freeCursor.x = mouseX;
-                freeCursor.y = mouseY;
+                if (freeCursor.dragmode.indexOf('x') != -1) {
+                    freeCursor.x = mouseX;
+                }
+                if (freeCursor.dragmode.indexOf('y') != -1) {
+                    freeCursor.y = mouseY;
+                }
                 plot.getPlaceholder().css('cursor', 'default');
                 plot.triggerRedrawOverlay();
             }
@@ -233,16 +283,29 @@ The plugin also adds some public methods:
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-            var freeCursor = null;
 
-            cursors.forEach(function (cursor) {
-                if (cursor.locked) {
-                    if ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4)) {
+            var freeCursor = findFreeCursor(cursors);
+
+            if (!freeCursor) {
+                cursors.forEach(function (cursor) {
+                    if (mouseOverCursorManipulator(e, plot, cursor)) {
                         if (!cursor.highlighted) {
                             cursor.highlighted = true;
-                            plot.getPlaceholder().css('cursor', 'pointer');
                             plot.triggerRedrawOverlay();
                         }
+                        plot.getPlaceholder().css('cursor', 'pointer');
+                    } else if (mouseOverCursorVerticalLine(e, plot, cursor)) {
+                        if (!cursor.highlighted) {
+                            cursor.highlighted = true;
+                            plot.triggerRedrawOverlay();
+                        }
+                        plot.getPlaceholder().css('cursor', 'col-resize');
+                    } else if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
+                        if (!cursor.highlighted) {
+                            cursor.highlighted = true;
+                            plot.triggerRedrawOverlay();
+                        }
+                        plot.getPlaceholder().css('cursor', 'row-resize');
                     } else {
                         if (cursor.highlighted) {
                             cursor.highlighted = false;
@@ -250,15 +313,18 @@ The plugin also adds some public methods:
                             plot.triggerRedrawOverlay();
                         }
                     }
-                } else {
-                    if (!freeCursor)
-                        freeCursor = cursor;
-                }
-            });
+                });
+            }
 
             if (freeCursor) {
-                freeCursor.x = freeCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-                freeCursor.y = freeCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+                if (freeCursor.dragmode.indexOf('x') != -1) {
+                    freeCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+                    freeCursor.x = freeCursor.position.relativeX;
+                }
+                if (freeCursor.dragmode.indexOf('y') != -1) {
+                    freeCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+                    freeCursor.y = freeCursor.position.relativeY;
+                }
 
                 plot.triggerRedrawOverlay();
             }
@@ -325,7 +391,6 @@ The plugin also adds some public methods:
             return intersections;
         }
 
-
         function drawIntersections(plot, ctx, cursor) {
             cursor.intersections.points.forEach(function (point) {
                 var coord = plot.p2c(point);
@@ -375,11 +440,10 @@ The plugin also adds some public methods:
                         ctx.moveTo(0, drawY);
                         ctx.lineTo(plot.width(), drawY);
                     }
-                    if (cursor.locked) {
-                        if (cursor.highlighted) ctx.fillStyle = 'orange';
-                        else ctx.fillStyle = c.color;
-                        ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
-                    }
+
+                    if (cursor.highlighted) ctx.fillStyle = 'orange';
+                    else ctx.fillStyle = c.color;
+                    ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
 
                     intersections = findIntersections(plot, cursor);
                     cursor.intersections = intersections;
@@ -401,6 +465,7 @@ The plugin also adds some public methods:
             eventHolder.unbind("mouseout", onMouseOut);
             eventHolder.unbind("mousemove", onMouseMove);
             eventHolder.unbind("cursorupdates");
+            plot.getPlaceholder().css('cursor', 'default');
         });
     }
 

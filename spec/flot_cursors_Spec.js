@@ -11,8 +11,11 @@ describe("Flot cursors", function () {
     beforeEach(function () {
         jasmine.clock().install();
     });
+
     afterEach(function () {
-        plot.shutdown();
+        if (plot) {
+            plot.shutdown();
+        }
         $('#placeholder').empty();
         jasmine.clock().uninstall();
     });
@@ -63,6 +66,20 @@ describe("Flot cursors", function () {
         expect(cursors.length).toBe(2);
         expect(cursors[0].name).toBe('Blue cursor');
         expect(cursors[1].name).toBe('Red cursor');
+    });
+
+    it('should have xy mode by default', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                }
+            ]
+        });
+
+        var cursors = plot.getCursors();
+        expect(cursors[0].mode).toBe('xy');
     });
 
     it('should be possible to create a cursor programatically', function () {
