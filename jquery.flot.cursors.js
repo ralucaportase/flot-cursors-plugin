@@ -99,7 +99,8 @@ The plugin also adds some public methods:
                     highlighted: false,
                     mode: cursor.mode || 'xy',
                     position: cursor.position,
-                    showIntersections: !!cursor.showIntersections
+                    showIntersections: !!cursor.showIntersections,
+                    showLabel: !!cursor.showLabel
                 };
 
                 setPosition(currentCursor, cursor.position);
@@ -163,7 +164,7 @@ The plugin also adds some public methods:
 
         function onMouseOut(e) {
             /*
-                stop drag
+                maybe it should stop drag when the mouse leaves the chart ?
             */
         }
 
@@ -392,7 +393,15 @@ The plugin also adds some public methods:
             return intersections;
         }
 
-        function drawIntersections(plot, ctx, cursor) {
+        function drawLabelAndIntersections(plot, ctx, cursor) {
+            if (cursor.showLabel) {
+                var x = cursor.x + 10;
+                var y = cursor.y - 10;
+                ctx.fillStyle = 'darkgray';
+                //ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
+                ctx.fillText(cursor.name, x, y);
+            }
+
             if (cursor.showIntersections && hasVerticalLine(cursor)) {
                 cursor.intersections.points.forEach(function (point) {
                     var coord = plot.p2c(point);
@@ -449,7 +458,7 @@ The plugin also adds some public methods:
                     cursor.intersections = intersections;
                     update.push(intersections);
 
-                    drawIntersections(plot, ctx, cursor);
+                    drawLabelAndIntersections(plot, ctx, cursor);
                     ctx.stroke();
                 }
                 ctx.restore();

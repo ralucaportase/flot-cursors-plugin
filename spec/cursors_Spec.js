@@ -37,8 +37,7 @@ describe("Flot cursors", function () {
 
     it('should be possible to specify zero cursors when creating the plot', function () {
         plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-            ]
+            cursors: []
         });
 
         var cursors = plot.getCursors();
@@ -79,7 +78,7 @@ describe("Flot cursors", function () {
         expect(cursors[0].mode).toBe('xy');
     });
 
-    it('should be possible to create a cursor programatically', function () {
+    it('should be possible to create a cursor at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: []
         });
@@ -98,7 +97,7 @@ describe("Flot cursors", function () {
         expect(cursors[0].name).toBe('Blue cursor');
     });
 
-    it('should be possible to remove a cursor programatically', function () {
+    it('should be possible to remove a cursor at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -119,14 +118,14 @@ describe("Flot cursors", function () {
         expect(cursors.length).toBe(0);
     });
 
-    it('should be possible to change a cursor name programatically', function () {
+    it('should be possible to change a cursor name at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
                     name: 'Blue cursor',
                     color: 'blue'
-        }
-      ]
+                }
+            ]
         });
 
         var cursors = plot.getCursors();
@@ -134,8 +133,7 @@ describe("Flot cursors", function () {
         expect(cursors[0].name).toBe('Blue cursor');
 
         plot.setCursor(cursors[0], {
-            name: 'Red Cursor',
-            mode: 'x'
+            name: 'Red Cursor'
         });
 
         cursors = plot.getCursors();
@@ -144,15 +142,38 @@ describe("Flot cursors", function () {
         expect(cursors[0].name).toBe('Red Cursor');
     });
 
-
-    it('should be possible to change a cursor mode programatically', function () {
+    it('should be possible to change a cursor showLabel at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
                     name: 'Blue cursor',
                     color: 'blue'
-        }
-      ]
+                }
+            ]
+        });
+
+        var cursors = plot.getCursors();
+        expect(cursors.length).toBe(1);
+        expect(cursors[0].showLabel).toBe(false);
+
+        plot.setCursor(cursors[0], {
+            showLabel: true
+        });
+
+        cursors = plot.getCursors();
+        expect(cursors.length).toBe(1);
+
+        expect(cursors[0].showLabel).toBe(true);
+    });
+
+    it('should be possible to change a cursor mode at runtime', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue'
+                }
+            ]
         });
 
         var cursors = plot.getCursors();
@@ -168,8 +189,6 @@ describe("Flot cursors", function () {
         expect(cursors[0].mode).toBe('x');
     });
 
-
     it('should be possible to specify the cursor shape');
     it('should display the cursor label when told so');
-
 });
