@@ -25,7 +25,6 @@ describe("Flot cursors", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                 }
             ]
@@ -51,12 +50,10 @@ describe("Flot cursors", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                 },
                 {
                     name: 'Red cursor',
-                    mode: 'xy',
                     color: 'red',
                 }
             ]
@@ -106,7 +103,6 @@ describe("Flot cursors", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                     x: 3,
                     y: 1.5
@@ -123,15 +119,14 @@ describe("Flot cursors", function () {
         expect(cursors.length).toBe(0);
     });
 
-    it('should be possible to change cursor properties programatically', function () {
+    it('should be possible to change a cursor name programatically', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
-                    color: 'blue',
-                }
-            ]
+                    color: 'blue'
+        }
+      ]
         });
 
         var cursors = plot.getCursors();
@@ -147,8 +142,32 @@ describe("Flot cursors", function () {
         expect(cursors.length).toBe(1);
 
         expect(cursors[0].name).toBe('Red Cursor');
+    });
+
+
+    it('should be possible to change a cursor mode programatically', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue'
+        }
+      ]
+        });
+
+        var cursors = plot.getCursors();
+        expect(cursors.length).toBe(1);
+        expect(cursors[0].mode).toBe('xy');
+
+        plot.setCursor(cursors[0], {
+            mode: 'x'
+        });
+
+        cursors = plot.getCursors();
+        expect(cursors.length).toBe(1);
         expect(cursors[0].mode).toBe('x');
     });
+
 
     it('should be possible to specify the cursor shape');
     it('should display the cursor label when told so');

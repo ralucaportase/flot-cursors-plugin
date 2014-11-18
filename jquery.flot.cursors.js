@@ -50,8 +50,8 @@ The plugin also adds some public methods:
 	var myFlot = $.plot( $("#graph"), ...,
     {
         cursors: [
-            { name: 'Green cursor', mode: "xy", color: 'green' },
-            { name: 'Red cursor', mode: "xy", color: 'red' }
+            { name: 'Green cursor', mode: 'xy', color: 'green' },
+            { name: 'Red cursor', mode: 'xy', color: 'red' }
         ]
     });
 */
@@ -98,7 +98,8 @@ The plugin also adds some public methods:
                     locked: true,
                     highlighted: false,
                     mode: cursor.mode || 'xy',
-                    position: cursor.position
+                    position: cursor.position,
+                    showIntersections: !!cursor.showIntersections
                 };
 
                 setPosition(currentCursor, cursor.position);
@@ -392,12 +393,14 @@ The plugin also adds some public methods:
         }
 
         function drawIntersections(plot, ctx, cursor) {
-            cursor.intersections.points.forEach(function (point) {
-                var coord = plot.p2c(point);
-                ctx.fillStyle = 'darkgray';
-                ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
-                ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
-            });
+            if (cursor.showIntersections && hasVerticalLine(cursor)) {
+                cursor.intersections.points.forEach(function (point) {
+                    var coord = plot.p2c(point);
+                    ctx.fillStyle = 'darkgray';
+                    ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
+                    ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
+                });
+            }
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {

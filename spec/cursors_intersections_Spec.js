@@ -21,7 +21,6 @@ describe("Cursors intersections", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                     position: {
                         x: 1,
@@ -47,7 +46,6 @@ describe("Cursors intersections", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                     position: {
                         x: 1,
@@ -74,7 +72,6 @@ describe("Cursors intersections", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                     position: {
                         x: 0.5,
@@ -102,7 +99,6 @@ describe("Cursors intersections", function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    mode: 'xy',
                     color: 'blue',
                     position: {
                         x: 0.5,
