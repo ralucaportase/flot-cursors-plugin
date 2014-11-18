@@ -35,7 +35,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().uninstall();
     });
 
-    it('should be become floating on mouse down on cursor manipulator and nonfloating on mouseup', function () {
+    it('should become floating on mouse down on cursor manipulator and nonfloating on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -71,7 +71,7 @@ describe("Cursors interaction", function () {
         expect(cursor.locked).toBe(true);
     });
 
-    it('should be become floating on mouse down on cursor vertical line and nonfloating on mouseup', function () {
+    it('should become floating on mouse down on cursor vertical line and nonfloating on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -107,7 +107,7 @@ describe("Cursors interaction", function () {
         expect(cursor.locked).toBe(true);
     });
 
-    it('should be become floating on mouse down on cursor horizontal line and nonfloating on mouseup', function () {
+    it('should become floating on mouse down on cursor horizontal line and nonfloating on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -184,6 +184,146 @@ describe("Cursors interaction", function () {
         var cursor = plot.getCursors()[0];
         expect(cursor.x).toBe(50 + 13);
         expect(cursor.y).toBe(60 + 5);
+    });
+
+    it('should be constrained on the right side by the chart margin when dragging', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    }
+                }
+            ],
+            yaxes: [
+                {
+                    position: 'right'
+                }]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorX = plot.offset().left + plot.width() + 5;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(plot.width());
+        expect(cursor.y).toBe(60);
+    });
+
+    it('should be constrained on the top side by the chart margin when dragging', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    }
+                }
+            ],
+            xaxes: [
+                {
+                    position: 'top'
+                }]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorY = plot.offset().top - 5;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(50);
+        expect(cursor.y).toBe(0);
+    });
+
+    it('should be constrained on the bottom side by the chart margin when dragging', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    }
+                }
+            ]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorY = plot.offset().top + plot.height() + 5;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(50);
+        expect(cursor.y).toBe(plot.height());
     });
 
     it('should be possible to drag cursors with the mouse from the cursor manipulator while the chart updates', function () {

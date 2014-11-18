@@ -80,7 +80,7 @@ The plugin also adds some public methods:
             if (!pos)
                 return;
 
-            if (pos.relativeX && pos.relativeY) {
+            if ((pos.relativeX !== undefined) && (pos.relativeY !== undefined)) {
                 cursor.x = Math.max(0, Math.min(pos.relativeX, plot.width()));
                 cursor.y = Math.max(0, Math.min(pos.relativeY, plot.height()));
             } else {
