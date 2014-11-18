@@ -415,9 +415,6 @@ The plugin also adds some public methods:
                     c = cursor;
                 }
 
-                if (!c.mode)
-                    return;
-
                 var plotOffset = plot.getPlotOffset();
 
                 ctx.save();
@@ -433,12 +430,12 @@ The plugin also adds some public methods:
                     ctx.lineJoin = "round";
 
                     ctx.beginPath();
-                    if (c.mode.indexOf("x") != -1) {
+                    if (cursor.mode.indexOf("x") != -1) {
                         var drawX = Math.floor(cursor.x) + adj;
                         ctx.moveTo(drawX, 0);
                         ctx.lineTo(drawX, plot.height());
                     }
-                    if (c.mode.indexOf("y") != -1) {
+                    if (cursor.mode.indexOf("y") != -1) {
                         var drawY = Math.floor(cursor.y) + adj;
                         ctx.moveTo(0, drawY);
                         ctx.lineTo(plot.width(), drawY);
