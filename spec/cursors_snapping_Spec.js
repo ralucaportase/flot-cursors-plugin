@@ -17,5 +17,30 @@ describe("Cursors snapping", function () {
         jasmine.clock().uninstall();
     });
 
-    it('should be able to snap to a plot');
+    it('should be able to snap to a plot', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 0
+                    },
+                    snapToPlot: 0
+                }
+            ]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        var pos = plot.p2c({
+            x: 1,
+            y: 1.1
+        });
+
+        expect(cursor.x).toBe(pos.left);
+        expect(cursor.y).toBe(pos.top);
+    });
 });

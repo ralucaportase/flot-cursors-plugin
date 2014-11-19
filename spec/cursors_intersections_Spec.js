@@ -38,7 +38,6 @@ describe("Cursors intersections", function () {
         expect(intersections.points.length).toBe(1);
         expect(intersections.points[0].x).toBe(1);
         expect(intersections.points[0].y).toBe(sampledata[1][1]);
-
     });
 
     it('should find intersections with multiple plots', function () {

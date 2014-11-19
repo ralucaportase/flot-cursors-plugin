@@ -76,7 +76,7 @@ The plugin also adds some public methods:
             });
         };
 
-        var setPosition = function (cursor, pos) {
+        function setPosition(cursor, pos, intersections) {
             if (!pos)
                 return;
 
@@ -88,7 +88,17 @@ The plugin also adds some public methods:
                 cursor.x = Math.max(0, Math.min(o.left, plot.width()));
                 cursor.y = Math.max(0, Math.min(o.top, plot.height()));
             }
-        };
+        }
+
+        function maybeSnapToPlot(cursor, intersections) {
+            if (cursor.snapToPlot !== undefined) {
+                if (intersections.points[cursor.snapToPlot]) {
+
+                }
+            } else {
+                return cursor.position;
+            }
+        }
 
         plot.hooks.processOptions.push(function (plot) {
             plot.getOptions().cursors.forEach(function (cursor) {
@@ -100,7 +110,8 @@ The plugin also adds some public methods:
                     mode: cursor.mode || 'xy',
                     position: cursor.position,
                     showIntersections: !!cursor.showIntersections,
-                    showLabel: !!cursor.showLabel
+                    showLabel: !!cursor.showLabel,
+                    snapToPlot: cursor.snapToPlot
                 };
 
                 setPosition(currentCursor, cursor.position);
@@ -429,7 +440,11 @@ The plugin also adds some public methods:
                 ctx.save();
                 ctx.translate(plotOffset.left, plotOffset.top);
 
-                setPosition(cursor, cursor.position);
+                intersections = findIntersections(plot, cursor);
+
+                var position = maybeSnapToPlot(cursor, intersections);
+
+                setPosition(cursor, position, intersections);
 
                 if (cursor.x != -1) {
                     var adj = c.lineWidth % 2 ? 0.5 : 0;
@@ -454,7 +469,6 @@ The plugin also adds some public methods:
                     else ctx.fillStyle = c.color;
                     ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
 
-                    intersections = findIntersections(plot, cursor);
                     cursor.intersections = intersections;
                     update.push(intersections);
 
