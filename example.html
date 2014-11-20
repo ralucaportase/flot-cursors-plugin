@@ -19,7 +19,7 @@
             function updateData() {
                 sin = [];
                 cos = [];
-                offset += 0.1;
+                offset += 0.025;
                 for (var i = 0; i < 14; i += 0.1) {
                     sin.push([i, Math.sin(i + offset)]);
                     cos.push([i, Math.cos(i + offset)]);
@@ -46,7 +46,7 @@
                     plot.draw();
                 }
 
-                setTimeout(updateChart, 100);
+                setTimeout(updateChart, 16);
             }
 
             updateData();
@@ -82,7 +82,7 @@
                         mode: 'xy',
                         color: 'blue',
                         showIntersections: true,
-                        snapToPlot: 0,
+                        snapToPlot: 1,
                         position: {
                             relativeX: 10,
                             relativeY: 20

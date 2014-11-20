@@ -12,6 +12,7 @@ describe("Cursors intersections", function () {
     beforeEach(function () {
         jasmine.clock().install();
     });
+
     afterEach(function () {
         plot.shutdown();
         $('#placeholder').empty();
