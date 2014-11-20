@@ -2,6 +2,8 @@
 /* jshint browser: true*/
 
 describe('Cursors Positioning', function () {
+    'use strict';
+
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
     var sampledata2 = [[0, 2], [1, 2.1], [2, 2.2]];
     var sampledata3 = [[0, 20], [10, 19], [15, 18]];

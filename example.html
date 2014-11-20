@@ -10,13 +10,46 @@
     <script language="javascript" type="text/javascript" src="jquery.flot.cursors.js"></script>
     <script type="text/javascript">
         $(function () {
+            'use strict';
+            var plot;
+            var offset = 0.0;
             var sin = [],
                 cos = [];
-            for (var i = 0; i < 14; i += 0.1) {
-                sin.push([i, Math.sin(i)]);
-                cos.push([i, Math.cos(i)]);
+
+            function updateData() {
+                sin = [];
+                cos = [];
+                offset += 0.1;
+                for (var i = 0; i < 14; i += 0.1) {
+                    sin.push([i, Math.sin(i + offset)]);
+                    cos.push([i, Math.cos(i + offset)]);
+                }
             }
 
+            function updateChart() {
+
+                if ($('#checkbox').prop('checked')) {
+                    updateData();
+
+                    plot.setData([
+                        {
+                            data: sin,
+                            label: "sin(x) = -0.00"
+                        },
+                        {
+                            data: cos,
+                            label: "cos(x) = -0.00"
+                        }
+                    ]);
+
+                    plot.setupGrid();
+                    plot.draw();
+                }
+
+                setTimeout(updateChart, 100);
+            }
+
+            updateData();
             plot = $.plot("#placeholder", [
                 {
                     data: sin,
@@ -26,7 +59,7 @@
                     data: cos,
                     label: "cos(x) = -0.00"
                 }
-  ], {
+                ], {
                 series: {
                     lines: {
                         show: true
@@ -43,7 +76,7 @@
                             relativeX: 200,
                             relativeY: 300
                         }
-          },
+                    },
                     {
                         name: 'Blue cursor',
                         mode: 'xy',
@@ -64,8 +97,8 @@
                             relativeX: 100,
                             relativeY: 200
                         }
-   }
-   ],
+                    }
+                ],
                 grid: {
                     hoverable: true,
                     clickable: true,
@@ -89,6 +122,7 @@
                 });
             });
 
+            updateChart();
             // Add the Flot version string to the footer
             $("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
         });
@@ -103,6 +137,9 @@
         <div class="demo-container">
             <div id="placeholder" class="demo-placeholder"></div>
         </div>
+        <p>
+            <input id="checkbox" type="checkbox" name="Dynamic data" value="0">Dynamic chart data
+        </p>
         <p>You can add cursors that will track data.</p>
         <p>If you combine it with listening cursor updates, you can use it to display the data.</p>
         <p id="hoverdata"></p>

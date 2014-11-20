@@ -2,6 +2,8 @@
 /* jshint browser: true*/
 
 describe("Cursors interaction", function () {
+    'use strict';
+
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
 
     var plot;
