@@ -76,7 +76,7 @@ The plugin also adds some public methods:
             });
         };
 
-        function setPosition(cursor, pos, intersections) {
+        function setPosition(cursor, pos) {
             if (!pos)
                 return;
 
@@ -92,8 +92,12 @@ The plugin also adds some public methods:
 
         function maybeSnapToPlot(cursor, intersections) {
             if (cursor.snapToPlot !== undefined) {
-                if (intersections.points[cursor.snapToPlot]) {
-
+                var point = intersections.points[cursor.snapToPlot];
+                if (point) {
+                    setPosition(cursor, {
+                        x: point.x,
+                        y: point.y
+                    });
                 }
             } else {
                 return cursor.position;
@@ -440,11 +444,11 @@ The plugin also adds some public methods:
                 ctx.save();
                 ctx.translate(plotOffset.left, plotOffset.top);
 
+                setPosition(cursor, cursor.position, intersections);
+
                 intersections = findIntersections(plot, cursor);
 
-                var position = maybeSnapToPlot(cursor, intersections);
-
-                setPosition(cursor, position, intersections);
+                maybeSnapToPlot(cursor, intersections);
 
                 if (cursor.x != -1) {
                     var adj = c.lineWidth % 2 ? 0.5 : 0;
