@@ -27,6 +27,7 @@
             }
 
             function updateChart() {
+                setTimeout(updateChart, 16);
 
                 if ($('#checkbox').prop('checked')) {
                     updateData();
@@ -45,8 +46,6 @@
                     plot.setupGrid();
                     plot.draw();
                 }
-
-                setTimeout(updateChart, 16);
             }
 
             updateData();
