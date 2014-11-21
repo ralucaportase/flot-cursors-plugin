@@ -413,7 +413,6 @@ The plugin also adds some public methods:
                 var x = cursor.x + 10;
                 var y = cursor.y - 10;
                 ctx.fillStyle = 'darkgray';
-                //ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
                 ctx.fillText(cursor.name, x, y);
             }
 
@@ -445,9 +444,7 @@ The plugin also adds some public methods:
                 ctx.translate(plotOffset.left, plotOffset.top);
 
                 setPosition(cursor, cursor.position, intersections);
-
                 intersections = findIntersections(plot, cursor);
-
                 maybeSnapToPlot(cursor, intersections);
 
                 if (cursor.x != -1) {
@@ -458,6 +455,7 @@ The plugin also adds some public methods:
                     ctx.lineJoin = "round";
 
                     ctx.beginPath();
+
                     if (cursor.mode.indexOf("x") != -1) {
                         var drawX = Math.floor(cursor.x) + adj;
                         ctx.moveTo(drawX, 0);
