@@ -1,7 +1,7 @@
 /* global $, describe, it, xit, after, beforeEach, afterEach, expect, jasmine */
 /* jshint browser: true*/
 
-describe('Cursors Positioning', function () {
+describe('Cursors Position', function () {
     'use strict';
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
@@ -164,5 +164,33 @@ describe('Cursors Positioning', function () {
         expect(cursors[0].y).toBe(expectedY1);
         expect(cursors[1].x).toBe(expectedX2);
         expect(cursors[1].y).toBe(expectedY2);
+    });
+
+    describe('Reading', function () {
+        xit('should be possible to determine the position of the cursor relative to an axis', function () {
+            plot = $.plot("#placeholder", [sampledata2], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            relativeX: 3,
+                            relativeY: 1.5
+                        }
+                    }
+                ]
+            });
+
+            var pos1 = plot.c2p({
+                x: 3,
+                y: 1.5
+            });
+
+            expect(true).toBe(false);
+        });
+
+        xit('should be possible to determine the position of the cursor relative to multiple axes', function () {
+
+        });
     });
 });
