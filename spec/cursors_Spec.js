@@ -1,4 +1,4 @@
-/* global $, describe, it, xit, after, beforeEach, afterEach, expect, jasmine */
+/* global $, describe, it, xit, after, beforeEach, afterEach, expect, jasmine, spyOn */
 /* jshint browser: true*/
 
 describe("Flot cursors", function () {
@@ -191,6 +191,63 @@ describe("Flot cursors", function () {
         expect(cursors[0].mode).toBe('x');
     });
 
-    it('should be possible to specify the cursor shape');
+    ['cross', 'triangle', 'square', 'diamond'].forEach(function (symbol, i, arr) {
+        it('should be possible to make the cursor shape a ' + symbol, function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        symbol: symbol
+                        }
+                    ]
+            });
+
+            arr.forEach(function (symbol) {
+                spyOn(plot.drawSymbol, symbol);
+            });
+
+            jasmine.clock().tick(20);
+
+
+            arr.forEach(function (s) {
+                if (s === symbol) {
+                    expect(plot.drawSymbol[s]).toHaveBeenCalled();
+                } else {
+                    expect(plot.drawSymbol[s]).not.toHaveBeenCalled();
+                }
+
+            });
+        });
+    });
+
+    it('should be possible to change the cursor shape at runtime', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    symbol: 'diamond'
+                }
+            ]
+        });
+
+        ['square', 'diamond'].forEach(function (symbol) {
+            spyOn(plot.drawSymbol, symbol);
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+
+        plot.setCursor(cursors[0], {
+            symbol: 'square'
+        });
+
+        jasmine.clock().tick(20);
+
+        expect(plot.drawSymbol.square).toHaveBeenCalled();
+    });
+
     it('should display the cursor label when told so');
 });

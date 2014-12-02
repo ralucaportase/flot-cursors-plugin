@@ -115,7 +115,8 @@ The plugin also adds some public methods:
                     position: cursor.position,
                     showIntersections: !!cursor.showIntersections,
                     showLabel: !!cursor.showLabel,
-                    snapToPlot: cursor.snapToPlot
+                    snapToPlot: cursor.snapToPlot,
+                    symbol: cursor.symbol
                 };
 
                 setPosition(currentCursor, cursor.position);
@@ -469,7 +470,11 @@ The plugin also adds some public methods:
 
                     if (cursor.highlighted) ctx.fillStyle = 'orange';
                     else ctx.fillStyle = c.color;
-                    ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+                    if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
+                        plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
+                    } else {
+                        ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+                    }
 
                     cursor.intersections = intersections;
                     update.push(intersections);
