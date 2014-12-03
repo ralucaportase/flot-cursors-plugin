@@ -144,7 +144,7 @@ describe("Flot cursors", function () {
         expect(cursors[0].name).toBe('Red Cursor');
     });
 
-    it('should be possible to change a cursor showLabel at runtime', function () {
+    it('should be possible to change a cursor label visibility at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
