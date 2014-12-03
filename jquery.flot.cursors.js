@@ -468,18 +468,23 @@ The plugin also adds some public methods:
                         ctx.lineTo(plot.width(), drawY);
                     }
 
+                    cursor.intersections = intersections;
+                    update.push(intersections);
+
+                    drawLabelAndIntersections(plot, ctx, cursor);
+
                     if (cursor.highlighted) ctx.fillStyle = 'orange';
                     else ctx.fillStyle = c.color;
                     if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
+                        var oldFillStyle = ctx.fillStyle;
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+                        ctx.fillStyle = oldFillStyle;
                         plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
                     } else {
                         ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
                     }
 
-                    cursor.intersections = intersections;
-                    update.push(intersections);
-
-                    drawLabelAndIntersections(plot, ctx, cursor);
                     ctx.stroke();
                 }
                 ctx.restore();
