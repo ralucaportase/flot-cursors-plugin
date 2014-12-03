@@ -70,40 +70,6 @@ The plugin also adds some public methods:
         var cursors = [];
         var update = [];
 
-        var mixin = function (source, destination) {
-            Object.keys(source).forEach(function (key) {
-                destination[key] = source[key];
-            });
-        };
-
-        function setPosition(cursor, pos) {
-            if (!pos)
-                return;
-
-            if ((pos.relativeX !== undefined) && (pos.relativeY !== undefined)) {
-                cursor.x = Math.max(0, Math.min(pos.relativeX, plot.width()));
-                cursor.y = Math.max(0, Math.min(pos.relativeY, plot.height()));
-            } else {
-                var o = plot.p2c(pos);
-                cursor.x = Math.max(0, Math.min(o.left, plot.width()));
-                cursor.y = Math.max(0, Math.min(o.top, plot.height()));
-            }
-        }
-
-        function maybeSnapToPlot(cursor, intersections) {
-            if (cursor.snapToPlot !== undefined) {
-                var point = intersections.points[cursor.snapToPlot];
-                if (point) {
-                    setPosition(cursor, {
-                        x: point.x,
-                        y: point.y
-                    });
-                }
-            } else {
-                return cursor.position;
-            }
-        }
-
         plot.hooks.processOptions.push(function (plot) {
             plot.getOptions().cursors.forEach(function (cursor) {
                 var currentCursor = {
@@ -116,10 +82,12 @@ The plugin also adds some public methods:
                     showIntersections: !!cursor.showIntersections,
                     showLabel: !!cursor.showLabel,
                     snapToPlot: cursor.snapToPlot,
-                    symbol: cursor.symbol
+                    symbol: cursor.symbol,
+                    color: cursor.color,
+                    lineWidth: cursor.lineWidth || 1
                 };
 
-                setPosition(currentCursor, cursor.position);
+                setPosition(plot, currentCursor, cursor.position);
 
                 currentCursor.name = cursor.name || ('unnamed ' + cursors.length);
                 cursors.push(currentCursor);
@@ -142,7 +110,7 @@ The plugin also adds some public methods:
             };
 
             currentCursor.name = name || ('unnamed ' + cursors.length);
-            setPosition(currentCursor, pos);
+            setPosition(plot, currentCursor, pos);
             cursors.push(currentCursor);
 
             plot.triggerRedrawOverlay();
@@ -163,7 +131,7 @@ The plugin also adds some public methods:
 
             if (index !== -1) {
                 mixin(options, cursors[index]);
-                setPosition(cursors[index], cursors[index].position);
+                setPosition(plot, cursors[index], cursors[index].position);
                 plot.triggerRedrawOverlay();
             }
         };
@@ -206,38 +174,6 @@ The plugin also adds some public methods:
                 }
             });
         };
-
-        function hasVerticalLine(cursor) {
-            return (cursor.mode.indexOf('x') != -1);
-        }
-
-        function hasHorizontalLine(cursor) {
-            return (cursor.mode.indexOf('y') != -1);
-        }
-
-        function mouseOverCursorManipulator(e, plot, cursor) {
-            var offset = plot.offset();
-            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-
-            return ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4));
-        }
-
-        function mouseOverCursorVerticalLine(e, plot, cursor) {
-            var offset = plot.offset();
-            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-
-            return (hasVerticalLine(cursor) && (mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > 0) && (mouseY < plot.height()));
-        }
-
-        function mouseOverCursorHorizontalLine(e, plot, cursor) {
-            var offset = plot.offset();
-            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-
-            return (hasHorizontalLine(cursor) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4) && (mouseX > 0) && (mouseY < plot.width()));
-        }
 
         function onMouseDown(e) {
             var offset = plot.offset();
@@ -412,23 +348,7 @@ The plugin also adds some public methods:
             return intersections;
         }
 
-        function drawLabelAndIntersections(plot, ctx, cursor) {
-            if (cursor.showLabel) {
-                var x = cursor.x + 10;
-                var y = cursor.y - 10;
-                ctx.fillStyle = 'darkgray';
-                ctx.fillText(cursor.name, x, y);
-            }
 
-            if (cursor.showIntersections && hasVerticalLine(cursor)) {
-                cursor.intersections.points.forEach(function (point) {
-                    var coord = plot.p2c(point);
-                    ctx.fillStyle = 'darkgray';
-                    ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
-                    ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
-                });
-            }
-        }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             var i = 0;
@@ -436,62 +356,23 @@ The plugin also adds some public methods:
             var intersections;
 
             cursors.forEach(function (cursor) {
-                var c = plot.getOptions().cursors[i];
-
-                if (!c) {
-                    c = cursor;
-                }
-
                 var plotOffset = plot.getPlotOffset();
 
                 ctx.save();
                 ctx.translate(plotOffset.left, plotOffset.top);
 
-                setPosition(cursor, cursor.position, intersections);
+                setPosition(plot, cursor, cursor.position, intersections);
                 intersections = findIntersections(plot, cursor);
-                maybeSnapToPlot(cursor, intersections);
+                maybeSnapToPlot(plot, cursor, intersections);
 
                 if (cursor.x != -1) {
-                    var adj = c.lineWidth % 2 ? 0.5 : 0;
-
-                    ctx.strokeStyle = c.color;
-                    ctx.lineWidth = c.lineWidth;
-                    ctx.lineJoin = "round";
-
-                    ctx.beginPath();
-
-                    if (cursor.mode.indexOf("x") != -1) {
-                        var drawX = Math.floor(cursor.x) + adj;
-                        ctx.moveTo(drawX, 0);
-                        ctx.lineTo(drawX, plot.height());
-                    }
-                    if (cursor.mode.indexOf("y") != -1) {
-                        var drawY = Math.floor(cursor.y) + adj;
-                        ctx.moveTo(0, drawY);
-                        ctx.lineTo(plot.width(), drawY);
-                    }
+                    drawVerticalAndHorizontalLines(plot, ctx, cursor);
 
                     cursor.intersections = intersections;
                     update.push(intersections);
 
                     drawLabelAndIntersections(plot, ctx, cursor);
-
-                    ctx.stroke();
-                    ctx.beginPath();
-
-                    if (cursor.highlighted)
-                        ctx.strokeStyle = 'orange';
-                    else
-                        ctx.strokeStyle = c.color;
-                    if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
-                        ctx.fillStyle = 'white';
-                        ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
-                        plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
-                    } else {
-                        ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
-                    }
-
-                    ctx.stroke();
+                    drawManipulator(plot, ctx, cursor);
                 }
                 ctx.restore();
                 i++;
@@ -516,4 +397,132 @@ The plugin also adds some public methods:
         name: 'cursors',
         version: '0.1'
     });
+
+    function mixin(source, destination) {
+        Object.keys(source).forEach(function (key) {
+            destination[key] = source[key];
+        });
+    }
+
+    function setPosition(plot, cursor, pos) {
+        if (!pos)
+            return;
+
+        if ((pos.relativeX !== undefined) && (pos.relativeY !== undefined)) {
+            cursor.x = Math.max(0, Math.min(pos.relativeX, plot.width()));
+            cursor.y = Math.max(0, Math.min(pos.relativeY, plot.height()));
+        } else {
+            var o = plot.p2c(pos);
+            cursor.x = Math.max(0, Math.min(o.left, plot.width()));
+            cursor.y = Math.max(0, Math.min(o.top, plot.height()));
+        }
+    }
+
+    function maybeSnapToPlot(plot, cursor, intersections) {
+        if (cursor.snapToPlot !== undefined) {
+            var point = intersections.points[cursor.snapToPlot];
+            if (point) {
+                setPosition(plot, cursor, {
+                    x: point.x,
+                    y: point.y
+                });
+            }
+        } else {
+            return cursor.position;
+        }
+    }
+
+    function drawLabelAndIntersections(plot, ctx, cursor) {
+        ctx.beginPath();
+        if (cursor.showLabel) {
+            var x = cursor.x + 10;
+            var y = cursor.y - 10;
+            ctx.fillStyle = 'darkgray';
+            ctx.fillText(cursor.name, x, y);
+        }
+
+        if (cursor.showIntersections && hasVerticalLine(cursor)) {
+            cursor.intersections.points.forEach(function (point) {
+                var coord = plot.p2c(point);
+                ctx.fillStyle = 'darkgray';
+                ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
+                ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
+            });
+        }
+        ctx.stroke();
+    }
+
+    function drawVerticalAndHorizontalLines(plot, ctx, cursor) {
+        var adj = cursor.lineWidth % 2 ? 0.5 : 0;
+
+        ctx.strokeStyle = cursor.color;
+        ctx.lineWidth = cursor.lineWidth;
+        ctx.lineJoin = "round";
+
+        ctx.beginPath();
+
+        if (cursor.mode.indexOf("x") != -1) {
+            var drawX = Math.floor(cursor.x) + adj;
+            ctx.moveTo(drawX, 0);
+            ctx.lineTo(drawX, plot.height());
+        }
+        if (cursor.mode.indexOf("y") != -1) {
+            var drawY = Math.floor(cursor.y) + adj;
+            ctx.moveTo(0, drawY);
+            ctx.lineTo(plot.width(), drawY);
+        }
+
+        ctx.stroke();
+    }
+
+    function drawManipulator(plot, ctx, cursor) {
+        var adj = cursor.lineWidth % 2 ? 0.5 : 0;
+        ctx.beginPath();
+
+        if (cursor.highlighted)
+            ctx.strokeStyle = 'orange';
+        else
+            ctx.strokeStyle = cursor.color;
+        if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+            plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
+        } else {
+            ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+        }
+
+        ctx.stroke();
+    }
+
+    function hasVerticalLine(cursor) {
+        return (cursor.mode.indexOf('x') != -1);
+    }
+
+    function hasHorizontalLine(cursor) {
+        return (cursor.mode.indexOf('y') != -1);
+    }
+
+    function mouseOverCursorManipulator(e, plot, cursor) {
+        var offset = plot.offset();
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+        return ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4));
+    }
+
+    function mouseOverCursorVerticalLine(e, plot, cursor) {
+        var offset = plot.offset();
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+        return (hasVerticalLine(cursor) && (mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > 0) && (mouseY < plot.height()));
+    }
+
+    function mouseOverCursorHorizontalLine(e, plot, cursor) {
+        var offset = plot.offset();
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
+        return (hasHorizontalLine(cursor) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4) && (mouseX > 0) && (mouseY < plot.width()));
+    }
 })(jQuery);

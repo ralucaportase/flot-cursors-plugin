@@ -249,5 +249,56 @@ describe("Flot cursors", function () {
         expect(plot.drawSymbol.square).toHaveBeenCalled();
     });
 
+    it('should be possible to change the cursor color at runtime', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue'
+                }
+            ]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+
+        expect(cursors[0].color).toBe('blue');
+
+        plot.setCursor(cursors[0], {
+            color: 'red'
+        });
+
+        jasmine.clock().tick(20);
+
+        expect(cursors[0].color).toBe('red');
+    });
+
+    it('should be possible to change the cursor lineWidth at runtime', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    lineWidth: 2
+                }
+            ]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+
+        expect(cursors[0].lineWidth).toBe(2);
+
+        plot.setCursor(cursors[0], {
+            lineWidth: 3
+        });
+
+        jasmine.clock().tick(20);
+
+        expect(cursors[0].lineWidth).toBe(3);
+    });
+
     it('should display the cursor label when told so');
 });
