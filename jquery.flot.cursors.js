@@ -109,7 +109,7 @@ The plugin also adds some public methods:
                 var currentCursor = {
                     x: 0,
                     y: 0,
-                    locked: true,
+                    selected: false,
                     highlighted: false,
                     mode: cursor.mode || 'xy',
                     position: cursor.position,
@@ -134,7 +134,7 @@ The plugin also adds some public methods:
             var currentCursor = {
                 x: 0,
                 y: 0,
-                locked: true,
+                selected: false,
                 highlighted: false,
                 mode: mode,
                 color: color,
@@ -180,21 +180,31 @@ The plugin also adds some public methods:
 
         function onMouseOut(e) {
             /*
-                maybe it should stop drag when the mouse leaves the chart ?
+                maybe stop drag when the mouse leaves the chart ?
             */
         }
 
-        var findFreeCursor = function (cursors) {
+        var selectedCursor = function (cursors) {
             var result;
 
             cursors.forEach(function (cursor) {
-                if (!cursor.locked) {
+                if (cursor.selected) {
                     if (!result)
                         result = cursor;
                 }
             });
 
             return result;
+        };
+
+        var selectCursor = function (cursors, cursor) {
+            cursors.forEach(function (c) {
+                if (c === cursor) {
+                    c.selected = true;
+                } else {
+                    c.selected = false;
+                }
+            });
         };
 
         function hasVerticalLine(cursor) {
@@ -233,44 +243,39 @@ The plugin also adds some public methods:
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-            var dragmode;
 
-            var freeCursor = findFreeCursor(cursors);
+            var currentlySelectedCursor = selectedCursor(cursors);
 
-            if (freeCursor) {
-                // lock the free cursor to current position
-                freeCursor.locked = true;
+            if (currentlySelectedCursor) {
+                // unselect the cursor and move it to the current position
+                currentlySelectedCursor.selected = false;
                 plot.getPlaceholder().css('cursor', 'default');
-                freeCursor.x = mouseX;
-                freeCursor.y = mouseY;
+                currentlySelectedCursor.x = mouseX;
+                currentlySelectedCursor.y = mouseY;
                 plot.triggerRedrawOverlay();
             } else {
                 // find nearby cursor and unlock it
-                cursors.forEach(function (cursor) {
-                    if (cursor.locked) {
-                        if (mouseOverCursorManipulator(e, plot, cursor)) {
-                            if (!freeCursor) {
-                                freeCursor = cursor;
-                                dragmode = 'xy';
-                            }
-                        } else if (mouseOverCursorVerticalLine(e, plot, cursor)) {
-                            if (!freeCursor) {
-                                freeCursor = cursor;
-                                dragmode = 'x';
-                            }
-                        } else if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
-                            if (!freeCursor) {
-                                freeCursor = cursor;
-                                dragmode = 'y';
-                            }
-                        }
+                var targetCursor;
+                var dragmode;
 
+                cursors.forEach(function (cursor) {
+                    if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'y';
+                    }
+                    if (mouseOverCursorVerticalLine(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'x';
+                    }
+                    if (mouseOverCursorManipulator(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'xy';
                     }
                 });
 
-                if (freeCursor) {
-                    freeCursor.locked = false;
-                    freeCursor.dragmode = dragmode;
+                if (targetCursor) {
+                    targetCursor.selected = true;
+                    targetCursor.dragmode = dragmode;
                     plot.getPlaceholder().css('cursor', 'move');
                     plot.triggerRedrawOverlay();
                 }
@@ -281,16 +286,16 @@ The plugin also adds some public methods:
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-            var freeCursor = findFreeCursor(cursors);
+            var currentlySelectedCursor = selectedCursor(cursors);
 
-            if (freeCursor) {
+            if (currentlySelectedCursor) {
                 // lock the free cursor to current position
-                freeCursor.locked = true;
-                if (freeCursor.dragmode.indexOf('x') != -1) {
-                    freeCursor.x = mouseX;
+                currentlySelectedCursor.selected = false;
+                if (currentlySelectedCursor.dragmode.indexOf('x') != -1) {
+                    currentlySelectedCursor.x = mouseX;
                 }
-                if (freeCursor.dragmode.indexOf('y') != -1) {
-                    freeCursor.y = mouseY;
+                if (currentlySelectedCursor.dragmode.indexOf('y') != -1) {
+                    currentlySelectedCursor.y = mouseY;
                 }
                 plot.getPlaceholder().css('cursor', 'default');
                 plot.triggerRedrawOverlay();
@@ -302,9 +307,20 @@ The plugin also adds some public methods:
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
-            var freeCursor = findFreeCursor(cursors);
+            var currentlySelectedCursor = selectedCursor(cursors);
 
-            if (!freeCursor) {
+            if (currentlySelectedCursor) {
+                if (currentlySelectedCursor.dragmode.indexOf('x') != -1) {
+                    currentlySelectedCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+                    currentlySelectedCursor.x = currentlySelectedCursor.position.relativeX;
+                }
+                if (currentlySelectedCursor.dragmode.indexOf('y') != -1) {
+                    currentlySelectedCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+                    currentlySelectedCursor.y = currentlySelectedCursor.position.relativeY;
+                }
+
+                plot.triggerRedrawOverlay();
+            } else {
                 cursors.forEach(function (cursor) {
                     if (mouseOverCursorManipulator(e, plot, cursor)) {
                         if (!cursor.highlighted) {
@@ -332,19 +348,6 @@ The plugin also adds some public methods:
                         }
                     }
                 });
-            }
-
-            if (freeCursor) {
-                if (freeCursor.dragmode.indexOf('x') != -1) {
-                    freeCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-                    freeCursor.x = freeCursor.position.relativeX;
-                }
-                if (freeCursor.dragmode.indexOf('y') != -1) {
-                    freeCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-                    freeCursor.y = freeCursor.position.relativeY;
-                }
-
-                plot.triggerRedrawOverlay();
             }
         }
 
@@ -476,13 +479,13 @@ The plugin also adds some public methods:
                     ctx.stroke();
                     ctx.beginPath();
 
-                    if (cursor.highlighted) ctx.fillStyle = 'orange';
-                    else ctx.fillStyle = c.color;
+                    if (cursor.highlighted)
+                        ctx.strokeStyle = 'orange';
+                    else
+                        ctx.strokeStyle = c.color;
                     if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
-                        var oldFillStyle = ctx.fillStyle;
                         ctx.fillStyle = 'white';
                         ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
-                        ctx.fillStyle = oldFillStyle;
                         plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
                     } else {
                         ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);

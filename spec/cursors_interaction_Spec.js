@@ -37,7 +37,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().uninstall();
     });
 
-    it('should become floating on mouse down on cursor manipulator and nonfloating on mouseup', function () {
+    it('should become selected on mouse down on cursor manipulator and not selected on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -63,17 +63,17 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.locked).toBe(false);
+        expect(cursor.selected).toBe(true);
 
         eventHolder.trigger(new $.Event('mouseup', {
             pageX: cursorX,
             pageY: cursorY
         }));
 
-        expect(cursor.locked).toBe(true);
+        expect(cursor.selected).toBe(false);
     });
 
-    it('should become floating on mouse down on cursor vertical line and nonfloating on mouseup', function () {
+    it('should become selected on mouse down on cursor vertical line and not selected on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -99,17 +99,17 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.locked).toBe(false);
+        expect(cursor.selected).toBe(true);
 
         eventHolder.trigger(new $.Event('mouseup', {
             pageX: cursorX,
             pageY: cursorY
         }));
 
-        expect(cursor.locked).toBe(true);
+        expect(cursor.selected).toBe(false);
     });
 
-    it('should become floating on mouse down on cursor horizontal line and nonfloating on mouseup', function () {
+    it('should become selected on mouse down on cursor horizontal line and not selected on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -135,14 +135,14 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.locked).toBe(false);
+        expect(cursor.selected).toBe(true);
 
         eventHolder.trigger(new $.Event('mouseup', {
             pageX: cursorX,
             pageY: cursorY
         }));
 
-        expect(cursor.locked).toBe(true);
+        expect(cursor.selected).toBe(false);
     });
 
     it('should be possible to drag cursors with the mouse from the cursor manipulator', function () {
