@@ -473,6 +473,9 @@ The plugin also adds some public methods:
 
                     drawLabelAndIntersections(plot, ctx, cursor);
 
+                    ctx.stroke();
+                    ctx.beginPath();
+
                     if (cursor.highlighted) ctx.fillStyle = 'orange';
                     else ctx.fillStyle = c.color;
                     if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
