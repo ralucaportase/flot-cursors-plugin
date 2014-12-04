@@ -7,20 +7,20 @@ This plugin is based on another plugin `jQuery.flot.crosshair.js` which can be f
 
 The plugin supports these options:
 
-cursors: [
-    {
-        mode: null or "x" or "y" or "xy",
-        color: color,
-        lineWidth: number,
-        position: {...}
-    },
-    {
-        mode: null or "x" or "y" or "xy",
-        color: color,
-        lineWidth: number,
-        position: {...}
-    }
-]
+    cursors: [
+        {
+            mode: null or "x" or "y" or "xy",
+            color: color,
+            lineWidth: number,
+            position: {...}
+        },
+        {
+            mode: null or "x" or "y" or "xy",
+            color: color,
+            lineWidth: number,
+            position: {...}
+        }
+    ]
 
 Set the mode to one of "x", "y" or "xy". The "x" mode enables a vertical
 cursor that lets you trace the values on the x axis, "y" enables a
@@ -28,7 +28,7 @@ horizontal cursor and "xy" enables them both. "color" is the color of the
 cursor (default is "rgba(170, 0, 0, 0.80)"), "lineWidth" is the width of
 the drawn lines (default is 1).
 
-The plugin also adds some public methods:
+The plugin adds some public methods:
 
     addCursor( name, pos, options )
 
@@ -46,14 +46,14 @@ The plugin also adds some public methods:
 
         Causes the cursor with the name 'name' to move to 'pos'
 
-    Example usage:
+How to use:
 
-	var myFlot = $.plot( $("#graph"), ...,
-    {
-        cursors: [
-            { name: 'Green cursor', mode: 'xy', color: 'green' },
-            { name: 'Red cursor', mode: 'xy', color: 'red' }
-        ]
-    });
+    var myFlot = $.plot( $("#graph"), ...,
+        {
+            cursors: [
+                { name: 'Green cursor', mode: 'xy', color: 'green' },
+                { name: 'Red cursor', mode: 'xy', color: 'red' }
+            ]
+        });
 
 jquery.flot.cursors is available under the MIT license.
