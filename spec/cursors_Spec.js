@@ -5,9 +5,6 @@ describe("Flot cursors", function () {
     'use strict';
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
-    var sampledata2 = [[0, 2], [1, 2.1], [2, 2.2]];
-    var sampledata3 = [[0, 20], [10, 19], [15, 18]];
-
     var plot;
 
     beforeEach(function () {
@@ -32,9 +29,9 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-        expect(cursors[0].name).toBe('Blue cursor');
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.name).toBe('Blue cursor');
     });
 
     it('should be possible to specify zero cursors when creating the plot', function () {
@@ -42,8 +39,8 @@ describe("Flot cursors", function () {
             cursors: []
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(0);
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(0);
     });
 
     it('should be possible to specify multiple cursors when creating the plot', function () {
@@ -60,10 +57,11 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(2);
-        expect(cursors[0].name).toBe('Blue cursor');
-        expect(cursors[1].name).toBe('Red cursor');
+        var firstCursor = plot.getCursors()[0];
+        var secondCursor = plot.getCursors()[1];
+        expect(plot.getCursors().length).toBe(2);
+        expect(firstCursor.name).toBe('Blue cursor');
+        expect(secondCursor.name).toBe('Red cursor');
     });
 
     it('should have xy mode by default', function () {
@@ -76,27 +74,40 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors[0].mode).toBe('xy');
+        var firstCursor = plot.getCursors()[0];
+        expect(firstCursor.mode).toBe('xy');
     });
+
+    it('should have a lineWidth of 1 by default', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                }
+            ]
+        });
+
+        var firstCursor = plot.getCursors()[0];
+        expect(firstCursor.lineWidth).toBe(1);
+    });
+
 
     it('should be possible to create a cursor at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: []
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(0);
+        expect(plot.getCursors().length).toBe(0);
 
         plot.addCursor('Blue cursor', 'xy', 'blue', {
             relativeX: 7,
             relativeY: 7
         });
+        var firstCursor = plot.getCursors()[0];
 
-        cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-
-        expect(cursors[0].name).toBe('Blue cursor');
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.name).toBe('Blue cursor');
     });
 
     it('should be possible to remove a cursor at runtime', function () {
@@ -111,13 +122,12 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(1);
 
-        plot.removeCursor(cursors[0]);
+        plot.removeCursor(firstCursor);
 
-        cursors = plot.getCursors();
-        expect(cursors.length).toBe(0);
+        expect(plot.getCursors().length).toBe(0);
     });
 
     it('should be possible to change a cursor name at runtime', function () {
@@ -130,18 +140,16 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-        expect(cursors[0].name).toBe('Blue cursor');
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.name).toBe('Blue cursor');
 
-        plot.setCursor(cursors[0], {
+        plot.setCursor(firstCursor, {
             name: 'Red Cursor'
         });
 
-        cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-
-        expect(cursors[0].name).toBe('Red Cursor');
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.name).toBe('Red Cursor');
     });
 
     it('should be possible to change a cursor label visibility at runtime', function () {
@@ -154,18 +162,16 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-        expect(cursors[0].showLabel).toBe(false);
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.showLabel).toBe(false);
 
-        plot.setCursor(cursors[0], {
+        plot.setCursor(firstCursor, {
             showLabel: true
         });
 
-        cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-
-        expect(cursors[0].showLabel).toBe(true);
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.showLabel).toBe(true);
     });
 
     it('should be possible to change a cursor mode at runtime', function () {
@@ -178,17 +184,16 @@ describe("Flot cursors", function () {
             ]
         });
 
-        var cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-        expect(cursors[0].mode).toBe('xy');
+        var firstCursor = plot.getCursors()[0];
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.mode).toBe('xy');
 
-        plot.setCursor(cursors[0], {
+        plot.setCursor(firstCursor, {
             mode: 'x'
         });
 
-        cursors = plot.getCursors();
-        expect(cursors.length).toBe(1);
-        expect(cursors[0].mode).toBe('x');
+        expect(plot.getCursors().length).toBe(1);
+        expect(firstCursor.mode).toBe('x');
     });
 
     ['cross', 'triangle', 'square', 'diamond'].forEach(function (symbol, i, arr) {
@@ -238,9 +243,9 @@ describe("Flot cursors", function () {
 
         jasmine.clock().tick(20);
 
-        var cursors = plot.getCursors();
+        var firstCursor = plot.getCursors()[0];
 
-        plot.setCursor(cursors[0], {
+        plot.setCursor(firstCursor, {
             symbol: 'square'
         });
 
@@ -259,19 +264,14 @@ describe("Flot cursors", function () {
             ]
         });
 
-        jasmine.clock().tick(20);
-
-        var cursors = plot.getCursors();
-
-        expect(cursors[0].color).toBe('blue');
-
-        plot.setCursor(cursors[0], {
+        var firstCursor = plot.getCursors()[0];
+        var initialColor = firstCursor.color;
+        plot.setCursor(firstCursor, {
             color: 'red'
         });
 
-        jasmine.clock().tick(20);
-
-        expect(cursors[0].color).toBe('red');
+        expect(initialColor).toBe('blue');
+        expect(firstCursor.color).toBe('red');
     });
 
     it('should be possible to change the cursor lineWidth at runtime', function () {
@@ -285,19 +285,15 @@ describe("Flot cursors", function () {
             ]
         });
 
-        jasmine.clock().tick(20);
+        var firstCursor = plot.getCursors()[0];
+        var initialLineWidth = firstCursor.lineWidth;
 
-        var cursors = plot.getCursors();
-
-        expect(cursors[0].lineWidth).toBe(2);
-
-        plot.setCursor(cursors[0], {
+        plot.setCursor(firstCursor, {
             lineWidth: 3
         });
 
-        jasmine.clock().tick(20);
-
-        expect(cursors[0].lineWidth).toBe(3);
+        expect(initialLineWidth).toBe(2);
+        expect(firstCursor.lineWidth).toBe(3);
     });
 
     it('should display the cursor label when told so');
