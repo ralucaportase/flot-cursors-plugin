@@ -152,6 +152,12 @@ describe("Flot cursors", function () {
         expect(firstCursor.name).toBe('Red Cursor');
     });
 
+    describe('Names', function () {
+        it('should give the cursors default names if not specified');
+        it('should give the cursors unique names');
+        it('should give the cursors created at runtime unique names');
+    });
+
     it('should be possible to change a cursor label visibility at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
