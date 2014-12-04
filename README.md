@@ -51,11 +51,12 @@ The plugin adds some public methods to the chart:
 
     addCursor( options )
     
-        creates a new cursor with the parameters specified in options. See the options described in the options section.
+        creates a new cursor with the parameters specified in options.
 
     removeCursor( cursorToRemove )
 
-        remove the specified cursor from the plot. *cursorToRemove* is a cursor reference to one of the cursors obtained with getCursors()
+        remove the specified cursor from the plot. *cursorToRemove* is
+        a cursor reference to one of the cursors obtained with getCursors()
 
     setCursor ( cursor , options)
 
