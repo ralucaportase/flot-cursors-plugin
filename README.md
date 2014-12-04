@@ -21,7 +21,7 @@ The plugin supports these options:
                 relativeY or y or y2 or y3 ..: number,
             }
         },
-        additional cursors here
+        <more cursors if needed>
     ]
 
 **name** is a string containing the name of the cursor.
@@ -45,21 +45,21 @@ Public Methods
 
 The plugin adds some public methods to the chart:
 
-    addCursor( name, pos, options )
+    getCursors()
+    
+        Returns a list containing all the cursors
 
-        add a new cursor named 'name' at the position pos with default options
-        specified in options. "pos" is in coordinates of the plot and should be
-        on the form { x: xpos, y: ypos } (you can use  x2/x3/... if you're using
-        multiple axes), which is coincidentally the same format as what you get
-        from a "plothover" event.
+    addCursor( options )
+    
+        creates a new cursor with the parameters specified in options. See the options described in the options section.
 
-    removeCursor( name )
+    removeCursor( cursorToRemove )
 
-        remove the cursor named 'name'.
+        remove the specified cursor from the plot. *cursorToRemove* is a cursor reference to one of the cursors obtained with getCursors()
 
-    moveCursor( name , pos)
+    setCursor ( cursor , options)
 
-        Causes the cursor with the name 'name' to move to 'pos'
+        Changes one or more cursor property.
 
 How to use:
 
