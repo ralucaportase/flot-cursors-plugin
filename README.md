@@ -57,3 +57,5 @@ How to use:
         });
 
 jquery.flot.cursors is available under the MIT license.
+
+Interactive example is here: <http://cipix2000.github.io/flot-cursors-plugin/>
