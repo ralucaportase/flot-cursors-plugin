@@ -3,7 +3,7 @@ flot.cursors
 
 This is a plugin for jQuery flot, to create cursors.
 
-This plugin is based on another plugin `jQuery.flot.crosshair.js` which can be found on <http://code.google.com/p/flot/>
+This plugin is based on another plugin `jQuery.flot.crosshair.js` which can be found in the flot chart package at <http://www.flotcharts.org/>
 
 The plugin supports these options:
 
