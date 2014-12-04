@@ -19,7 +19,11 @@ The plugin supports these options:
             position: {
                 relativeX or x or x2 or x3 ..: number,
                 relativeY or y or y2 or y3 ..: number,
-            }
+            },
+            showIntersections: true or false,
+            showLabel: true or false,
+            snapToPlot: number,
+            symbol: 'cross', 'triangle' ...
         },
         <more cursors if needed>
     ]
@@ -28,7 +32,7 @@ The plugin supports these options:
 
 **mode** is one of "x", "y" or "xy". The "x" mode enables a vertical
 cursor that lets you trace the values on the x axis, "y" enables a
-horizontal cursor and "xy" enables them both.
+horizontal cursor and "xy" enables them both. "xy" is default.
 
 **color** is the color of the cursor (default is "rgba(170, 0, 0, 0.80)")
 
@@ -37,6 +41,16 @@ horizontal cursor and "xy" enables them both.
 **position** position of the cursor. It can be specified relative to the canvas, in pixels, 
 using a *relativeX, relativeY* pair of coordinates or using axis based coordinates 
 ( *x, x2, x3 .., y, y2, y3* ).
+
+**showIntersections** if true the intersection with the plots will be displayed as grey
+rectangles. Default is false.
+
+**showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
+
+**snapToPlot** specifies a plot on which the cursor will snap. If not specified the cursor 
+will be free.
+
+**symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape.
 
 
 Public Methods
@@ -60,7 +74,7 @@ The plugin adds some public methods to the chart:
 
     setCursor ( cursor , options)
 
-        Changes one or more cursor property.
+        changes one or more cursor properties.
 
 How to use:
 
