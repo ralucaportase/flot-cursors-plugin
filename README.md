@@ -53,8 +53,8 @@ will be free.
 **symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape.
 
 
-Public Methods
---------------
+Public Methods and events
+-------------------------
 
 
 The plugin adds some public methods to the chart:
@@ -69,21 +69,42 @@ The plugin adds some public methods to the chart:
 
     removeCursor( cursorToRemove )
 
-        remove the specified cursor from the plot. *cursorToRemove* is
+        remove the specified cursor from the plot. cursorToRemove is
         a cursor reference to one of the cursors obtained with getCursors()
 
     setCursor ( cursor , options)
 
         changes one or more cursor properties.
 
-How to use:
+Everytime one or more cursors changes state a *cursorupdates* event is emitted on the chart container.
+These events are emitted in one of these situations:
+
+    * cursor added
+    * cursor removed
+    * cursor moved
+    * intersections of the cursors with the plots changed
+
+
+How to use
+----------
 
     var myFlot = $.plot( $("#graph"), ...,
         {
+            ...
             cursors: [
                 { name: 'Green cursor', mode: 'xy', color: 'green' },
                 { name: 'Red cursor', mode: 'xy', color: 'red' }
             ]
+            ...
+        });
+
+        $("#graph").bind("cursorupdates", function (event, cursordata) {
+            cursordata.forEach(function (cursor) {
+                console.log("Cursor " + cursor.cursor.name + " intersections:");
+                cursor.points.forEach(function (point) {
+                    console.log("x:" + point.x + " y: " + point.y);
+                });
+            });
         });
 
 jquery.flot.cursors is available under the MIT license.
