@@ -100,10 +100,16 @@ describe("Flot cursors", function () {
 
         expect(plot.getCursors().length).toBe(0);
 
-        plot.addCursor('Blue cursor', 'xy', 'blue', {
-            relativeX: 7,
-            relativeY: 7
+        plot.addCursor({
+            name: 'Blue cursor',
+            mode: 'xy',
+            color: 'blue',
+            position: {
+                relativeX: 7,
+                relativeY: 7
+            }
         });
+
         var firstCursor = plot.getCursors()[0];
 
         expect(plot.getCursors().length).toBe(1);
@@ -153,7 +159,21 @@ describe("Flot cursors", function () {
     });
 
     describe('Names', function () {
-        it('should give the cursors default names if not specified');
+        it('should give the cursors default names if not specified', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        color: 'blue'
+                    }
+                ]
+            });
+
+            var firstCursor = plot.getCursors()[0];
+
+            expect(firstCursor.name).toEqual(jasmine.any(String));
+            expect(firstCursor.name.length).toBeGreaterThan(0);
+        });
+
         it('should give the cursors unique names');
         it('should give the cursors created at runtime unique names');
     });

@@ -19,27 +19,24 @@ Licensed under the MIT license.
         var cursors = [];
         var update = [];
 
+        function createCursor(options) {
+            return mixin(options, {
+                name: options.name || ('unnamed ' + cursors.length),
+                x: 0,
+                y: 0,
+                selected: false,
+                highlighted: false,
+                mode: 'xy',
+                showIntersections: false,
+                showLabel: false,
+                color: 'gray',
+                lineWidth: 1
+            });
+        }
+
         plot.hooks.processOptions.push(function (plot) {
-            plot.getOptions().cursors.forEach(function (cursor) {
-                var currentCursor = {
-                    x: 0,
-                    y: 0,
-                    selected: false,
-                    highlighted: false,
-                    mode: cursor.mode || 'xy',
-                    position: cursor.position,
-                    showIntersections: !!cursor.showIntersections,
-                    showLabel: !!cursor.showLabel,
-                    snapToPlot: cursor.snapToPlot,
-                    symbol: cursor.symbol,
-                    color: cursor.color,
-                    lineWidth: cursor.lineWidth || 1
-                };
-
-                setPosition(plot, currentCursor, cursor.position);
-
-                currentCursor.name = cursor.name || ('unnamed ' + cursors.length);
-                cursors.push(currentCursor);
+            plot.getOptions().cursors.forEach(function (options) {
+                plot.addCursor(options);
             });
         });
 
@@ -47,19 +44,10 @@ Licensed under the MIT license.
             return cursors;
         };
 
-        plot.addCursor = function addCursor(name, mode, color, pos) {
-            var currentCursor = {
-                x: 0,
-                y: 0,
-                selected: false,
-                highlighted: false,
-                mode: mode,
-                color: color,
-                position: pos
-            };
+        plot.addCursor = function addCursor(options) {
+            var currentCursor = createCursor(options);
 
-            currentCursor.name = name || ('unnamed ' + cursors.length);
-            setPosition(plot, currentCursor, pos);
+            setPosition(plot, currentCursor, options.position);
             cursors.push(currentCursor);
 
             plot.triggerRedrawOverlay();
@@ -297,8 +285,6 @@ Licensed under the MIT license.
             return intersections;
         }
 
-
-
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             var i = 0;
             update = [];
@@ -351,6 +337,8 @@ Licensed under the MIT license.
         Object.keys(source).forEach(function (key) {
             destination[key] = source[key];
         });
+
+        return destination;
     }
 
     function setPosition(plot, cursor, pos) {
