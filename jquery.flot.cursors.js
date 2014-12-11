@@ -239,6 +239,8 @@ Licensed under the MIT license.
 
             var intersections = {
                 cursor: cursor.name,
+                x: pos.x,
+                y: pos.y,
                 points: []
             };
 
@@ -363,9 +365,9 @@ Licensed under the MIT license.
                     x: point.x,
                     y: point.y
                 });
+
+                intersections.y = point.y; // update cursor position
             }
-        } else {
-            return cursor.position;
         }
     }
 
@@ -374,7 +376,7 @@ Licensed under the MIT license.
         if (cursor.showLabel) {
             var x = cursor.x + 10;
             var y = cursor.y - 10;
-            ctx.fillStyle = 'darkgray';
+            ctx.fillStyle = cursor.color;
             ctx.fillText(cursor.name, x, y);
         }
 
@@ -422,7 +424,7 @@ Licensed under the MIT license.
             ctx.strokeStyle = cursor.color;
         if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
             ctx.fillStyle = 'white';
-            ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+            ctx.fillRect(Math.floor(cursor.x) + adj - 5, Math.floor(cursor.y) + adj - 5, 10, 10);
             plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
         } else {
             ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
@@ -444,7 +446,7 @@ Licensed under the MIT license.
         var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
         var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
-        return ((mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4));
+        return ((mouseX > cursor.x - 8) && (mouseX < cursor.x + 8) && (mouseY > cursor.y - 8) && (mouseY < cursor.y + 8));
     }
 
     function mouseOverCursorVerticalLine(e, plot, cursor) {
