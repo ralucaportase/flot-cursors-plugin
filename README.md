@@ -106,6 +106,9 @@ How to use
             });
         });
     });
+    
+Examples and tests
+------------------
 
 jquery.flot.cursors is available under the MIT license.
 
