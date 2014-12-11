@@ -110,4 +110,7 @@ How to use
 jquery.flot.cursors is available under the MIT license.
 
 Interactive example: <http://cipix2000.github.io/flot-cursors-plugin/>
+
 How to create a legend: <http://cipix2000.github.io/flot-cursors-plugin/cursors-legend.html>
+
+A testsuite for cursors is available: <http://cipix2000.github.io/flot-cursors-plugin/SpecRunner.html>
