@@ -47,7 +47,7 @@ rectangles. Default is false.
 
 **showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
 
-**snapToPlot** specifies a plot on which the cursor will snap. If not specified the cursor 
+**snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor 
 will be free.
 
 **symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape.
