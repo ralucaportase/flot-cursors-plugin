@@ -82,7 +82,7 @@ These events are emitted in one of these situations:
     * cursor added
     * cursor removed
     * cursor moved
-    * intersections of the cursors with the plots changed
+    * intersections of the cursors with the plots changed due to chart data changes 
 
 
 How to use
