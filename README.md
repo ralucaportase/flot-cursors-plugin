@@ -100,7 +100,7 @@ How to use
 
     $("#graph").bind("cursorupdates", function (event, cursordata) {
         cursordata.forEach(function (cursor) {
-            console.log("Cursor " + cursor.cursor.name + " intersections:");
+            console.log("Cursor " + cursor.cursor + " intersections:");
             cursor.points.forEach(function (point) {
                 console.log("x:" + point.x + " y: " + point.y);
             });
