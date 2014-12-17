@@ -29,6 +29,7 @@ Licensed under the MIT license.
                 mode: 'xy',
                 showIntersections: false,
                 showLabel: false,
+                showValuesRelativeToSeries: undefined,
                 color: 'gray',
                 lineWidth: 1
             });
@@ -308,7 +309,9 @@ Licensed under the MIT license.
                     cursor.intersections = intersections;
                     update.push(intersections);
 
-                    drawLabelAndIntersections(plot, ctx, cursor);
+                    drawLabel(plot, ctx, cursor);
+                    drawIntersections(plot, ctx, cursor);
+                    drawValues(plot, ctx, cursor);
                     drawManipulator(plot, ctx, cursor);
                 }
                 ctx.restore();
@@ -371,25 +374,39 @@ Licensed under the MIT license.
         }
     }
 
-    function drawLabelAndIntersections(plot, ctx, cursor) {
-        ctx.beginPath();
+    function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
+            ctx.beginPath();
             var x = cursor.x + 10;
             var y = cursor.y - 10;
             ctx.fillStyle = cursor.color;
             ctx.fillText(cursor.name, x, y);
+            ctx.stroke();
         }
+    }
 
+    function drawIntersections(plot, ctx, cursor) {
         if (cursor.showIntersections && hasVerticalLine(cursor)) {
+            ctx.beginPath();
             cursor.intersections.points.forEach(function (point) {
                 var coord = plot.p2c(point);
                 ctx.fillStyle = 'darkgray';
                 ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
                 ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
             });
+            ctx.stroke();
         }
-        ctx.stroke();
     }
+
+    function drawValues(plot, ctx, cursor) {
+        if (typeof cursor.showValuesRelativeToSeries === 'number') {
+            ctx.beginPath();
+            var i, j, dataset = plot.getData();
+
+            ctx.stroke();
+        }
+    }
+
 
     function drawVerticalAndHorizontalLines(plot, ctx, cursor) {
         var adj = cursor.lineWidth % 2 ? 0.5 : 0;

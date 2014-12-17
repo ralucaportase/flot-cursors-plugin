@@ -323,4 +323,5 @@ describe("Flot cursors", function () {
     });
 
     it('should display the cursor label when told so');
+    it('should display the cursor values relative to a plot when told so');
 });
