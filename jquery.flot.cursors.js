@@ -374,13 +374,41 @@ Licensed under the MIT license.
         }
     }
 
+    function computeLabelPosition(plot, cursor, offset) {
+        var width = plot.width();
+        var height = plot.height();
+        var textAlign = 'left';
+        
+        var y = cursor.y;
+        var x = cursor.x;
+        
+        if (x > (width/2)) {
+            x -= 10;
+            textAlign = 'right';
+        } else {
+            x += 10;
+        }
+        
+        if (y > (height/2)) {
+            y -= 10 + offset;
+        } else {
+            y += 20 + offset;
+        }
+        
+        return {x: x,
+                y: y,
+                textAlign: textAlign
+               };
+    }
+    
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
             ctx.beginPath();
-            var x = cursor.x + 10;
-            var y = cursor.y - 10;
+            var position = computeLabelPosition(plot, cursor, typeof cursor.showValuesRelativeToSeries === 'number' ? 20: 0);
             ctx.fillStyle = cursor.color;
-            ctx.fillText(cursor.name, x, y);
+            ctx.textAlign = position.textAlign;
+            ctx.fillText(cursor.name, position.x, position.y);
+            ctx.textAlign = 'left';
             ctx.stroke();
         }
     }
@@ -401,12 +429,25 @@ Licensed under the MIT license.
     function drawValues(plot, ctx, cursor) {
         if (typeof cursor.showValuesRelativeToSeries === 'number') {
             ctx.beginPath();
-            var i, j, dataset = plot.getData();
+            var dataset = plot.getData();
 
+            var series = dataset[cursor.showValuesRelativeToSeries];
+            var xaxis = series.xaxis;
+            var yaxis = series.yaxis;
+
+            var text = '' + xaxis.c2p(cursor.x).toFixed(2) + ', ' + yaxis.c2p(cursor.y).toFixed(2);
+            
+            var position = computeLabelPosition(plot, cursor,0);
+
+            ctx.fillStyle = cursor.color;
+            ctx.textAlign = position.textAlign;
+            ctx.fillText(text, position.x, position.y);
+            
+            ctx.textAlign = 'left';
+            
             ctx.stroke();
         }
     }
-
 
     function drawVerticalAndHorizontalLines(plot, ctx, cursor) {
         var adj = cursor.lineWidth % 2 ? 0.5 : 0;

@@ -323,5 +323,23 @@ describe("Flot cursors", function () {
     });
 
     it('should display the cursor label when told so');
-    it('should display the cursor values relative to a plot when told so');
+    
+    it('should display the cursor values relative to a plot when told so', function() {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 1.15
+                    },
+                    showValuesRelativeToSeries: 0
+                }
+            ]
+        });
+        
+        jasmine.clock().tick(20);
+        expect(true).toBe(false);
+    });
 });

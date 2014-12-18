@@ -1,4 +1,5 @@
 /*global jQuery, $*/
+/*jshint browser: true*/
 
 $(function () {
     'use strict';
@@ -86,6 +87,8 @@ $(function () {
                 color: 'green',
                 showIntersections: true,
                 symbol: 'cross',
+                showValuesRelativeToSeries: 0,
+                showLabel: true,
                 position: {
                     relativeX: 100,
                     relativeY: 200
