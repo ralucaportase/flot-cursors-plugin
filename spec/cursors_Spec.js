@@ -322,8 +322,54 @@ describe("Flot cursors", function () {
         expect(firstCursor.lineWidth).toBe(3);
     });
 
-    it('should display the cursor label when told so');
-    
+    it('should display the cursor label when told so', function() {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 1.15
+                    },
+                    showLabel: true
+                }
+            ]
+        });
+
+        var overlay =$('.flot-overlay')[0];
+        var octx = overlay.getContext("2d");
+
+        var spy = spyOn(octx, 'fillText').and.callThrough();
+
+        jasmine.clock().tick(20);
+        expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
+    });
+
+    it('should not display the cursor label when told not to', function() {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 1.15
+                    },
+                    showLabel: false
+                }
+            ]
+        });
+
+        var overlay =$('.flot-overlay')[0];
+        var octx = overlay.getContext("2d");
+
+        var spy = spyOn(octx, 'fillText').and.callThrough();
+
+        jasmine.clock().tick(20);
+        expect(spy).not.toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
+    });
+
     it('should display the cursor values relative to a plot when told so', function() {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -338,6 +384,29 @@ describe("Flot cursors", function () {
                 }
             ]
         });
+
+        var overlay =$('.flot-overlay')[0];
+        var octx = overlay.getContext("2d");
+
+        var spy = spyOn(octx, 'fillText').and.callThrough();
+
+        jasmine.clock().tick(20);
+        expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
+    });
+    
+    it('should not display the cursor values relative to a plot when told not to', function() {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 1.15
+                    }
+                }
+            ]
+        });
         
         var overlay =$('.flot-overlay')[0];
         var octx = overlay.getContext("2d");
@@ -345,6 +414,6 @@ describe("Flot cursors", function () {
         var spy = spyOn(octx, 'fillText').and.callThrough();
         
         jasmine.clock().tick(20);
-        expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
+        expect(spy).not.toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
     });
 });
