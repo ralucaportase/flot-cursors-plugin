@@ -339,7 +339,12 @@ describe("Flot cursors", function () {
             ]
         });
         
+        var overlay =$('.flot-overlay')[0];
+        var octx = overlay.getContext("2d");
+        
+        var spy = spyOn(octx, 'fillText').and.callThrough();
+        
         jasmine.clock().tick(20);
-        expect(true).toBe(false);
+        expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
     });
 });

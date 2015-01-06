@@ -331,13 +331,6 @@ Licensed under the MIT license.
         });
     }
 
-    $.plot.plugins.push({
-        init: init,
-        options: options,
-        name: 'cursors',
-        version: '0.1'
-    });
-
     function mixin(source, destination) {
         Object.keys(source).forEach(function (key) {
             destination[key] = source[key];
@@ -522,4 +515,11 @@ Licensed under the MIT license.
 
         return (hasHorizontalLine(cursor) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4) && (mouseX > 0) && (mouseY < plot.width()));
     }
+    
+    $.plot.plugins.push({
+        init: init,
+        options: options,
+        name: 'cursors',
+        version: '0.1'
+    });
 })(jQuery);

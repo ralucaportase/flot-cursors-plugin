@@ -131,8 +131,6 @@ describe("Cursors snapping", function () {
                 }
             ]
         });
-        
-        spyOn(plot.);
 
         jasmine.clock().tick(20);
 
@@ -158,6 +156,5 @@ describe("Cursors snapping", function () {
 
         expect(cursor.x).toBe(pos.left);
         expect(cursor.y).toBe(pos.top);
-
     });
 });
