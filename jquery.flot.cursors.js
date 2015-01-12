@@ -385,7 +385,7 @@ Licensed under the MIT license.
         if (y > (height/2)) {
             y -= 10 + offset;
         } else {
-            y += 20 + offset;
+            y += 20;
         }
         
         return {x: x,
@@ -430,11 +430,11 @@ Licensed under the MIT license.
 
             var text = '' + xaxis.c2p(cursor.x).toFixed(2) + ', ' + yaxis.c2p(cursor.y).toFixed(2);
             
-            var position = computeLabelPosition(plot, cursor,0);
+            var position = computeLabelPosition(plot, cursor, cursor.showLabel ? 20: 0);
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
-            ctx.fillText(text, position.x, position.y);
+            ctx.fillText(text, position.x, position.y + (cursor.showLabel ? 20 : 0));
             
             ctx.textAlign = 'left';
             

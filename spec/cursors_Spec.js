@@ -158,26 +158,6 @@ describe('Flot cursors', function () {
         expect(firstCursor.name).toBe('Red Cursor');
     });
 
-    describe('Names', function () {
-        it('should give the cursors default names if not specified', function () {
-            plot = $.plot("#placeholder", [sampledata], {
-                cursors: [
-                    {
-                        color: 'blue'
-                    }
-                ]
-            });
-
-            var firstCursor = plot.getCursors()[0];
-
-            expect(firstCursor.name).toEqual(jasmine.any(String));
-            expect(firstCursor.name.length).toBeGreaterThan(0);
-        });
-
-        it('should give the cursors unique names');
-        it('should give the cursors created at runtime unique names');
-    });
-
     it('should be possible to change a cursor label visibility at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -322,95 +302,174 @@ describe('Flot cursors', function () {
         expect(firstCursor.lineWidth).toBe(3);
     });
 
-    it('should display the cursor label when told so', function() {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        x: 1,
-                        y: 1.15
-                    },
-                    showLabel: true
+    describe('Labels', function () {
+        function spyOnFillText() {
+            var overlay = $('.flot-overlay')[0];
+            var octx = overlay.getContext("2d");
+            return spyOn(octx, 'fillText').and.callThrough();
+        }
+
+        it('should display the cursor label when told so', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showLabel: true
                 }
             ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
         });
 
-        var overlay =$('.flot-overlay')[0];
-        var octx = overlay.getContext("2d");
-
-        var spy = spyOn(octx, 'fillText').and.callThrough();
-
-        jasmine.clock().tick(20);
-        expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
-    });
-
-    it('should not display the cursor label when told not to', function() {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        x: 1,
-                        y: 1.15
-                    },
-                    showLabel: false
+        it('should not display the cursor label when told not to', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showLabel: false
                 }
             ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).not.toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
         });
 
-        var overlay =$('.flot-overlay')[0];
-        var octx = overlay.getContext("2d");
-        var spy = spyOn(octx, 'fillText').and.callThrough();
-
-        jasmine.clock().tick(20);
-        expect(spy).not.toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
-    });
-
-    it('should display the cursor values relative to a plot when told so', function() {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        x: 1,
-                        y: 1.15
-                    },
-                    showValuesRelativeToSeries: 0
+        it('should display the cursor values relative to a plot when told so', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showValuesRelativeToSeries: 0
                 }
             ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
         });
 
-        var overlay =$('.flot-overlay')[0];
-        var octx = overlay.getContext("2d");
-        var spy = spyOn(octx, 'fillText').and.callThrough();
+        it('should not display the cursor values relative to a plot when told not to', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        }
+                }
+            ]
+            });
 
-        jasmine.clock().tick(20);
-        expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
-    });
-    
-    it('should not display the cursor values relative to a plot when told not to', function() {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        x: 1,
-                        y: 1.15
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).not.toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
+        });
+
+        it('should display both the cursor label and values when told so', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showLabel: true,
+                        showValuesRelativeToSeries: 0
                     }
-                }
-            ]
+                ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
         });
-        
-        var overlay =$('.flot-overlay')[0];
-        var octx = overlay.getContext("2d");
-        var spy = spyOn(octx, 'fillText').and.callThrough();
-        
-        jasmine.clock().tick(20);
-        expect(spy).not.toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
+
+        [['top right', 1.5, 1.2], ['top left', 0.5, 1.2], ['bottom right', 1.5, 1.0], ['top left', 0.5, 1.0]].forEach(function (pos) {
+            describe('When cursor placed in the ' + pos[0] + ' of the plot', function () {
+                it('should display the cursor label above the values', function () {
+                    plot = $.plot("#placeholder", [sampledata], {
+                        cursors: [
+                            {
+                                name: 'Blue cursor',
+                                color: 'blue',
+                                position: {
+                                    x: pos[1],
+                                    y: pos[2]
+                                },
+                                showLabel: true,
+                                showValuesRelativeToSeries: 0
+                    }
+                ]
+                    });
+
+                    var spy = spyOnFillText();
+                    jasmine.clock().tick(20);
+
+                    var args = spy.calls.allArgs();
+                    expect(args.length).toBe(2);
+
+                    var cursorArgs = args.filter(function (args) {
+                        return args[0] === 'Blue cursor';
+                    })[0];
+
+                    var valueArgs = args.filter(function (args) {
+                        return args[0] !== 'Blue cursor';
+                    })[0];
+
+                    expect(cursorArgs[2]).toBeLessThan(valueArgs[2]);
+                });
+            });
+        });
+    });
+
+    describe('Names', function () {
+        it('should give the cursors default names if not specified', function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        color: 'blue'
+                    }
+                ]
+            });
+
+            var firstCursor = plot.getCursors()[0];
+
+            expect(firstCursor.name).toEqual(jasmine.any(String));
+            expect(firstCursor.name.length).toBeGreaterThan(0);
+        });
+
+        it('should give the cursors unique names');
+        it('should give the cursors created at runtime unique names');
     });
 });
