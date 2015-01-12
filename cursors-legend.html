@@ -192,6 +192,7 @@
                     $("#jqxsnapdropdownlist").jqxDropDownList('selectItem', (cursorData.snapToPlot !== undefined) ? 'plot ' + (cursorData.snapToPlot + 1) : 'none');
                     $('#jqxcheckbox1').val(cursorData.showLabel);
                     $('#jqxcheckbox2').val(cursorData.showIntersections);
+                    $('#jqxcheckbox3').val(cursorData.showValues);
 
                     // show the popup window.
                     $("#popupWindow").jqxWindow('show');
@@ -253,6 +254,11 @@
                 //width: 120,
                 height: 25
             });
+            
+            $("#jqxcheckbox3").jqxCheckBox({
+                //width: 120,
+                height: 25
+            });
 
             $("#colorPicker").on('colorchange', function (event) {
                 $("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
@@ -308,6 +314,7 @@
                 var snapToId = $("#jqxsnapdropdownlist").jqxDropDownList('getSelectedItem').index;
                 var showLabel = $('#jqxcheckbox1').val();
                 var showIntersections = $('#jqxcheckbox2').val();
+                var showValues = $('#jqxcheckbox3').val();
 
                 $('#jqxgrid').jqxGrid('updaterow', rowid, row);
 
@@ -318,7 +325,8 @@
                     showLabel: showLabel,
                     showIntersections: showIntersections,
                     symbol: shape,
-                    snapToPlot: [undefined, 0, 1][snapToId]
+                    snapToPlot: [undefined, 0, 1][snapToId],
+                    showValuesRelativeToSeries: showValues ? 0 : undefined
                 });
 
                 $("#popupWindow").jqxWindow('hide');
@@ -409,6 +417,7 @@
                             </td>
                             <td align="left">
                                 <div id='jqxcheckbox1'>Show Label</div>
+                                <div id='jqxcheckbox3'>Show Values</div>
                                 <div id='jqxcheckbox2'>Show Intersections</div>
                             </td>
                         </tr>
