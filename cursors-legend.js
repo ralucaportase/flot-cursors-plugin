@@ -1,3 +1,4 @@
+/* jshint browser: true */
 /*global jQuery, setTimeout, $*/
 
 $(function () {
@@ -104,18 +105,5 @@ $(function () {
     });
 
     window.myPlot = plot;
-    /*
-    $("#placeholder").bind("cursorupdates", function (event, cursordata) {
-        $('#hoverdata').empty();
-        var ul1 = $('#hoverdata').append('<UL style="padding-left: 30px;">').find("UL");
-        cursordata.forEach(function (cursor) {
-            ul1.append("<LI>" + cursor.cursor + "</LI>");
-            var ul2 = ul1.append('<UL style="padding-left: 30px;">').find("UL").last();
-            cursor.points.forEach(function (point) {
-                ul2.append("<LI> x:" + point.x.toFixed(4) + " y: " + point.y.toFixed(4) + "</LI>");
-            });
-        });
-    });
-*/
     updateChart();
 });
