@@ -1,7 +1,7 @@
 /* global $, describe, it, xit, after, beforeEach, afterEach, expect, jasmine, spyOn */
 /* jshint browser: true*/
 
-describe("Flot cursors", function () {
+describe('Flot cursors', function () {
     'use strict';
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
@@ -363,7 +363,6 @@ describe("Flot cursors", function () {
 
         var overlay =$('.flot-overlay')[0];
         var octx = overlay.getContext("2d");
-
         var spy = spyOn(octx, 'fillText').and.callThrough();
 
         jasmine.clock().tick(20);
@@ -387,7 +386,6 @@ describe("Flot cursors", function () {
 
         var overlay =$('.flot-overlay')[0];
         var octx = overlay.getContext("2d");
-
         var spy = spyOn(octx, 'fillText').and.callThrough();
 
         jasmine.clock().tick(20);
@@ -410,7 +408,6 @@ describe("Flot cursors", function () {
         
         var overlay =$('.flot-overlay')[0];
         var octx = overlay.getContext("2d");
-        
         var spy = spyOn(octx, 'fillText').and.callThrough();
         
         jasmine.clock().tick(20);
