@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/cipix2000/flot-cursors-plugin.png?label=ready&title=Ready)](https://waffle.io/cipix2000/flot-cursors-plugin)
 flot.cursors
 ============
 
