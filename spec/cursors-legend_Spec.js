@@ -20,14 +20,32 @@ describe('Flot cursors legend', function () {
         jasmine.clock().uninstall();
     });
 
-    it('should be possible to specify a cursor when creating the plot', function () {
+    it('should be possible to specify a cursor legend when creating the plot', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
                     name: 'Blue cursor',
                     color: 'blue',
                 }
-            ]
+            ],
+            cursorsLegendDiv: 'cursorsLegend'
         });
     });
+    
+    it('should clear the content of the div given before populating it', function () {
+        var marker = 'abcdefghij';
+        $('#cursorsLegend').append(marker);
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                }
+            ],
+            cursorsLegendDiv: 'cursorsLegend'
+        });
+        
+        expect($('#cursorsLegend').text()).not.toContain(marker);
+    });
+
 });
