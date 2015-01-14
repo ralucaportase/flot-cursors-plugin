@@ -48,6 +48,8 @@ rectangles. Default is false.
 
 **showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
 
+**showValuesRelativeToSeries** if pressent and is numberic the coordinate of cursor (realtive to the specified series of data) will be displayed next to the cursor manipulator.
+
 **snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor 
 will be free.
 
