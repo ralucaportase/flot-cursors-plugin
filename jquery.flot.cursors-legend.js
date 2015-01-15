@@ -44,9 +44,16 @@ Licensed under the MIT license.
     function populateLegendDiv(plot, div) {
         div.empty();
         div.append('<div id="jqxgrid"/>');
-        var popup = div.add('<div id="popupWindow">');
-        popup.append('<div>Edit cursor</div>');
-        var tableDiv = popup.add('<div style="overflow: hidden;">');
+        var popup = $('<div id="popupWindow">').appendTo(div);
+        popup.append('<div id="title">Edit cursor</div>');
+        var bodyDiv = $('<div id="body" style="xxxoverflow: hidden;" />').appendTo(popup);
+        bodyDiv.append('<span id="cursorNameText">Name</span>');
+        bodyDiv.append('<input id="cursorname" />');
+        bodyDiv.append('<span id="colorText">Color</span>');
+        $('<div id="dropDownButton"\>').appendTo(bodyDiv)
+            .append('<div id="colorPicker">');
+        bodyDiv.append('<span id="modeText">Mode</span>');
+        bodyDiv.append('<div id="dropDownList"\>');
     }
 
     $.plot.plugins.push({
@@ -55,6 +62,6 @@ Licensed under the MIT license.
         name: 'cursors-legend',
         version: '0.1'
     });
-    
+
     var popUpTemplate = '';
 })(jQuery);
