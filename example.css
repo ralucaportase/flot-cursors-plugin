@@ -84,13 +84,3 @@ input[type=checkbox] {
     font-size: 14px;
     line-height: 1.2em;
 }
-.legend table {
-    border-spacing: 5px;
-}
-.cursor-legend {
-    position: relative;
-    width: 33%;
-    height: 50px;
-    font-size: 14px;
-    line-height: 1.2em;
-}
