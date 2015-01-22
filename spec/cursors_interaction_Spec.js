@@ -380,6 +380,110 @@ describe("Cursors interaction", function () {
         expect(cursor.y).toBe(60 + 5);
     });
 
+    it('should be possible to drag cursors with the mouse from the vertical line if the cursor is positioned relative to axes', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1.5,
+                        y: 1.15
+                    }
+                    }
+                ]
+        });
+
+        var X = plot.p2c({
+            x: 1.5,
+            y: 1.15
+        }).left;
+        var Y = plot.p2c({
+            x: 1.5,
+            y: 1.15
+        }).top + 20;
+
+        var cursorX = plot.offset().left + X;
+        var cursorY = plot.offset().top + Y;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorX += 13;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(X + 13);
+    });
+
+    it('should be possible to drag cursors with the mouse from the horizontal line if the cursor is positioned relative to axes', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1.5,
+                        y: 1.15
+                    }
+                    }
+                ]
+        });
+
+        var X = plot.p2c({
+            x: 1.5,
+            y: 1.15
+        }).left + 20;
+        var Y = plot.p2c({
+            x: 1.5,
+            y: 1.15
+        }).top;
+
+        var cursorX = plot.offset().left + X;
+        var cursorY = plot.offset().top + Y;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorY += 13;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.y).toBe(Y + 13);
+    });
+
     it('should be highlighted on mouse over the cursor manipulator', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [

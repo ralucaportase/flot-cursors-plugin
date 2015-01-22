@@ -429,8 +429,8 @@ describe('Flot cursors', function () {
                                 },
                                 showLabel: true,
                                 showValuesRelativeToSeries: 0
-                    }
-                ]
+                            }
+                        ]
                     });
 
                     var spy = spyOnFillText();
