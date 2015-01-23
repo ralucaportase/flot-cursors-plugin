@@ -15,6 +15,14 @@ Licensed under the MIT license.
         ]
     };
 
+    var constants = {
+        iRectSize: 8,
+        symbolSize: 8,
+        mouseGrabMargin: 8,
+        textHeight: 10, // to do: compute it somehow. Canvas doesn't give us a way to know it
+        labelPadding: 10
+    };
+
     function init(plot) {
         var cursors = [];
         var update = [];
@@ -385,16 +393,16 @@ Licensed under the MIT license.
         var x = cursor.x;
 
         if (x > (width / 2)) {
-            x -= 10;
+            x -= constants.labelPadding;
             textAlign = 'right';
         } else {
-            x += 10;
+            x += constants.labelPadding;
         }
 
         if (y > (height / 2)) {
-            y -= 10 + offset;
+            y -= constants.labelPadding + offset;
         } else {
-            y += 20;
+            y += constants.labelPadding + constants.textHeight;
         }
 
         return {
@@ -407,7 +415,8 @@ Licensed under the MIT license.
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
             ctx.beginPath();
-            var position = computeLabelPosition(plot, cursor, typeof cursor.showValuesRelativeToSeries === 'number' ? 20 : 0);
+            var position = computeLabelPosition(plot, cursor,
+                typeof cursor.showValuesRelativeToSeries === 'number' ? constants.labelPadding * 2 : 0);
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
             ctx.fillText(cursor.name, position.x, position.y);
@@ -422,8 +431,11 @@ Licensed under the MIT license.
             cursor.intersections.points.forEach(function (point) {
                 var coord = plot.p2c(point);
                 ctx.fillStyle = 'darkgray';
-                ctx.fillRect(Math.floor(coord.left) - 4, Math.floor(coord.top) - 4, 8, 8);
-                ctx.fillText(point.y.toFixed(2), coord.left + 8, coord.top + 8);
+                ctx.fillRect(Math.floor(coord.left) - constants.iRectSize / 2,
+                    Math.floor(coord.top) - constants.iRectSize / 2,
+                    constants.iRectSize, constants.iRectSize);
+                ctx.fillText(point.y.toFixed(2), coord.left + constants.iRectSize,
+                    coord.top + constants.iRectSize);
             });
             ctx.stroke();
         }
@@ -440,11 +452,11 @@ Licensed under the MIT license.
 
             var text = '' + xaxis.c2p(cursor.x).toFixed(2) + ', ' + yaxis.c2p(cursor.y).toFixed(2);
 
-            var position = computeLabelPosition(plot, cursor, cursor.showLabel ? 20 : 0);
+            var position = computeLabelPosition(plot, cursor, cursor.showLabel ? constants.labelPadding * 2 : 0);
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
-            ctx.fillText(text, position.x, position.y + (cursor.showLabel ? 20 : 0));
+            ctx.fillText(text, position.x, position.y + (cursor.showLabel ? constants.labelPadding * 2 : 0));
 
             ctx.textAlign = 'left';
 
@@ -453,6 +465,7 @@ Licensed under the MIT license.
     }
 
     function drawVerticalAndHorizontalLines(plot, ctx, cursor) {
+        // keep line sharp
         var adj = cursor.lineWidth % 2 ? 0.5 : 0;
 
         ctx.strokeStyle = cursor.color;
@@ -476,6 +489,7 @@ Licensed under the MIT license.
     }
 
     function drawManipulator(plot, ctx, cursor) {
+        // keep line sharp
         var adj = cursor.lineWidth % 2 ? 0.5 : 0;
         ctx.beginPath();
 
@@ -484,11 +498,17 @@ Licensed under the MIT license.
         else
             ctx.strokeStyle = cursor.color;
         if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
+            //first draw a white background
             ctx.fillStyle = 'white';
-            ctx.fillRect(Math.floor(cursor.x) + adj - 5, Math.floor(cursor.y) + adj - 5, 10, 10);
-            plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj, Math.floor(cursor.y) + adj, 4, 0);
+            ctx.fillRect(Math.floor(cursor.x) + adj - (constants.symbolSize / 2 + 1),
+                Math.floor(cursor.y) + adj - (constants.symbolSize / 2 + 1),
+                constants.symbolSize + 2, constants.symbolSize + 2);
+            plot.drawSymbol[cursor.symbol](ctx, Math.floor(cursor.x) + adj,
+                Math.floor(cursor.y) + adj, constants.symbolSize / 2, 0);
         } else {
-            ctx.fillRect(Math.floor(cursor.x) + adj - 4, Math.floor(cursor.y) + adj - 4, 8, 8);
+            ctx.fillRect(Math.floor(cursor.x) + adj - (constants.symbolSize / 2),
+                Math.floor(cursor.y) + adj - (constants.symbolSize / 2),
+                constants.symbolSize, constants.symbolSize);
         }
 
         ctx.stroke();
@@ -506,8 +526,10 @@ Licensed under the MIT license.
         var offset = plot.offset();
         var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
         var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+        var grabRadius = constants.symbolSize + constants.mouseGrabMargin;
 
-        return ((mouseX > cursor.x - 8) && (mouseX < cursor.x + 8) && (mouseY > cursor.y - 8) && (mouseY < cursor.y + 8));
+        return ((mouseX > cursor.x - grabRadius) && (mouseX < cursor.x + grabRadius) &&
+            (mouseY > cursor.y - grabRadius) && (mouseY < cursor.y + grabRadius));
     }
 
     function mouseOverCursorVerticalLine(e, plot, cursor) {
@@ -515,7 +537,8 @@ Licensed under the MIT license.
         var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
         var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
-        return (hasVerticalLine(cursor) && (mouseX > cursor.x - 4) && (mouseX < cursor.x + 4) && (mouseY > 0) && (mouseY < plot.height()));
+        return (hasVerticalLine(cursor) && (mouseX > cursor.x - constants.mouseGrabMargin) &&
+            (mouseX < cursor.x + constants.mouseGrabMargin) && (mouseY > 0) && (mouseY < plot.height()));
     }
 
     function mouseOverCursorHorizontalLine(e, plot, cursor) {
@@ -523,7 +546,8 @@ Licensed under the MIT license.
         var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
         var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
-        return (hasHorizontalLine(cursor) && (mouseY > cursor.y - 4) && (mouseY < cursor.y + 4) && (mouseX > 0) && (mouseY < plot.width()));
+        return (hasHorizontalLine(cursor) && (mouseY > cursor.y - constants.mouseGrabMargin) &&
+            (mouseY < cursor.y + constants.mouseGrabMargin) && (mouseX > 0) && (mouseY < plot.width()));
     }
 
     $.plot.plugins.push({
