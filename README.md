@@ -64,30 +64,29 @@ Public Methods and events
 
 The plugin adds some public methods to the chart:
 
-    getCursors()
-    
-        Returns a list containing all the cursors
+getCursors()
 
-    addCursor( options )
-    
-        creates a new cursor with the parameters specified in options.
+    Returns a list containing all the cursors
 
-    removeCursor( cursorToRemove )
+addCursor(options)
 
-        remove the specified cursor from the plot. cursorToRemove is
-        a cursor reference to one of the cursors obtained with getCursors()
+    creates a new cursor with the parameters specified in options.
 
-    setCursor ( cursor , options)
+removeCursor(cursorToRemove)
 
-        changes one or more cursor properties.
+    remove the specified cursor from the plot. cursorToRemove is a cursor reference to one of the cursors obtained with getCursors()
+
+setCursor ( cursor , options)
+
+    changes one or more cursor properties.
 
 Everytime one or more cursors changes state a *cursorupdates* event is emitted on the chart container.
 These events are emitted in one of these situations:
 
-    * cursor added
-    * cursor removed
-    * cursor moved
-    * intersections of the cursors with the plots changed due to chart data changes 
+* cursor added
+* cursor removed
+* cursor moved
+* intersections of the cursors with the plots changed due to chart data changes 
 
 
 How to use
