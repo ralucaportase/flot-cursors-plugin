@@ -11,6 +11,7 @@ Options
 
 The plugin supports these options:
 
+```javascript
     cursors: [
         {
             name: 'string'
@@ -28,6 +29,7 @@ The plugin supports these options:
         },
         <more cursors if needed>
     ]
+```
 
 **name** is a string containing the name of the cursor.
 
@@ -91,16 +93,16 @@ These events are emitted in one of these situations:
 How to use
 ----------
 
-javascript```
+```javascript
 var myFlot = $.plot( $("#graph"), ...,
-    {
-        ...
-        cursors: [
-            { name: 'Green cursor', mode: 'xy', color: 'green' },
-            { name: 'Red cursor', mode: 'xy', color: 'red' }
-        ]
-        ...
-    });
+{
+    ...
+    cursors: [
+        { name: 'Green cursor', mode: 'xy', color: 'green' },
+        { name: 'Red cursor', mode: 'xy', color: 'red' }
+    ]
+    ...
+});
 
 $("#graph").bind("cursorupdates", function (event, cursordata) {
     cursordata.forEach(function (cursor) {
