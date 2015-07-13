@@ -91,24 +91,26 @@ These events are emitted in one of these situations:
 How to use
 ----------
 
-    var myFlot = $.plot( $("#graph"), ...,
-        {
-            ...
-            cursors: [
-                { name: 'Green cursor', mode: 'xy', color: 'green' },
-                { name: 'Red cursor', mode: 'xy', color: 'red' }
-            ]
-            ...
-        });
+javascript```
+var myFlot = $.plot( $("#graph"), ...,
+    {
+        ...
+        cursors: [
+            { name: 'Green cursor', mode: 'xy', color: 'green' },
+            { name: 'Red cursor', mode: 'xy', color: 'red' }
+        ]
+        ...
+    });
 
-    $("#graph").bind("cursorupdates", function (event, cursordata) {
-        cursordata.forEach(function (cursor) {
-            console.log("Cursor " + cursor.cursor + " intersections:");
-            cursor.points.forEach(function (point) {
-                console.log("x:" + point.x + " y: " + point.y);
-            });
+$("#graph").bind("cursorupdates", function (event, cursordata) {
+    cursordata.forEach(function (cursor) {
+        console.log("Cursor " + cursor.cursor + " intersections:");
+        cursor.points.forEach(function (point) {
+            console.log("x:" + point.x + " y: " + point.y);
         });
     });
+});
+```    
     
 Examples and tests
 ------------------
