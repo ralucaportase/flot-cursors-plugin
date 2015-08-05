@@ -1,0 +1,10 @@
+{
+  "files": {
+    "included": [
+      "jquery.flot.cursors.js"
+    ],
+    "excluded": [
+      "lib/*"
+    ]
+  }
+}
