@@ -25,13 +25,13 @@ The plugin supports these options:
             showLabel: true or false,
             snapToPlot: number,
             symbol: 'cross', 'triangle' ...,
-			movable: true or false,
-			mouseButton: 'all' or 'left' or 'right' or 'middle',
-			dashes: number,
-			showIntersections: true or false or array,
-			intersectionColor: color,
-			intersectionLabelPosition: 'bottom-right' or 'bottom-left' or 'top-right' or 'top-left',
-			fontSize: number
+            movable: true or false,
+            mouseButton: 'all' or 'left' or 'right' or 'middle',
+            dashes: number,
+            showIntersections: true or false or array,
+            intersectionColor: color,
+            intersectionLabelPosition: 'bottom-right' or 'bottom-left' or 'top-right' or 'top-left',
+            fontSize: number
         },
         <more cursors if needed>
     ]
@@ -43,7 +43,7 @@ The plugin supports these options:
 
 **color** is the color of the cursor (default is "rgba(170, 0, 0, 0.80)")
 
-**lineWidth** is the width of the drawn lines (default is 1). Setting lineWidth to zero creates and invisible cursor.
+**lineWidth** is the width of the drawn lines (default is 1). Setting lineWidth to zero creates an invisible cursor.
 
 **position** position of the cursor. It can be specified relative to the canvas, in pixels, using a *relativeX, relativeY* pair of coordinates or using axis based coordinates ( *x, x2, x3 .., y, y2, y3* ).
 
