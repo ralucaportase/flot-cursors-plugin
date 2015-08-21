@@ -119,7 +119,7 @@ describe("Cursors snapping", function () {
     });
 
     it('should be possible to change it to snap to a different plot', function () {
-        plot = $.plot("#placeholder", [sampledata, emptydata], {
+        plot = $.plot("#placeholder", [sampledata, sampledata2], {
             cursors: [
                 {
                     name: 'Blue cursor',
@@ -128,7 +128,7 @@ describe("Cursors snapping", function () {
                         x: 1,
                         y: 0
                     },
-                    snapToPlot: 1
+                    snapToPlot: 0
                 }
             ]
         });
@@ -138,21 +138,21 @@ describe("Cursors snapping", function () {
         var cursor = plot.getCursors()[0];
         var pos = plot.p2c({
             x: 1,
-            y: 2.1
+            y: 1.1
         });
 
         expect(cursor.x).toBe(pos.left);
         expect(cursor.y).toBe(pos.top);
 
         plot.setCursor(cursor, {
-            snapToPlot: 0
+            snapToPlot: 1
         });
 
         jasmine.clock().tick(20);
 
         pos = plot.p2c({
             x: 1,
-            y: 1.1
+            y: 2.1
         });
 
         expect(cursor.x).toBe(pos.left);
