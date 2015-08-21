@@ -202,7 +202,8 @@ describe('Flot cursors', function () {
         expect(firstCursor.mode).toBe('x');
     });
 
-    ['cross', 'triangle', 'square', 'diamond'].forEach(function (symbol, i, arr) {
+    var symbols = ['cross', 'triangle', 'square', 'diamond'];
+	symbols.forEach(function (symbol, i, arr) {
         it('should be possible to make the cursor shape a ' + symbol, function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [
@@ -231,6 +232,29 @@ describe('Flot cursors', function () {
             });
         });
     });
+	
+	it('should be possible to make the cursor shape "none"', function () {
+		plot = $.plot("#placeholder", [sampledata], {
+			cursors: [
+				{
+					name: 'Blue cursor',
+					color: 'blue',
+					symbol: 'none'
+					}
+				]
+		});
+
+		symbols.forEach(function (symbol) {
+			spyOn(plot.drawSymbol, symbol);
+		});
+
+		jasmine.clock().tick(20);
+
+
+		symbols.forEach(function (s) {
+			expect(plot.drawSymbol[s]).not.toHaveBeenCalled();
+		});
+	});
 
     it('should be possible to change the cursor shape at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
@@ -301,6 +325,48 @@ describe('Flot cursors', function () {
         expect(initialLineWidth).toBe(2);
         expect(firstCursor.lineWidth).toBe(3);
     });
+	
+	it('should be possible to make an invisible cursor with lineWidth == 0');
+	
+	// we expect more lines to be drawn when we have more dashes
+	it('should be possible to make a dashed line', function() {
+        function spyOnLineTo() {
+            var overlay = $('.flot-overlay')[0];
+            var octx = overlay.getContext("2d");
+            return spyOn(octx, 'lineTo').and.callThrough();
+        }
+		
+		plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    dashes: 1
+                }
+            ]
+        });
+		
+		var spy = spyOnLineTo();
+		jasmine.clock().tick(20);
+
+		var oneDashCallCount = spy.calls.count();
+		spy.calls.reset();
+		
+		plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    dashes: 5
+                }
+            ]
+        });
+		
+		jasmine.clock().tick(20);
+		
+		var fiveDashCallCount = spy.calls.count();
+		expect(oneDashCallCount + (5-1)*2).toEqual(fiveDashCallCount);
+	});
 
     describe('Labels', function () {
         function spyOnFillText() {
@@ -414,6 +480,8 @@ describe('Flot cursors', function () {
             expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
             expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
         });
+		
+		it('should be able to change the font size');
 
         [['top right', 1.5, 1.2], ['top left', 0.5, 1.2], ['bottom right', 1.5, 1.0], ['top left', 0.5, 1.0]].forEach(function (pos) {
             describe('When cursor placed in the ' + pos[0] + ' of the plot', function () {

@@ -482,23 +482,28 @@
                 var x;
                 var y;
                 ctx.font = cursor.fontSize + 'px sans-serif';
-                if (cursor.intersectionLabelPosition === 'bottom-right') {
-                    x = coord.left + constants.iRectSize;
-                    y = coord.top + cursor.fontSize;
-                } else if (cursor.intersectionLabelPosition === 'top-right') {
-                    x = coord.left + constants.iRectSize;
-                    y = coord.top - constants.iRectSize;
-                } else if (cursor.intersectionLabelPosition === 'bottom-left') {
-                    var textWidth = ctx.measureText(text).width;
-                    x = coord.left - textWidth - constants.iRectSize;
-                    y = coord.top + cursor.fontSize;
-                } else if (cursor.intersectionLabelPosition === 'top-left') {
-                    var textWidth = ctx.measureText(text).width;
-                    x = coord.left - textWidth - constants.iRectSize;
-                    y = coord.top - constants.iRectSize;
-                } else {
-                    return;
-                }
+				switch(cursor.intersectionLabelPosition) {
+					case 'bottom-left':
+						var textWidth = ctx.measureText(text).width;
+						x = coord.left - textWidth - constants.iRectSize;
+						y = coord.top + cursor.fontSize;
+						break;
+					case 'top-left':
+						var textWidth = ctx.measureText(text).width;
+						x = coord.left - textWidth - constants.iRectSize;
+						y = coord.top - constants.iRectSize;
+						break;
+					case 'top-right':
+						x = coord.left + constants.iRectSize;
+						y = coord.top - constants.iRectSize;
+						break;
+					case 'bottom-right':
+					default:
+						x = coord.left + constants.iRectSize;
+						y = coord.top + cursor.fontSize;
+						break;
+				}
+				
                 ctx.fillText(text, x, y);
             });
             ctx.stroke();
