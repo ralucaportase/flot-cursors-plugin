@@ -30,6 +30,10 @@ Licensed under the MIT license.
         function createCursor(options) {
             return mixin(options, {
                 name: options.name || ('unnamed ' + cursors.length),
+                position: options.position || {
+                    relativeX: 10,
+                    relativeY: 20
+                },
                 x: 0,
                 y: 0,
                 selected: false,
@@ -173,10 +177,10 @@ Licensed under the MIT license.
             if (currentlySelectedCursor) {
                 // lock the free cursor to current position
                 currentlySelectedCursor.selected = false;
-                if (currentlySelectedCursor.dragmode.indexOf('x') != -1) {
+                if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = mouseX;
                 }
-                if (currentlySelectedCursor.dragmode.indexOf('y') != -1) {
+                if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = mouseY;
                 }
                 plot.getPlaceholder().css('cursor', 'default');
@@ -192,11 +196,11 @@ Licensed under the MIT license.
             var currentlySelectedCursor = selectedCursor(cursors);
 
             if (currentlySelectedCursor) {
-                if (currentlySelectedCursor.dragmode.indexOf('x') != -1) {
+                if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
                     currentlySelectedCursor.x = currentlySelectedCursor.position.relativeX;
                 }
-                if (currentlySelectedCursor.dragmode.indexOf('y') != -1) {
+                if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
                     currentlySelectedCursor.y = currentlySelectedCursor.position.relativeY;
                 }
@@ -277,6 +281,10 @@ Licensed under the MIT license.
                     p1 = series.data[j - 1],
                     p2 = series.data[j];
 
+                if ((p1 === undefined) && (p2 === undefined)) {
+                    continue;
+                }
+
                 if (p1 === undefined) {
                     y = p2[1];
                 } else if (p2 === undefined) {
@@ -311,7 +319,7 @@ Licensed under the MIT license.
                 intersections = findIntersections(plot, cursor);
                 maybeSnapToPlot(plot, cursor, intersections);
 
-                if (cursor.x != -1) {
+                if (cursor.x !== -1) {
                     drawVerticalAndHorizontalLines(plot, ctx, cursor);
 
                     cursor.intersections = intersections;
@@ -474,12 +482,12 @@ Licensed under the MIT license.
 
         ctx.beginPath();
 
-        if (cursor.mode.indexOf("x") != -1) {
+        if (cursor.mode.indexOf("x") !== -1) {
             var drawX = Math.floor(cursor.x) + adj;
             ctx.moveTo(drawX, 0);
             ctx.lineTo(drawX, plot.height());
         }
-        if (cursor.mode.indexOf("y") != -1) {
+        if (cursor.mode.indexOf("y") !== -1) {
             var drawY = Math.floor(cursor.y) + adj;
             ctx.moveTo(0, drawY);
             ctx.lineTo(plot.width(), drawY);
@@ -515,11 +523,11 @@ Licensed under the MIT license.
     }
 
     function hasVerticalLine(cursor) {
-        return (cursor.mode.indexOf('x') != -1);
+        return (cursor.mode.indexOf('x') !== -1);
     }
 
     function hasHorizontalLine(cursor) {
-        return (cursor.mode.indexOf('y') != -1);
+        return (cursor.mode.indexOf('y') !== -1);
     }
 
     function mouseOverCursorManipulator(e, plot, cursor) {
