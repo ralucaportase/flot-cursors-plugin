@@ -72,6 +72,89 @@ describe("Cursors interaction", function () {
 
         expect(cursor.selected).toBe(false);
     });
+	
+	it('should treat a mouseout event as a mouseup', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    }
+                    }
+                ]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.selected).toBe(true);
+
+        eventHolder.trigger(new $.Event('mouseout', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        expect(cursor.selected).toBe(false);
+    });
+	
+	it('should only listen to the relevant mouse buttons', function() {
+		plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    },
+					mouseButton: 'right',
+                    }
+                ]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY,
+			button: 2
+        }));
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.selected).toBe(true);
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY,
+			button: 2
+        }));
+
+        expect(cursor.selected).toBe(false);
+		
+		eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY,
+			button: 1
+        }));
+
+        expect(cursor.selected).toBe(false);
+	});
 
     it('should become selected on mouse down on cursor vertical line and not selected on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
@@ -186,6 +269,50 @@ describe("Cursors interaction", function () {
         var cursor = plot.getCursors()[0];
         expect(cursor.x).toBe(50 + 13);
         expect(cursor.y).toBe(60 + 5);
+    });
+	
+	it('should not be possible to move a cursor with movable set to false', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 50,
+                        relativeY: 60
+                    },
+					movable: false
+                    }
+                ]
+        });
+
+        var cursorX = plot.offset().left + 50;
+        var cursorY = plot.offset().top + 60;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        cursorX += 13;
+        cursorY += 5;
+
+        eventHolder.trigger(new $.Event('mousemove', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(50);
+        expect(cursor.y).toBe(60);
     });
 
     it('should be constrained on the right side by the chart margin when dragging', function () {
@@ -689,6 +816,8 @@ describe("Cursors interaction", function () {
 
             expect($('#placeholder').css('cursor')).toBe('row-resize');
         });
+		
+		it('should set the mouse pointer correctly when moving the cursor in one axis');
 
         it('should set the mouse pointer of the holder div to default on chart shutdown', function () {
             plot = $.plot("#placeholder", [sampledata], {
