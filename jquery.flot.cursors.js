@@ -188,9 +188,9 @@
           targetCursor.dragmode = dragmode;
           // changed for InsightCM -max
           if (targetCursor.mode === 'x') {
-            plot.getPlaceholder().css('cursor', 'e-resize');
+            plot.getPlaceholder().css('cursor', 'ew-resize');
           } else if (targetCursor.mode === 'y') {
-            plot.getPlaceholder().css('cursor', 'n-resize');
+            plot.getPlaceholder().css('cursor', 'ns-resize');
           } else {
             plot.getPlaceholder().css('cursor', 'move');
           }
