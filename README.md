@@ -22,10 +22,16 @@ The plugin supports these options:
                 relativeX or x or x2 or x3 ..: number,
                 relativeY or y or y2 or y3 ..: number,
             },
-            showIntersections: true or false,
             showLabel: true or false,
             snapToPlot: number,
-            symbol: 'cross', 'triangle' ...
+            symbol: 'cross', 'triangle' ...,
+            movable: true or false,
+            mouseButton: 'all' or 'left' or 'right' or 'middle',
+            dashes: number,
+            showIntersections: true or false or array,
+            intersectionColor: color,
+            intersectionLabelPosition: 'bottom-right' or 'bottom-left' or 'top-right' or 'top-left',
+            fontSize: number
         },
         <more cursors if needed>
     ]
@@ -33,29 +39,35 @@ The plugin supports these options:
 
 **name** is a string containing the name of the cursor.
 
-**mode** is one of "x", "y" or "xy". The "x" mode enables a vertical
-cursor that lets you trace the values on the x axis, "y" enables a
-horizontal cursor and "xy" enables them both. "xy" is default.
+**mode** is one of "x", "y" or "xy". The "x" mode enables a vertical cursor that lets you trace the values on the x axis, "y" enables a horizontal cursor and "xy" enables them both. "xy" is default.
 
 **color** is the color of the cursor (default is "rgba(170, 0, 0, 0.80)")
 
-**lineWidth** is the width of the drawn lines (default is 1).
+**lineWidth** is the width of the drawn lines (default is 1). Setting lineWidth to zero creates an invisible cursor.
 
-**position** position of the cursor. It can be specified relative to the canvas, in pixels, 
-using a *relativeX, relativeY* pair of coordinates or using axis based coordinates 
-( *x, x2, x3 .., y, y2, y3* ).
-
-**showIntersections** if true the intersection with the plots will be displayed as grey
-rectangles. Default is false.
+**position** position of the cursor. It can be specified relative to the canvas, in pixels, using a *relativeX, relativeY* pair of coordinates or using axis based coordinates ( *x, x2, x3 .., y, y2, y3* ).
 
 **showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
 
-**showValuesRelativeToSeries** if pressent and is numberic the coordinate of cursor (realtive to the specified series of data) will be displayed next to the cursor manipulator.
+**showValuesRelativeToSeries** if present and is numeric the coordinate of cursor (relative to the specified series of data) will be displayed next to the cursor manipulator.
 
-**snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor 
-will be free.
+**snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor will be free.
 
-**symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape.
+**symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape. Set to 'none' to draw no symbol.
+
+**movable** if true, the cursor can be moved with the mouse. Default is true.
+
+**mouseButton** is which mouse button is used to move the cursor. Note that this may not be compatible with IE 8. Default is 'all'.
+
+**dashes** the number of dashes you want in the line. Set to 1 to get a solid line without dashes. Default is 1.
+
+**showIntersections** if true the intersection with the plots will be displayed as grey rectangles. Can be set to an array of series indices to only show intersections with those series. Default is false.
+
+**intersectionColor** sets the color of the boxes drawn at intersections, and also the color of the text showing the value at the intersection. Default is 'darkgray'.
+
+**intersectionLabelPosition** sets where the intersection label text appears, relative to the intersection. Default is 'bottom-right'.
+
+**fontSize** sets the font size of the cursor labels and intersection value labels. Default is 10.
 
 
 Public Methods and events
