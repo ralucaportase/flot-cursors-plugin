@@ -131,9 +131,9 @@ Examples and tests
 
 jquery.flot.cursors is available under the MIT license.
 
-Interactive example: <http://cipix2000.github.io/flot-cursors-plugin/>
+Interactive example: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/example.html>
 
-A testsuite for cursors is available at: <http://cipix2000.github.io/flot-cursors-plugin/SpecRunner.html>
+A testsuite for cursors is available at: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/SpecRunner.html>
 
 Related plugins
 ---------------
