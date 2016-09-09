@@ -134,8 +134,6 @@ jquery.flot.cursors is available under the MIT license.
 
 Interactive example: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/example.html>
 
-A testsuite for cursors is available at: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/SpecRunner.html>
-
 Related plugins
 ---------------
 
