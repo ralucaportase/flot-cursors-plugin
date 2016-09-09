@@ -5,10 +5,15 @@ describe("Cursors interaction", function () {
     'use strict';
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
-
     var plot;
+    var placeholder;
 
     beforeEach(function () {
+      var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
+
+      placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
+      placeholder.appendTo(fixture);
+
         jasmine.addMatchers({
             toBeAnyOf: function (util, customEqualityTesters) {
                 return {
@@ -72,7 +77,7 @@ describe("Cursors interaction", function () {
 
         expect(cursor.selected).toBe(false);
     });
-	
+
 	it('should treat a mouseout event as a mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -108,7 +113,7 @@ describe("Cursors interaction", function () {
 
         expect(cursor.selected).toBe(false);
     });
-	
+
 	it('should only listen to the relevant mouse buttons', function() {
 		plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -146,7 +151,7 @@ describe("Cursors interaction", function () {
         }));
 
         expect(cursor.selected).toBe(false);
-		
+
 		eventHolder.trigger(new $.Event('mousedown', {
             pageX: cursorX,
             pageY: cursorY,
@@ -270,7 +275,7 @@ describe("Cursors interaction", function () {
         expect(cursor.x).toBe(plot.width() * 0.5 + 13);
         expect(cursor.y).toBe(plot.height() * 0.6 + 5);
     });
-	
+
 	it('should not be possible to move a cursor with movable set to false', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -799,7 +804,7 @@ describe("Cursors interaction", function () {
 
             expect($('#placeholder').css('cursor')).toBe('row-resize');
         });
-		
+
 		it('should set the mouse pointer correctly when moving the cursor in one axis');
 
         it('should set the mouse pointer of the holder div to default on chart shutdown', function () {

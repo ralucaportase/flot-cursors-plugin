@@ -6,8 +6,13 @@ describe('Flot cursors', function () {
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
     var plot;
+    var placeholder;
 
     beforeEach(function () {
+        var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
+
+        placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
+        placeholder.appendTo(fixture);
         jasmine.clock().install();
     });
 
@@ -232,7 +237,7 @@ describe('Flot cursors', function () {
             });
         });
     });
-	
+
 	it('should be possible to make the cursor shape "none"', function () {
 		plot = $.plot("#placeholder", [sampledata], {
 			cursors: [
@@ -325,9 +330,9 @@ describe('Flot cursors', function () {
         expect(initialLineWidth).toBe(2);
         expect(firstCursor.lineWidth).toBe(3);
     });
-	
+
 	it('should be possible to make an invisible cursor with lineWidth == 0');
-	
+
 	// we expect more lines to be drawn when we have more dashes
 	it('should be possible to make a dashed line', function() {
         function spyOnLineTo() {
@@ -335,7 +340,7 @@ describe('Flot cursors', function () {
             var octx = overlay.getContext("2d");
             return spyOn(octx, 'lineTo').and.callThrough();
         }
-		
+
 		plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -345,13 +350,13 @@ describe('Flot cursors', function () {
                 }
             ]
         });
-		
+
 		var spy = spyOnLineTo();
 		jasmine.clock().tick(20);
 
 		var oneDashCallCount = spy.calls.count();
 		spy.calls.reset();
-		
+
 		plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -361,9 +366,9 @@ describe('Flot cursors', function () {
                 }
             ]
         });
-		
+
 		jasmine.clock().tick(20);
-		
+
 		var fiveDashCallCount = spy.calls.count();
 		expect(oneDashCallCount + (5-1)*2).toEqual(fiveDashCallCount);
 	});
@@ -480,7 +485,7 @@ describe('Flot cursors', function () {
             expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
             expect(spy).toHaveBeenCalledWith('1.00, 1.15', jasmine.any(Number), jasmine.any(Number));
         });
-		
+
 		it('should be able to change the font size');
 
         [['top right', 1.5, 1.2], ['top left', 0.5, 1.2], ['bottom right', 1.5, 1.0], ['top left', 0.5, 1.0]].forEach(function (pos) {
