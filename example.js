@@ -65,8 +65,8 @@ $(function () {
                 showLabel: true,
                 symbol: 'triangle',
                 position: {
-                    relativeX: 200,
-                    relativeY: 300
+                    relativeX: 0.75,
+                    relativeY: 0.5
                 }
             },
             {
@@ -77,8 +77,8 @@ $(function () {
                 snapToPlot: 1,
                 symbol: 'diamond',
                 position: {
-                    relativeX: 400,
-                    relativeY: 20
+                    relativeX: 0.5,
+                    relativeY: 0.5
                 }
             },
             {
@@ -90,8 +90,8 @@ $(function () {
                 showValuesRelativeToSeries: 0,
                 showLabel: true,
                 position: {
-                    relativeX: 100,
-                    relativeY: 200
+                    relativeX: 0.25,
+                    relativeY: 0.25
                 }
             }
         ],

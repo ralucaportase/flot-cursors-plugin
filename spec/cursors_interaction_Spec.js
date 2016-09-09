@@ -44,15 +44,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -80,15 +80,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -116,16 +116,16 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     },
 					mouseButton: 'right',
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -163,15 +163,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 20;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.2;
 
         jasmine.clock().tick(20);
 
@@ -199,15 +199,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 30;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.3;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -235,15 +235,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
                     }
                 ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -267,8 +267,8 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(50 + 13);
-        expect(cursor.y).toBe(60 + 5);
+        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
+        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
     });
 	
 	it('should not be possible to move a cursor with movable set to false', function () {
@@ -278,16 +278,16 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     },
 					movable: false
                     }
                 ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -311,8 +311,8 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(50);
-        expect(cursor.y).toBe(60);
+        expect(cursor.x).toBe(plot.width() * 0.5);
+        expect(cursor.y).toBe(plot.height() * 0.6);
     });
 
     it('should be constrained on the right side by the chart margin when dragging', function () {
@@ -322,8 +322,8 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
                 }
             ],
@@ -333,8 +333,8 @@ describe("Cursors interaction", function () {
                 }]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -360,7 +360,7 @@ describe("Cursors interaction", function () {
 
         var cursor = plot.getCursors()[0];
         expect(cursor.x).toBe(plot.width());
-        expect(cursor.y).toBe(60);
+        expect(cursor.y).toBe(plot.height() * 0.6);
     });
 
     it('should be constrained on the top side by the chart margin when dragging', function () {
@@ -370,8 +370,8 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
                 }
             ],
@@ -381,8 +381,8 @@ describe("Cursors interaction", function () {
                 }]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -407,7 +407,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().tick(20);
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(50);
+        expect(cursor.x).toBe(plot.width() * 0.5);
         expect(cursor.y).toBe(0);
     });
 
@@ -418,15 +418,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
                 }
             ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -451,7 +451,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().tick(20);
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(50);
+        expect(cursor.x).toBe(plot.width() * 0.5);
         expect(cursor.y).toBe(plot.height());
     });
 
@@ -462,15 +462,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         var updateChart = function () {
             plot.setData([[[0, 1.2], [1, 1.1], [2, 1]]]);
@@ -503,8 +503,8 @@ describe("Cursors interaction", function () {
         }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(50 + 13);
-        expect(cursor.y).toBe(60 + 5);
+        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
+        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
     });
 
     it('should be possible to drag cursors with the mouse from the vertical line if the cursor is positioned relative to axes', function () {
@@ -514,24 +514,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        x: 1.5,
-                        y: 1.15
+                        x: 0,
+                        y: 0
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var X = plot.p2c({
-            x: 1.5,
-            y: 1.15
-        }).left;
-        var Y = plot.p2c({
-            x: 1.5,
-            y: 1.15
-        }).top + 20;
-
-        var cursorX = plot.offset().left + X;
-        var cursorY = plot.offset().top + Y;
+        var cursorX = plot.offset().left;
+        var cursorY = plot.offset().top + plot.height();
 
         jasmine.clock().tick(20);
 
@@ -556,7 +547,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().tick(20);
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(X + 13);
+        expect(cursor.x).toBeCloseTo(cursorX - plot.offset().left, 0);
     });
 
     it('should be possible to drag cursors with the mouse from the horizontal line if the cursor is positioned relative to axes', function () {
@@ -565,25 +556,17 @@ describe("Cursors interaction", function () {
                 {
                     name: 'Blue cursor',
                     color: 'blue',
+                    mode: 'y',
                     position: {
-                        x: 1.5,
-                        y: 1.15
+                        x: 0,
+                        y: 0
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var X = plot.p2c({
-            x: 1.5,
-            y: 1.15
-        }).left + 20;
-        var Y = plot.p2c({
-            x: 1.5,
-            y: 1.15
-        }).top;
-
-        var cursorX = plot.offset().left + X;
-        var cursorY = plot.offset().top + Y;
+        var cursorX = plot.offset().left;
+        var cursorY = plot.offset().top + plot.height();
 
         jasmine.clock().tick(20);
 
@@ -593,7 +576,7 @@ describe("Cursors interaction", function () {
             pageY: cursorY
         }));
 
-        cursorY += 13;
+        cursorY -= 13;
 
         eventHolder.trigger(new $.Event('mousemove', {
             pageX: cursorX,
@@ -608,7 +591,7 @@ describe("Cursors interaction", function () {
         jasmine.clock().tick(20);
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.y).toBe(Y + 13);
+        expect(cursor.y).toBeCloseTo(cursorY - plot.offset().top, 0);
     });
 
     it('should be highlighted on mouse over the cursor manipulator', function () {
@@ -618,15 +601,15 @@ describe("Cursors interaction", function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     position: {
-                        relativeX: 50,
-                        relativeY: 60
+                        relativeX: 0.5,
+                        relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
-        var cursorX = plot.offset().left + 50;
-        var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
         jasmine.clock().tick(20);
 
@@ -647,15 +630,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
                     }
                 ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 60;
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 
@@ -674,15 +657,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
-                }
-            ]
+                    }
+                ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 30;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.6 / 2;
 
             jasmine.clock().tick(20);
 
@@ -691,7 +674,7 @@ describe("Cursors interaction", function () {
                 pageY: cursorY
             }));
 
-            cursorY = plot.offset().top + 60;
+            cursorY += plot.height() * 0.6 / 2;
 
             $('#placeholder').find('.flot-overlay').trigger(new $.Event('mousemove', {
                 pageX: cursorX,
@@ -708,15 +691,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
                     }
                 ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 60;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 
@@ -742,15 +725,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
-                }
-            ]
+                    }
+                ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 30;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.3;
 
             jasmine.clock().tick(20);
 
@@ -770,15 +753,15 @@ describe("Cursors interaction", function () {
                         mode: 'y',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
-                }
-            ]
+                    }
+                ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 30;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.3;
 
             jasmine.clock().tick(20);
 
@@ -797,15 +780,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
-                }
-            ]
+                    }
+                ]
             });
 
-            var cursorX = plot.offset().left + 30;
-            var cursorY = plot.offset().top + 60;
+            var cursorX = plot.offset().left + plot.width() * 0.3;
+            var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 
@@ -826,15 +809,15 @@ describe("Cursors interaction", function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         position: {
-                            relativeX: 50,
-                            relativeY: 60
+                            relativeX: 0.5,
+                            relativeY: 0.6
                         }
-                }
-            ]
+                    }
+                ]
             });
 
-            var cursorX = plot.offset().left + 50;
-            var cursorY = plot.offset().top + 60;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 

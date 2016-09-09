@@ -28,19 +28,19 @@ describe('Cursors Position', function () {
                     mode: 'xy',
                     color: 'blue',
                     position: {
-                        relativeX: 3,
-                        relativeY: 1.5
+                        relativeX: 0.5,
+                        relativeY: 0.75
                     }
-                    }
-                ]
+                }
+            ]
         });
 
         jasmine.clock().tick(20);
 
         var cursors = plot.getCursors();
         expect(cursors.length).toBe(1);
-        expect(cursors[0].x).toBe(3);
-        expect(cursors[0].y).toBe(1.5);
+        expect(cursors[0].x).toBe(0.5 * plot.width());
+        expect(cursors[0].y).toBe(0.75 * plot.height());
     });
 
     it('Cursors positioned relative to the canvas should be constrained by the canvas size', function () {
@@ -76,8 +76,8 @@ describe('Cursors Position', function () {
                         x: 1,
                         y: 2
                     }
-                    }
-                ]
+                }
+            ]
         });
 
         jasmine.clock().tick(20);

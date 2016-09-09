@@ -18,8 +18,19 @@
     iRectSize: 8,
     symbolSize: 8,
     mouseGrabMargin: 8,
+	textHeight: 10, // to do: compute it somehow. Canvas doesn't give us a way to know it
     labelPadding: 10
   };
+
+    // The possible locations for a cursor label
+    var cursorLabelLocationEnum = Object.freeze({
+        // This is the only label for a cursor
+        ONLY: 'only',
+        // There are two cursor labels and this is the top one
+        TOP: 'top',
+        // There are two cursor labels and this is the bottom one
+        BOTTOM: 'bottom'
+    });
 
   function init(plot) {
     var cursors = [];
@@ -29,8 +40,8 @@
       return mixin(options, {
         name: options.name || ('unnamed ' + cursors.length),
         position: options.position || {
-          relativeX: 10,
-          relativeY: 20
+          relativeX: 0.5,
+          relativeY: 0.5
         },
         x: 0,
         y: 0,
@@ -41,6 +52,7 @@
         showLabel: false,
         showValuesRelativeToSeries: undefined,
         color: 'gray',
+		font: '10px sans-serif',
         lineWidth: 1,
         movable: true,
         mouseButton: 'all',
@@ -156,6 +168,9 @@
         plot.getPlaceholder().css('cursor', 'default');
         currentlySelectedCursor.x = mouseX;
         currentlySelectedCursor.y = mouseY;
+        currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
+        currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
+
         plot.triggerRedrawOverlay();
       } else {
         // find nearby cursor and unlock it
@@ -194,7 +209,9 @@
           } else {
             plot.getPlaceholder().css('cursor', 'move');
           }
+		  plot.getPlaceholder().css('cursor', 'move');
           plot.triggerRedrawOverlay();
+		  e.stopPropagation();
         }
       }
     }
@@ -213,10 +230,14 @@
         currentlySelectedCursor.selected = false;
         if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
           currentlySelectedCursor.x = mouseX;
+		  currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
         }
+
         if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
           currentlySelectedCursor.y = mouseY;
+		  currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
         }
+
         plot.getPlaceholder().css('cursor', 'default');
         plot.triggerRedrawOverlay();
       }
@@ -231,15 +252,17 @@
 
       if (currentlySelectedCursor) {
         if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
-          currentlySelectedCursor.position.relativeX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
-          currentlySelectedCursor.x = currentlySelectedCursor.position.relativeX;
+          currentlySelectedCursor.x = mouseX;
+          currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
         }
+
         if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
-          currentlySelectedCursor.position.relativeY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
-          currentlySelectedCursor.y = currentlySelectedCursor.position.relativeY;
+          currentlySelectedCursor.y = mouseY;
+          currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
         }
 
         plot.triggerRedrawOverlay();
+		e.stopPropagation();
       } else {
         cursors.forEach(function (cursor) {
           if (!cursor.movable) {
@@ -250,18 +273,21 @@
               cursor.highlighted = true;
               plot.triggerRedrawOverlay();
             }
+
             plot.getPlaceholder().css('cursor', 'pointer');
           } else if (mouseOverCursorVerticalLine(e, plot, cursor)) {
             if (!cursor.highlighted) {
               cursor.highlighted = true;
               plot.triggerRedrawOverlay();
             }
+
             plot.getPlaceholder().css('cursor', 'col-resize');
           } else if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
             if (!cursor.highlighted) {
               cursor.highlighted = true;
               plot.triggerRedrawOverlay();
             }
+
             plot.getPlaceholder().css('cursor', 'row-resize');
           } else {
             if (cursor.highlighted) {
@@ -328,6 +354,7 @@
         } else {
           y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
         }
+
         pos.y = y;
         pos.y1 = y;
 
@@ -359,6 +386,7 @@
           drawVerticalAndHorizontalLines(plot, ctx, cursor);
 
           cursor.intersections = intersections;
+		  intersections.target = cursor;
           update.push(intersections);
 
           drawLabel(plot, ctx, cursor);
@@ -368,6 +396,7 @@
             drawManipulator(plot, ctx, cursor);
           }
         }
+
         ctx.restore();
         i++;
       });
@@ -376,11 +405,11 @@
     });
 
     plot.hooks.shutdown.push(function (plot, eventHolder) {
-      eventHolder.unbind("mousedown", onMouseDown);
-      eventHolder.unbind("mouseup", onMouseUp);
-      eventHolder.unbind("mouseout", onMouseOut);
-      eventHolder.unbind("mousemove", onMouseMove);
-      eventHolder.unbind("cursorupdates");
+      eventHolder.unbind('mousedown', onMouseDown);
+      eventHolder.unbind('mouseup', onMouseUp);
+      eventHolder.unbind('mouseout', onMouseOut);
+      eventHolder.unbind('mousemove', onMouseMove);
+      eventHolder.unbind('cursorupdates');
       plot.getPlaceholder().css('cursor', 'default');
     });
   }
@@ -399,17 +428,19 @@
       return;
 
     o = plot.p2c(pos);
+	var rx = pos.relativeX * plot.width();
+    var ry = pos.relativeY * plot.height();
 
     if ((pos.relativeX !== undefined)) {
-      cursor.x = Math.max(0, Math.min(pos.relativeX, plot.width()));
+      cursor.x = Math.max(0, Math.min(rx, plot.width()));
       if (pos.relativeY === undefined) {
         cursor.y = Math.max(0, Math.min(o.top, plot.height()));
       } else {
-        cursor.y = Math.max(0, Math.min(pos.relativeY, plot.height()));
+        cursor.y = Math.max(0, Math.min(ry, plot.height()));
       }
     } else if (pos.relativeY !== undefined) {
       cursor.x = Math.max(0, Math.min(o.left, plot.width()));
-      cursor.y = Math.max(0, Math.min(pos.relativeY, plot.height()));
+      cursor.y = Math.max(0, Math.min(ry), plot.height());
     } else {
       cursor.x = Math.max(0, Math.min(o.left, plot.width()));
       cursor.y = Math.max(0, Math.min(o.top, plot.height()));
@@ -573,6 +604,7 @@
         }
       }
     }
+
     if (cursor.mode.indexOf("y") !== -1) {
       var drawY = Math.floor(cursor.y) + adj;
       if (cursor.dashes <= 0) {
@@ -633,7 +665,7 @@
 
     return ((mouseX > cursor.x - grabRadius) && (mouseX < cursor.x + grabRadius) &&
         (mouseY > cursor.y - grabRadius) && (mouseY < cursor.y + grabRadius)) &&
-      (cursor.symbol !== 'none');
+        (cursor.symbol !== 'none');
   }
 
   function mouseOverCursorVerticalLine(e, plot, cursor) {
