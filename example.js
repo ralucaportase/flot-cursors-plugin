@@ -65,8 +65,8 @@ $(function () {
                 showLabel: true,
                 symbol: 'triangle',
                 position: {
-                    relativeX: 200,
-                    relativeY: 300
+                    relativeX: 0.75,
+                    relativeY: 0.5
                 }
             },
             {
@@ -77,8 +77,8 @@ $(function () {
                 snapToPlot: 1,
                 symbol: 'diamond',
                 position: {
-                    relativeX: 400,
-                    relativeY: 20
+                    relativeX: 0.5,
+                    relativeY: 0.5
                 }
             },
             {
@@ -90,8 +90,8 @@ $(function () {
                 showValuesRelativeToSeries: 0,
                 showLabel: true,
                 position: {
-                    relativeX: 100,
-                    relativeY: 200
+                    relativeX: 0.25,
+                    relativeY: 0.25
                 }
             }
         ],
@@ -113,7 +113,19 @@ $(function () {
             ul1.append("<LI>" + cursor.cursor + "</LI>");
             var ul2 = ul1.append('<UL style="padding-left: 30px;">').find("UL").last();
             cursor.points.forEach(function (point) {
-                ul2.append("<LI> x:" + point.x.toFixed(4) + " y: " + point.y.toFixed(4) + "</LI>");
+				var x, y;
+                if (cursor.target.mode === 'xy') {
+                    x = point.x.toFixed(4);
+					y = point.y.toFixed(4);
+                } else if (cursor.target.mode === 'x') {
+					x = cursor.x.toFixed(4);
+					y = point.y.toFixed(4);
+				}
+				 else if (cursor.target.mode === 'y') {
+					x = point.x.toFixed(4);
+					y = cursor.y.toFixed(4);
+				}
+                ul2.append("<LI> x:" + x + " y: " + y + "</LI>");
             });
         });
     });
