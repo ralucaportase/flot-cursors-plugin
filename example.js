@@ -113,7 +113,19 @@ $(function () {
             ul1.append("<LI>" + cursor.cursor + "</LI>");
             var ul2 = ul1.append('<UL style="padding-left: 30px;">').find("UL").last();
             cursor.points.forEach(function (point) {
-                ul2.append("<LI> x:" + point.x.toFixed(4) + " y: " + point.y.toFixed(4) + "</LI>");
+				var x, y;
+                if (cursor.target.mode === 'xy') {
+                    x = point.x.toFixed(4);
+					y = point.y.toFixed(4);
+                } else if (cursor.target.mode === 'x') {
+					x = cursor.x.toFixed(4);
+					y = point.y.toFixed(4);
+				}
+				 else if (cursor.target.mode === 'y') {
+					x = point.x.toFixed(4);
+					y = cursor.y.toFixed(4);
+				}
+                ul2.append("<LI> x:" + x + " y: " + y + "</LI>");
             });
         });
     });
