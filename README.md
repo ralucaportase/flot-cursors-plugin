@@ -1,4 +1,5 @@
-[![Stories in Ready](https://badge.waffle.io/cipix2000/flot-cursors-plugin.png?label=ready&title=Ready)](https://waffle.io/cipix2000/flot-cursors-plugin)
+[![Stories in Ready](https://badge.waffle.io/cipix2000/flot-cursors-plugin.png?label=ready&title=Ready)](https://waffle.io/cipix2000/flot-cursors-plugin) [![Build Status](https://travis-ci.org/cipix2000/flot-cursors-plugin.svg?branch=master)](https://travis-ci.org/cipix2000/flot-cursors-plugin)
+
 flot.cursors
 ============
 
@@ -86,7 +87,7 @@ The plugin adds some public methods to the chart:
 
 * removeCursor(cursorToRemove)
 
-    remove the specified cursor from the plot. cursorToRemove is a cursor 
+    remove the specified cursor from the plot. cursorToRemove is a cursor
     reference to one of the cursors obtained with getCursors()
 
 * setCursor ( cursor , options)
@@ -99,7 +100,7 @@ These events are emitted in one of these situations:
 * cursor added
 * cursor removed
 * cursor moved
-* intersections of the cursors with the plots changed due to chart data changes 
+* intersections of the cursors with the plots changed due to chart data changes
 
 
 How to use
@@ -125,7 +126,7 @@ $("#graph").bind("cursorupdates", function (event, cursordata) {
     });
 });
 ```    
-    
+
 Examples and tests
 ------------------
 
