@@ -45,7 +45,7 @@ The plugin supports these options:
 
 **lineWidth** is the width of the drawn lines (default is 1). Setting lineWidth to zero creates an invisible cursor.
 
-**position** position of the cursor. It can be specified relative to the canvas, in pixels, using a *relativeX, relativeY* pair of coordinates or using axis based coordinates ( *x, x2, x3 .., y, y2, y3* ).
+**position** position of the cursor. It can be specified relative to the canvas, using a *relativeX, relativeY* pair of coordinates which are expressed as a number between 0 and 1. It can be also specified using axis based coordinates ( *x, x2, x3 .., y, y2, y3* ).
 
 **showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
 
