@@ -555,8 +555,8 @@ Licensed under the MIT license.
                     constants.iRectSize, constants.iRectSize);
 
                 var text;
-                if (typeof cursor.formatData === 'function') {
-                    text = cursor.formatData(point);
+                if (typeof cursor.formatIntersectionData === 'function') {
+                    text = cursor.formatIntersectionData(point);
                 } else {
                      text= point.y.toFixed(2);
                 }
