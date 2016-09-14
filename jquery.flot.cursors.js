@@ -343,17 +343,11 @@ Licensed under the MIT license.
                     p1 = series.data[j - 1],
                     p2 = series.data[j];
 
-                if ((p1 === undefined) && (p2 === undefined)) {
+                if ((p1 === undefined) || (p2 === undefined)) {
                     continue;
                 }
 
-                if (p1 === undefined || p1 === null) {
-                    y = p2[1];
-                } else if (p2 === undefined || p2 === null) {
-                    y = p1[1];
-                } else {
-                    y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-                }
+                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
 
                 pos.y = y;
                 pos.y1 = y;
@@ -692,4 +686,4 @@ Licensed under the MIT license.
         name: 'cursors',
         version: '0.1'
     });
-})(jQuery);			
+})(jQuery);
