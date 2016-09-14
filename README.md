@@ -31,8 +31,9 @@ The plugin supports these options:
             dashes: number,
             showIntersections: true or false or array,
             intersectionColor: color,
-            intersectionLabelPosition: 'bottom-right' or 'bottom-left' or 'top-right' or 'top-left',
-            fontSize: number
+            intersectionLabelPosition: 'bottom-right', 'right', 'top-right' 'bottom-left', 'left' or 'top-left',
+            fontSize: number,
+            formatIntersectionData: null or function(point)
         },
         <more cursors if needed>
     ]
@@ -70,6 +71,15 @@ The plugin supports these options:
 
 **fontSize** sets the font size of the cursor labels and intersection value labels. Default is 10.
 
+**formatIntersectionData** allows you to provide a custom formating function for data. point parameter is composed of
+```
+{
+    x: interpolated intersection x position,
+    y: interpolated intersection y position,
+    leftPoint: the closest datapoint on the left of the intersection,
+    rightPoint: the closest datapoint on the right of the intersection
+ }
+```
 
 Public Methods and events
 -------------------------

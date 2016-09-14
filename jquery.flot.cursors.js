@@ -323,7 +323,7 @@ Licensed under the MIT license.
             var axes = plot.getAxes();
             if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
                 pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
-                return;
+                return intersections;
             }
 
             var i, j, dataset = plot.getData();
@@ -354,7 +354,9 @@ Licensed under the MIT license.
 
                 intersections.points.push({
                     x: pos.x,
-                    y: pos.y
+                    y: pos.y,
+                    leftPoint: p1,
+                    rightPoint: p2
                 });
             }
 
@@ -496,6 +498,44 @@ Licensed under the MIT license.
         }
     }
 
+    function fillTextAligned(ctx, text, x, y, position, fontSize) {
+        switch (position) {
+            case 'left':
+                var textWidth = ctx.measureText(text).width;
+                x = x - textWidth - constants.iRectSize;
+                y = y;
+                break;
+            case 'bottom-left':
+                var textWidth = ctx.measureText(text).width;
+                x = x - textWidth - constants.iRectSize;
+                y = y + fontSize;
+                break;
+            case 'top-left':
+                var textWidth = ctx.measureText(text).width;
+                x = x - textWidth - constants.iRectSize;
+                y = y - constants.iRectSize;
+                break;
+            case 'top-right':
+                x = x + constants.iRectSize;
+                y = y - constants.iRectSize;
+                break;
+            case 'right':
+                x = x + constants.iRectSize;
+                y = y;
+                break;
+            case 'bottom-right':
+            default:
+                x = x + constants.iRectSize;
+                y = y + fontSize;
+                break;
+        }
+
+        ctx.textBaseline="middle";
+        ctx.font = fontSize + 'px sans-serif';
+        ctx.fillText(text, x, y);
+
+    }
+
     function drawIntersections(plot, ctx, cursor) {
         if (cursor.showIntersections && hasVerticalLine(cursor)) {
             ctx.beginPath();
@@ -514,33 +554,14 @@ Licensed under the MIT license.
                     Math.floor(coord.top) - constants.iRectSize / 2,
                     constants.iRectSize, constants.iRectSize);
 
-                var text = point.y.toFixed(2);
-                var x;
-                var y;
-                ctx.font = cursor.fontSize + 'px sans-serif';
-                switch (cursor.intersectionLabelPosition) {
-                    case 'bottom-left':
-                        var textWidth = ctx.measureText(text).width;
-                        x = coord.left - textWidth - constants.iRectSize;
-                        y = coord.top + cursor.fontSize;
-                        break;
-                    case 'top-left':
-                        var textWidth = ctx.measureText(text).width;
-                        x = coord.left - textWidth - constants.iRectSize;
-                        y = coord.top - constants.iRectSize;
-                        break;
-                    case 'top-right':
-                        x = coord.left + constants.iRectSize;
-                        y = coord.top - constants.iRectSize;
-                        break;
-                    case 'bottom-right':
-                    default:
-                        x = coord.left + constants.iRectSize;
-                        y = coord.top + cursor.fontSize;
-                        break;
+                var text;
+                if (typeof cursor.formatData === 'function') {
+                    text = cursor.formatData(point);
+                } else {
+                     text= point.y.toFixed(2);
                 }
 
-                ctx.fillText(text, x, y);
+                fillTextAligned(ctx, text, coord.left, coord.top, cursor.intersectionLabelPosition, cursor.fontSize);
             });
             ctx.stroke();
         }
