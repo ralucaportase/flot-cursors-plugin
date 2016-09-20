@@ -32,7 +32,10 @@ The plugin supports these options:
             showIntersections: true or false or array,
             intersectionColor: color,
             intersectionLabelPosition: 'bottom-right', 'right', 'top-right' 'bottom-left', 'left' or 'top-left',
-            fontSize: number,
+            fontSize: '<number>px',
+            fontFamily: string,
+            fontStyle: string,
+            fontWeight: string,
             formatIntersectionData: null or function(point)
         },
         <more cursors if needed>
@@ -69,7 +72,13 @@ The plugin supports these options:
 
 **intersectionLabelPosition** sets where the intersection label text appears, relative to the intersection. Default is 'bottom-right'.
 
-**fontSize** sets the font size of the cursor labels and intersection value labels. Default is 10.
+**fontSize** sets the font size of the cursor labels and intersection value labels. Default is '10px'.
+
+**fontFamily** sets the font size of the cursor labels and intersection value labels. Default is 'sans-serif'.
+
+**fontStyle** sets the font size of the cursor labels and intersection value labels. Default is ''.
+
+**fontWeight** sets the font size of the cursor labels and intersection value labels. Default is ''.
 
 **formatIntersectionData** allows you to provide a custom formating function for data. point parameter is composed of
 ```
