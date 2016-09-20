@@ -89,6 +89,8 @@ $(function () {
                 symbol: 'cross',
                 showValuesRelativeToSeries: 0,
                 showLabel: true,
+				fontSize: '10px',
+				fontStyle: 'italic',
                 position: {
                     relativeX: 0.25,
                     relativeY: 0.25

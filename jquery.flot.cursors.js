@@ -52,14 +52,16 @@ Licensed under the MIT license.
                 showLabel: false,
                 showValuesRelativeToSeries: undefined,
                 color: 'gray',
-                font: '10px sans-serif',
+                fontSize: '10px',
+                fontFamily: 'sans-serif',
+                fontStyle: '',
+                fontWeight: '',
                 lineWidth: 1,
                 movable: true,
                 mouseButton: 'all',
                 dashes: 1,
                 intersectionColor: 'darkgray',
-                fontSize: 10,
-                intersectionLabelPosition: 'bottom-right',
+                intersectionLabelPosition: 'bottom-right'
             });
         }
 
@@ -457,10 +459,26 @@ Licensed under the MIT license.
         }
     }
 
-    function computeLabelPosition(plot, cursor, offset) {
+	/**
+	 * The text displayed next to the cursor can be stacked as raws and their positions can be calculated with this function.
+	 * The bottom one has the index = 0, and the top one has the index = count -1. Depending on the current cursor's possition
+	 * relative to the center of the plot, index and count, the positions will be computed like this:
+	 *
+	 *               |
+	 *           two | two
+	 *           one | one
+	 *          zero | zero
+	 *       --------+--------
+	 *           two | two
+	 *           one | one
+	 *          zero | zero
+	 *               |
+	 */
+    function computeRawPosition(plot, cursor, index, count) {
         var width = plot.width();
         var height = plot.height();
         var textAlign = 'left';
+		var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
 
         var y = cursor.y;
         var x = cursor.x;
@@ -473,9 +491,9 @@ Licensed under the MIT license.
         }
 
         if (y > (height / 2)) {
-            y -= constants.labelPadding + offset;
+            y -= constants.labelPadding * (count - index) + fontSizeInPx * (count - 1 - index);
         } else {
-            y += constants.labelPadding + cursor.fontSize;
+            y += constants.labelPadding * (index + 1) + fontSizeInPx * (index + 1);
         }
 
         return {
@@ -484,21 +502,35 @@ Licensed under the MIT license.
             textAlign: textAlign
         };
     }
+	
+	function rawCount(cursor) {
+		return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
+	}
+	
+	function labelRawIndex(cursor) {
+		return 0;
+	}
+	
+	function valuesRawIndex(cursor) {
+		return cursor.showLabel ? 1 : 0;
+	}
 
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
             ctx.beginPath();
-            var position = computeLabelPosition(plot, cursor,
-            typeof cursor.showValuesRelativeToSeries === 'number' ? constants.labelPadding * 2 : 0);
+			var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
+            var position = computeRawPosition(plot, cursor, labelRawIndex(cursor), rawCount(cursor));
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
+            ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
             ctx.fillText(cursor.name, position.x, position.y);
             ctx.textAlign = 'left';
             ctx.stroke();
         }
     }
 
-    function fillTextAligned(ctx, text, x, y, position, fontSize) {
+    function fillTextAligned(ctx, text, x, y, position, fontStyle, fontWeight, fontSize, fontFamily) {
+		var fontSizeInPx = Number(fontSize.substring(0, fontSize.length - 2));
         switch (position) {
             case 'left':
                 var textWidth = ctx.measureText(text).width;
@@ -508,7 +540,7 @@ Licensed under the MIT license.
             case 'bottom-left':
                 var textWidth = ctx.measureText(text).width;
                 x = x - textWidth - constants.iRectSize;
-                y = y + fontSize;
+                y = y + fontSizeInPx;
                 break;
             case 'top-left':
                 var textWidth = ctx.measureText(text).width;
@@ -526,12 +558,12 @@ Licensed under the MIT license.
             case 'bottom-right':
             default:
                 x = x + constants.iRectSize;
-                y = y + fontSize;
+                y = y + fontSizeInPx;
                 break;
         }
 
         ctx.textBaseline="middle";
-        ctx.font = fontSize + 'px sans-serif';
+        ctx.font = fontStyle + ' ' + fontWeight + ' ' + fontSize + ' ' + fontFamily;
         ctx.fillText(text, x, y);
 
     }
@@ -561,7 +593,7 @@ Licensed under the MIT license.
                      text= point.y.toFixed(2);
                 }
 
-                fillTextAligned(ctx, text, coord.left, coord.top, cursor.intersectionLabelPosition, cursor.fontSize);
+                fillTextAligned(ctx, text, coord.left, coord.top, cursor.intersectionLabelPosition, cursor.fontStyle, cursor.fontWeight, cursor.fontSize, cursor.fontFamily);
             });
             ctx.stroke();
         }
@@ -578,12 +610,12 @@ Licensed under the MIT license.
 
             var text = '' + xaxis.c2p(cursor.x).toFixed(2) + ', ' + yaxis.c2p(cursor.y).toFixed(2);
 
-            var position = computeLabelPosition(plot, cursor, cursor.showLabel ? constants.labelPadding * 2 : 0);
+            var position = computeRawPosition(plot, cursor, valuesRawIndex(cursor), rawCount(cursor));
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
-            ctx.font = cursor.fontSize + 'px sans-serif';
-            ctx.fillText(text, position.x, position.y + (cursor.showLabel ? constants.labelPadding * 2 : 0));
+            ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
+            ctx.fillText(text, position.x, position.y);
 
             ctx.textAlign = 'left';
 
