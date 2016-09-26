@@ -460,7 +460,7 @@ Licensed under the MIT license.
     }
 
 	/**
-	 * The text displayed next to the cursor can be stacked as raws and their positions can be calculated with this function.
+	 * The text displayed next to the cursor can be stacked as rows and their positions can be calculated with this function.
 	 * The bottom one has the index = 0, and the top one has the index = count -1. Depending on the current cursor's possition
 	 * relative to the center of the plot, index and count, the positions will be computed like this:
 	 *
@@ -474,7 +474,7 @@ Licensed under the MIT license.
 	 *          zero | zero
 	 *               |
 	 */
-    function computeRawPosition(plot, cursor, index, count) {
+    function computeRowPosition(plot, cursor, index, count) {
         var width = plot.width();
         var height = plot.height();
         var textAlign = 'left';
@@ -503,15 +503,15 @@ Licensed under the MIT license.
         };
     }
 	
-	function rawCount(cursor) {
+	function rowCount(cursor) {
 		return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
 	}
 	
-	function labelRawIndex(cursor) {
+	function labelRowIndex(cursor) {
 		return 0;
 	}
 	
-	function valuesRawIndex(cursor) {
+	function valuesRowIndex(cursor) {
 		return cursor.showLabel ? 1 : 0;
 	}
 
@@ -519,7 +519,7 @@ Licensed under the MIT license.
         if (cursor.showLabel) {
             ctx.beginPath();
 			var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
-            var position = computeRawPosition(plot, cursor, labelRawIndex(cursor), rawCount(cursor));
+            var position = computeRowPosition(plot, cursor, labelRowIndex(cursor), rowCount(cursor));
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
             ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
@@ -610,7 +610,7 @@ Licensed under the MIT license.
 
             var text = '' + xaxis.c2p(cursor.x).toFixed(2) + ', ' + yaxis.c2p(cursor.y).toFixed(2);
 
-            var position = computeRawPosition(plot, cursor, valuesRawIndex(cursor), rawCount(cursor));
+            var position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
