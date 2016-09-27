@@ -23,6 +23,7 @@ The plugin supports these options:
                 relativeX or x or x2 or x3 ..: number,
                 relativeY or y or y2 or y3 ..: number,
             },
+            show: true or false,
             showLabel: true or false,
             snapToPlot: number,
             symbol: 'cross', 'triangle' ...,
@@ -51,6 +52,8 @@ The plugin supports these options:
 **lineWidth** is the width of the drawn lines (default is 1). Setting lineWidth to zero creates an invisible cursor.
 
 **position** position of the cursor. It can be specified relative to the canvas, using a *relativeX, relativeY* pair of coordinates which are expressed as a number between 0 and 1. It can be also specified using axis based coordinates ( *x, x2, x3 .., y, y2, y3* ).
+
+**show** if false the cursor won't be visible and the mouse interactions for it will be disabled. Default value: true.
 
 **showLabel** if true the name of the cursor will be displayed next to the cursor manipulator.
 

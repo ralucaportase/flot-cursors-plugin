@@ -83,6 +83,20 @@ describe('Flot cursors', function () {
         expect(firstCursor.mode).toBe('xy');
     });
 
+    it('should be visble by default', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                }
+            ]
+        });
+
+        var firstCursor = plot.getCursors()[0];
+        expect(firstCursor.show).toBe(true);
+    });
+
     it('should have a lineWidth of 1 by default', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
@@ -331,7 +345,27 @@ describe('Flot cursors', function () {
         expect(firstCursor.lineWidth).toBe(3);
     });
 
-	it('should be possible to make an invisible cursor with lineWidth == 0');
+	it('should be possible to change the cursor visibility at runtime', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    show: true
+                }
+            ]
+        });
+
+        var firstCursor = plot.getCursors()[0];
+        var initialVisibilty = firstCursor.show;
+
+        plot.setCursor(firstCursor, {
+            show: false
+        });
+
+        expect(initialVisibilty).toBe(true);
+        expect(firstCursor.show).toBe(false);
+    });
 
 	// we expect more lines to be drawn when we have more dashes
 	it('should be possible to make a dashed line', function() {

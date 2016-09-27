@@ -54,6 +54,30 @@ describe("Cursors intersections", function () {
         expect(intersections.points[0].y).toBe(sampledata[1][1]);
     });
 
+    it('should find intersections with a plot even when hidden', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [{
+                name: 'Blue cursor',
+                color: 'blue',
+                position: {
+                    x: 1,
+                    y: 0
+                },
+                show: false
+            }]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+        var intersections = plot.getIntersections(cursors[0]);
+
+        expect(intersections.points.length).toBe(1);
+        expect(intersections.points[0].x).toBe(1);
+        expect(intersections.points[0].y).toBe(sampledata[1][1]);
+    });
+
+
     it('should find intersections with multiple plots', function () {
         plot = $.plot("#placeholder", [sampledata, sampledata2], {
             cursors: [{
