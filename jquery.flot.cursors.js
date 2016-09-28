@@ -374,12 +374,11 @@ Licensed under the MIT license.
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             update = [];
-            var intersections;
 
             cursors.forEach(function (cursor) {
-                var plotOffset = plot.getPlotOffset();
+                var intersections;
 
-                setPosition(plot, cursor, cursor.position, intersections);
+                setPosition(plot, cursor, cursor.position);
                 intersections = findIntersections(plot, cursor);
                 maybeSnapToPlot(plot, cursor, intersections);
                 cursor.intersections = intersections;
@@ -387,6 +386,8 @@ Licensed under the MIT license.
                 update.push(intersections);
 
                 if (cursor.show && cursor.x !== -1) {
+                    var plotOffset = plot.getPlotOffset();
+
                     ctx.save();
                     ctx.translate(plotOffset.left, plotOffset.top);
 

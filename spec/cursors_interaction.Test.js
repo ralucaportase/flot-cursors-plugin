@@ -360,9 +360,9 @@ describe("Cursors interaction", function () {
                         relativeX: 0.5,
                         relativeY: 0.6
                     },
-					show: false
-                    }
-                ]
+                    show: false
+                }
+            ]
         });
 
         var cursorX = plot.offset().left + plot.width() * 0.5;

@@ -347,8 +347,7 @@ describe('Flot cursors', function () {
 
 	it('should be possible to change the cursor visibility at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
+            cursors: [{
                     name: 'Blue cursor',
                     color: 'blue',
                     show: true
@@ -357,13 +356,13 @@ describe('Flot cursors', function () {
         });
 
         var firstCursor = plot.getCursors()[0];
-        var initialVisibilty = firstCursor.show;
+        var initialVisibility = firstCursor.show;
 
         plot.setCursor(firstCursor, {
             show: false
         });
 
-        expect(initialVisibilty).toBe(true);
+        expect(initialVisibility).toBe(true);
         expect(firstCursor.show).toBe(false);
     });
 
