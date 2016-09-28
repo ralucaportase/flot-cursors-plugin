@@ -45,6 +45,7 @@ Licensed under the MIT license.
                 },
                 x: 0,
                 y: 0,
+                show: true,
                 selected: false,
                 highlighted: false,
                 mode: 'xy',
@@ -141,6 +142,12 @@ Licensed under the MIT license.
             });
         };
 
+        var visibleCursors = function(cursors) {
+            return cursors.filter(function (cursor) {
+                return cursor.show;
+            });
+        };
+
         // possible issues with ie8
         var correctMouseButton = function (cursor, buttonNumber) {
             switch (cursor.mouseButton) {
@@ -179,7 +186,7 @@ Licensed under the MIT license.
                 var targetCursor;
                 var dragmode;
 
-                cursors.forEach(function (cursor) {
+                visibleCursors(cursors).forEach(function (cursor) {
                     if (!cursor.movable) {
                         return;
                     }
@@ -266,7 +273,7 @@ Licensed under the MIT license.
                 plot.triggerRedrawOverlay();
                 e.stopPropagation();
             } else {
-                cursors.forEach(function (cursor) {
+                visibleCursors(cursors).forEach(function (cursor) {
                     if (!cursor.movable) {
                         return;
                     }
@@ -366,37 +373,34 @@ Licensed under the MIT license.
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
-            var i = 0;
             update = [];
-            var intersections;
 
             cursors.forEach(function (cursor) {
-                var plotOffset = plot.getPlotOffset();
+                var intersections;
 
-                ctx.save();
-                ctx.translate(plotOffset.left, plotOffset.top);
-
-                setPosition(plot, cursor, cursor.position, intersections);
+                setPosition(plot, cursor, cursor.position);
                 intersections = findIntersections(plot, cursor);
                 maybeSnapToPlot(plot, cursor, intersections);
+                cursor.intersections = intersections;
+                intersections.target = cursor;
+                update.push(intersections);
 
-                if (cursor.x !== -1) {
+                if (cursor.show && cursor.x !== -1) {
+                    var plotOffset = plot.getPlotOffset();
+
+                    ctx.save();
+                    ctx.translate(plotOffset.left, plotOffset.top);
+
                     drawVerticalAndHorizontalLines(plot, ctx, cursor);
-
-                    cursor.intersections = intersections;
-                    intersections.target = cursor;
-                    update.push(intersections);
-
                     drawLabel(plot, ctx, cursor);
                     drawIntersections(plot, ctx, cursor);
                     drawValues(plot, ctx, cursor);
                     if (cursor.symbol !== 'none') {
                         drawManipulator(plot, ctx, cursor);
                     }
-                }
 
-                ctx.restore();
-                i++;
+                    ctx.restore();
+                }
             });
 
             plot.getPlaceholder().trigger('cursorupdates', [update]);
@@ -502,15 +506,15 @@ Licensed under the MIT license.
             textAlign: textAlign
         };
     }
-	
+
 	function rowCount(cursor) {
 		return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
 	}
-	
+
 	function labelRowIndex(cursor) {
 		return 0;
 	}
-	
+
 	function valuesRowIndex(cursor) {
 		return cursor.showLabel ? 1 : 0;
 	}
