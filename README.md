@@ -97,22 +97,22 @@ Public Methods and events
 -------------------------
 
 
-The plugin adds some public methods to the chart:
+The plugin adds some public methods to the plot:
 
-* getCursors()
+* plot.getCursors()
 
     Returns a list containing all the cursors
 
-* addCursor(options)
+* plot.addCursor(options)
 
     creates a new cursor with the parameters specified in options.
 
-* removeCursor(cursorToRemove)
+* plot.removeCursor(cursorToRemove)
 
     remove the specified cursor from the plot. cursorToRemove is a cursor
     reference to one of the cursors obtained with getCursors()
 
-* setCursor ( cursor , options)
+* plot.setCursor ( cursor , options)
 
     changes one or more cursor properties.
 
@@ -155,6 +155,8 @@ Examples and tests
 jquery.flot.cursors is available under the MIT license.
 
 Interactive example: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/example.html>
+
+Tests on Travis CI: https://travis-ci.org/cipix2000/flot-cursors-plugin
 
 Related plugins
 ---------------
