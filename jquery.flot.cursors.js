@@ -385,7 +385,7 @@ Licensed under the MIT license.
                 intersections.target = cursor;
                 update.push(intersections);
 
-                if (cursor.show && cursor.x !== -1) {
+                if (cursor.show) {
                     var plotOffset = plot.getPlotOffset();
 
                     ctx.save();
