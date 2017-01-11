@@ -1,9 +1,9 @@
-[![Stories in Ready](https://badge.waffle.io/cipix2000/flot-cursors-plugin.png?label=ready&title=Ready)](https://waffle.io/cipix2000/flot-cursors-plugin) [![Build Status](https://travis-ci.org/cipix2000/flot-cursors-plugin.svg?branch=master)](https://travis-ci.org/cipix2000/flot-cursors-plugin)
+[![Build Status](https://travis-ci.org/ni-kismet/flot-cursors-plugin.svg?branch=master)](https://travis-ci.org/ni-kismet/flot-cursors-plugin)
 
 flot.cursors
 ============
 
-This is a plugin for jQuery flot to create cursors. Cursors are used to measure various values on the graph. You can have multiple cursors on a graph
+This is a plugin for engineering-flot to create cursors. Cursors are used to measure various values on the graphs and charts. Multiple cursors are supported.
 
 This plugin is based on another plugin `jQuery.flot.crosshair.js` which can be found in the flot chart package at <http://www.flotcharts.org/>
 
@@ -154,11 +154,6 @@ Examples and tests
 
 jquery.flot.cursors is available under the MIT license.
 
-Interactive example: <https://rawgit.com/cipix2000/flot-cursors-plugin/master/example.html>
+Interactive example: <https://rawgit.com/ni-kismet/flot-cursors-plugin/master/example.html>
 
-Tests on Travis CI: https://travis-ci.org/cipix2000/flot-cursors-plugin
-
-Related plugins
----------------
-
-flot-cursors-legend-plugin at <https://github.com/cipix2000/flot-cursors-legend-plugin> provides a legend for cursors
+Tests on Travis CI: https://travis-ci.org/ni-kismet/flot-cursors-plugin

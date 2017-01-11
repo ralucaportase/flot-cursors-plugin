@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://cipix2000@github.com/cipix2000/flot-cursors-plugin.git"
+    "url": "git+github.com/ni-kismet/flot-cursors-plugin.git"
   },
   "keywords": [
     "flot",
@@ -23,9 +23,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cipix2000/flot-cursors-plugin/issues"
+    "url": "https://github.com/ni-kismet/flot-cursors-plugin/issues"
   },
-  "homepage": "https://github.com/cipix2000/flot-cursors-plugin#readme",
+  "homepage": "https://github.com/ni-kismet/flot-cursors-plugin#readme",
   "devDependencies": {
     "jasmine-core": "^2.5.0",
     "karma": "^1.2.0",
