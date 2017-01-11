@@ -1,11 +1,11 @@
 {
   "name": "flot-cursors-plugin",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Cursors for flot charting",
   "main": "jquery.flot.cursors.js",
   "scripts": {
     "test": "node node_modules/karma/bin/karma start --single-run",
-	"preversion": "npm test"
+    "preversion": "npm test"
   },
   "repository": {
     "type": "git",
