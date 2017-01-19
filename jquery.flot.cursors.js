@@ -338,25 +338,30 @@ Licensed under the MIT license.
             var i, j, dataset = plot.getData();
 
             for (i = 0; i < dataset.length; ++i) {
-                var series = dataset[i];
+                var points = dataset[i].datapoints.points;
+                var ps = dataset[i].datapoints.pointsize;
 
                 // Find the nearest points, x-wise
-                for (j = 0; j < series.data.length; ++j) {
-                    if (series.data[j] && series.data[j][0] > pos.x) {
+                for (j = 0; j < points.length; j+= ps) {
+                    if (points[j] > pos.x) {
                         break;
                     }
                 }
 
                 // Now Interpolate
                 var y,
-                    p1 = series.data[j - 1],
-                    p2 = series.data[j];
+                    p1x = points[j - ps],
+                    p1y = points[j - ps +1],
+                    p2x = points[j],
+                    p2y = points[j + 1];
 
-                if ((p1 === undefined) || (p2 === undefined)) {
+
+                if ((p1x === undefined) || (p2x === undefined) ||
+                    (p1y === undefined) || (p2y === undefined)) {
                     continue;
                 }
 
-                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+                y = p1y + (p2y - p1y) * (pos.x - p1x) / (p2x - p1x);
 
                 pos.y = y;
                 pos.y1 = y;
@@ -364,8 +369,8 @@ Licensed under the MIT license.
                 intersections.points.push({
                     x: pos.x,
                     y: pos.y,
-                    leftPoint: p1,
-                    rightPoint: p2
+                    leftPoint: [p1x, p1y],
+                    rightPoint: [p2x, p2y]
                 });
             }
 
