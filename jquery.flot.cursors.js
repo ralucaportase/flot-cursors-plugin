@@ -361,10 +361,13 @@ Licensed under the MIT license.
                     continue;
                 }
 
-                y = p1y + (p2y - p1y) * (pos.x - p1x) / (p2x - p1x);
+                if (p1x === p2x) {
+                    y = p2y
+                } else {
+                    y = p1y + (p2y - p1y) * (pos.x - p1x) / (p2x - p1x);
+                }
 
                 pos.y = y;
-                pos.y1 = y;
 
                 intersections.points.push({
                     x: pos.x,
