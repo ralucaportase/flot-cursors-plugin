@@ -220,7 +220,7 @@ Licensed under the MIT license.
                     }
                     plot.getPlaceholder().css('cursor', 'move');
                     plot.triggerRedrawOverlay();
-                    e.stopPropagation();
+                    e.stopImmediatePropagation();
                 }
             }
         }
@@ -271,7 +271,7 @@ Licensed under the MIT license.
                 }
 
                 plot.triggerRedrawOverlay();
-                e.stopPropagation();
+                e.stopImmediatePropagation();
             } else {
                 visibleCursors(cursors).forEach(function (cursor) {
                     if (!cursor.movable) {
@@ -750,7 +750,7 @@ Licensed under the MIT license.
         var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
         return (hasHorizontalLine(cursor) && (mouseY > cursor.y - constants.mouseGrabMargin) &&
-            (mouseY < cursor.y + constants.mouseGrabMargin) && (mouseX > 0) && (mouseY < plot.width()));
+            (mouseY < cursor.y + constants.mouseGrabMargin) && (mouseX > 0) && (mouseX < plot.width()));
     }
 
     $.plot.plugins.push({
