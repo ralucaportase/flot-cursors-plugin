@@ -335,9 +335,9 @@ Licensed under the MIT license.
                 return intersections;
             }
             
-            var appropiatePoint = plot.findNearbyPoint(cursor.x, cursor.y , function(i) {
+            var appropiatePoint = plot.findNearbyItem(cursor.x, cursor.y , function(i) {
                         return i === cursor.snapToPlot;
-                    });
+                    }, Number.MAX_VALUE);
                         
             if(appropiatePoint!=null){
                 var dataset = plot.getData(),
