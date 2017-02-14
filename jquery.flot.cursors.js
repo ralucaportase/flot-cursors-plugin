@@ -334,49 +334,25 @@ Licensed under the MIT license.
                 pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
                 return intersections;
             }
-
-            var i, j, dataset = plot.getData();
-
-            for (i = 0; i < dataset.length; ++i) {
-                var points = dataset[i].datapoints.points;
-                var ps = dataset[i].datapoints.pointsize;
-
-                // Find the nearest points, x-wise
-                for (j = 0; j < points.length; j+= ps) {
-                    if (points[j] > pos.x) {
-                        break;
-                    }
-                }
-
-                // Now Interpolate
-                var y,
-                    p1x = points[j - ps],
-                    p1y = points[j - ps +1],
-                    p2x = points[j],
-                    p2y = points[j + 1];
-
-
-                if ((p1x === undefined) || (p2x === undefined) ||
-                    (p1y === undefined) || (p2y === undefined)) {
-                    continue;
-                }
-
-                if (p1x === p2x) {
-                    y = p2y
-                } else {
-                    y = p1y + (p2y - p1y) * (pos.x - p1x) / (p2x - p1x);
-                }
-
-                pos.y = y;
-
+            
+            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y , function(seriesIndex) {
+                        return seriesIndex === cursor.snapToPlot;
+                    }, Number.MAX_VALUE);
+                        
+            if(nearestPoint){
+                var dataset = plot.getData(),
+                    points = dataset[cursor.snapToPlot].datapoints.points,
+                    ps = dataset[cursor.snapToPlot].datapoints.pointsize,
+                    i = nearestPoint.dataIndex * ps;
+                    
                 intersections.points.push({
-                    x: pos.x,
-                    y: pos.y,
-                    leftPoint: [p1x, p1y],
-                    rightPoint: [p2x, p2y]
-                });
+                    x: nearestPoint.datapoint[0],
+                    y: nearestPoint.datapoint[1],
+                    leftPoint: [i - ps, i - ps + 1],
+                    rightPoint: [i, i+1]
+                });        
             }
-
+                        
             return intersections;
         }
 
@@ -457,16 +433,24 @@ Licensed under the MIT license.
         }
     }
 
-    function maybeSnapToPlot(plot, cursor, intersections) {
+  function maybeSnapToPlot(plot, cursor, intersections) {
         if (cursor.snapToPlot !== undefined) {
-            var point = intersections.points[cursor.snapToPlot];
+            var point = intersections.points[0];
+
             if (point) {
+                var axes = plot.getAxes(),
+                    relativeX = axes.xaxis.p2c(point.x) / plot.width(),
+                    relativeY = axes.yaxis.p2c(point.y) / plot.height();
+
                 setPosition(plot, cursor, {
                     x: point.x,
                     y: point.y
                 });
-
-                intersections.y = point.y; // update cursor position
+                
+                cursor.position.relativeX = relativeX;
+                cursor.position.relativeY = relativeY;
+                intersections.x = point.x; // update cursor position
+                intersections.y = point.y; 
             }
         }
     }
@@ -757,6 +741,6 @@ Licensed under the MIT license.
         init: init,
         options: options,
         name: 'cursors',
-        version: '0.1'
+        version: '0.2'
     });
 })(jQuery);
