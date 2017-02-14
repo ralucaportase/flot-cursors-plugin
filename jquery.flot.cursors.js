@@ -335,19 +335,19 @@ Licensed under the MIT license.
                 return intersections;
             }
             
-            var appropiatePoint = plot.findNearbyItem(cursor.x, cursor.y , function(seriesIndex) {
+            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y , function(seriesIndex) {
                         return seriesIndex === cursor.snapToPlot;
                     }, Number.MAX_VALUE);
                         
-            if(appropiatePoint){
+            if(nearestPoint){
                 var dataset = plot.getData(),
                     points = dataset[cursor.snapToPlot].datapoints.points,
                     ps = dataset[cursor.snapToPlot].datapoints.pointsize,
-                    i = appropiatePoint.dataIndex * ps;
+                    i = nearestPoint.dataIndex * ps;
                     
                 intersections.points.push({
-                    x: appropiatePoint.datapoint[0],
-                    y: appropiatePoint.datapoint[1],
+                    x: nearestPoint.datapoint[0],
+                    y: nearestPoint.datapoint[1],
                     leftPoint: [i - ps, i - ps + 1],
                     rightPoint: [i, i+1]
                 });        

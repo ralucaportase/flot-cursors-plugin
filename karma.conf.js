@@ -18,6 +18,9 @@ module.exports = function (config) {
         files: [
             'jquery.js',
             'jquery.flot.js',
+            'node_modules/engineering-flot/jquery.canvaswrapper.js',
+            'node_modules/engineering-flot/jquery.flot.js',
+            'node_modules/engineering-flot/jquery.flot.uiConstants.js',
             'jquery*.js',
             'spec/*.Test.js',
         ],
