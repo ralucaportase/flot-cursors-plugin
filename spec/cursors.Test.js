@@ -534,11 +534,13 @@ describe('Flot cursors', function () {
                 xaxes: [{
                     min: 0,
                     max: 10,
+                    autoscale: "none",
                     tickFormatter: function(val) {return '<' + val + '>';}   
                 }],
                 yaxes: [{
                     min: 100,
                     max: 110,
+                    autoscale: "none",
                     tickFormatter: function(val) {return '(' + val + ')';}           
                 }]
             });

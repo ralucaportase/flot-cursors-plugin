@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/ni-kismet/flot-cursors-plugin#readme",
   "devDependencies": {
-    "engineering-flot": "^0.1.15",
+    "engineering-flot": "^0.2.1",
     "jasmine-core": "^2.5.0",
     "karma": "^1.2.0",
     "karma-firefox-launcher": "^1.0.0",
