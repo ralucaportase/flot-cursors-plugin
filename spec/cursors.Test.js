@@ -473,7 +473,7 @@ describe('Flot cursors', function () {
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.0000, 1.1500', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should not display the cursor values relative to a plot when told not to', function () {
@@ -493,30 +493,40 @@ describe('Flot cursors', function () {
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).not.toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).not.toHaveBeenCalledWith('1.0000, 1.15000', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should display both the cursor label and values when told so', function () {
             plot = $.plot("#placeholder", [sampledata], {
-                cursors: [
-                    {
-                        name: 'Blue cursor',
-                        color: 'blue',
-                        position: {
-                            x: 1,
-                            y: 1.15
-                        },
-                        showLabel: true,
-                        showValuesRelativeToSeries: 0
-                    }
-                ]
+                cursors: [{
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        x: 1,
+                        y: 1.15
+                    },
+                    showLabel: true,
+                    showValuesRelativeToSeries: 0
+                }],
+			    xaxes: [{
+                    min: 0,
+                    max: 10,
+                    ticks: 10,
+                    autoscale: "none"  
+                }],
+                yaxes: [{
+                    min: 1,
+                    max: 1.2,
+                    ticks: 10,
+                    autoscale: "none"           
+                }]
             });
 
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
             expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
-            expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.00, 1.1500', jasmine.any(Number), jasmine.any(Number));
         });
         
         it('should display the cursor label in the same format as axis', function () {
@@ -609,5 +619,65 @@ describe('Flot cursors', function () {
 
         it('should give the cursors unique names');
         it('should give the cursors created at runtime unique names');
+    });
+	
+    describe('Precision', function () {
+
+        function spyOnFillText() {
+            var overlay = $('.flot-overlay')[0];
+            var octx = overlay.getContext("2d");
+            return spyOn(octx, 'fillText').and.callThrough();
+        }
+
+        it('should give the cursors a higher precision in a big graph', function () {
+            var fixture = setFixtures('<div id="demo-container" style="width: 1000px;height: 1000px">').find('#demo-container').get(0);
+
+            placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
+            placeholder.appendTo(fixture);
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showValuesRelativeToSeries: 0
+                }
+            ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalledWith('1.000, 1.15000', jasmine.any(Number), jasmine.any(Number));
+        });
+		
+        it('should give the cursors a smaller precision in a litle graph', function () {
+            var fixture = setFixtures('<div id="demo-container" style="width: 100px;height: 100px">').find('#demo-container').get(0);
+
+            placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
+            placeholder.appendTo(fixture);
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.15
+                        },
+                        showValuesRelativeToSeries: 0
+                }
+            ]
+            });
+
+            var spy = spyOnFillText();
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
+        });
+    
     });
 });

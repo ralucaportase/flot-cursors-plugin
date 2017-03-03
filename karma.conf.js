@@ -12,10 +12,7 @@ module.exports = function (config) {
 
     var sources = [
         'jquery.js',
-        'node_modules/engineering-flot/jquery.colorhelpers.js',
-        'node_modules/engineering-flot/jquery.canvaswrapper.js',
-        'node_modules/engineering-flot/jquery.flot.js',
-        'node_modules/engineering-flot/jquery.flot.uiConstants.js',
+        'node_modules/engineering-flot/dist/jquery.flot.js',
         'node_modules/engineering-flot/jquery.flot.symbol.js'
     ].concat(coverage_sources);
 

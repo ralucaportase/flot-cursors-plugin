@@ -697,7 +697,36 @@ Licensed under the MIT license.
             surface.resize(width, height);
             overlay.resize(width, height);
         };
+		
+		plot.findNearbyItem = findNearbyItem;
 
+		plot.computeValuePrecision = function (min, max, direction, ticks, tickDecimals){
+            var noTicks;
+            
+            if (typeof ticks == "number" && ticks > 0) {
+                noTicks = ticks;
+            } else {
+                noTicks = 0.3 * Math.sqrt(direction == "x" ? surface.width : surface.height);
+            }
+
+            var delta = (max - min) / noTicks,
+                dec = -Math.floor(Math.log(delta) / Math.LN10);
+
+            //if it is called with tickDecimals, then the precision should not be greather then that
+            if (tickDecimals != null && dec > tickDecimals) {
+                dec = tickDecimals;
+            }
+
+            var magn = Math.pow(10, -dec),
+                norm = delta / magn;
+
+            if (norm > 2.25 && norm < 3 && (tickDecimals == null || dec + 1 <= tickDecimals)) {
+                ++dec;
+            }
+
+            return dec;
+        };
+		
         // public attributes
         plot.hooks = hooks;
 
@@ -1680,24 +1709,23 @@ Licensed under the MIT license.
             axis.max = max;
         }
 
-        function setupTickGeneration(axis) {
-            var opts = axis.options;
-
-            // estimate number of ticks
+		function computeTickSize (min, max, direction, options, tickDecimals){
             var noTicks;
-            if (typeof opts.ticks == "number" && opts.ticks > 0)
-                noTicks = opts.ticks;
-            else
-                // heuristic based on the model a*sqrt(x) fitted to
-                // some data points that seemed reasonable
-                noTicks = 0.3 * Math.sqrt(axis.direction == "x" ? surface.width : surface.height);
+            
+            if (typeof options.ticks == "number" && options.ticks > 0) {
+                noTicks = options.ticks;
+            } else {
+            // heuristic based on the model a*sqrt(x) fitted to
+            // some data points that seemed reasonable
+                noTicks = 0.3 * Math.sqrt(direction == "x" ? surface.width : surface.height);
+            }
+                
+            var delta = (max - min) / noTicks,
+                dec = -Math.floor(Math.log(delta) / Math.LN10);
 
-            var delta = (axis.max - axis.min) / noTicks,
-                dec = -Math.floor(Math.log(delta) / Math.LN10),
-                maxDec = opts.tickDecimals;
-
-            if (maxDec != null && dec > maxDec) {
-                dec = maxDec;
+            //if it is called with tickDecimals, then the precision should not be greather then that
+            if (tickDecimals != null && dec > tickDecimals) {
+                dec = tickDecimals;
             }
 
             var magn = Math.pow(10, -dec),
@@ -1709,9 +1737,8 @@ Licensed under the MIT license.
             } else if (norm < 3) {
                 size = 2;
                 // special case for 2.5, requires an extra decimal
-                if (norm > 2.25 && (maxDec == null || dec + 1 <= maxDec)) {
+                if (norm > 2.25 && (tickDecimals == null || dec + 1 <= tickDecimals)) {
                     size = 2.5;
-                    ++dec;
                 }
             } else if (norm < 7.5) {
                 size = 5;
@@ -1721,13 +1748,21 @@ Licensed under the MIT license.
 
             size *= magn;
 
-            if (opts.minTickSize != null && size < opts.minTickSize) {
-                size = opts.minTickSize;
+            if (options.minTickSize != null && size < options.minTickSize) {
+                size = options.minTickSize;
             }
 
-            axis.delta = delta;
-            axis.tickDecimals = Math.max(0, maxDec != null ? maxDec : dec);
-            axis.tickSize = opts.tickSize || size;
+            return options.tickSize || size;
+        };
+
+        function setupTickGeneration(axis) {
+            var opts = axis.options;
+
+            axis.delta = (axis.max - axis.min) / opts.ticks;
+            var precision = plot.computeValuePrecision(axis.min, axis.max, axis.direction, opts.ticks, opts.tickDecimals);
+
+            axis.tickDecimals = Math.max(0, opts.tickDecimals != null ? opts.tickDecimals : precision);
+            axis.tickSize = computeTickSize(axis.min, axis.max, axis.direction, opts, opts.tickDecimals);
 
             // Time mode was moved to a plug-in in 0.8, and since so many people use it
             // we'll add an especially friendly reminder to make sure they included it.
@@ -1758,29 +1793,38 @@ Licensed under the MIT license.
                     return ticks;
                 };
 
-				axis.tickFormatter = function (value, axis) {
+                axis.tickFormatter = function(value, axis, precision) {
 
-					var factor = axis.tickDecimals ? Math.pow(10, axis.tickDecimals) : 1;
-					var formatted = "" + Math.round(value * factor) / factor;
+                    var oldTickDecimals = axis.tickDecimals;
 
-					// If tickDecimals was specified, ensure that we have exactly that
-					// much precision; otherwise default to the value's own precision.
+                    if (precision) {
+                        axis.tickDecimals = precision;
+                    }
 
-					if (axis.tickDecimals != null) {
-						var decimal = formatted.indexOf(".");
-						var precision = decimal == -1 ? 0 : formatted.length - decimal - 1;
-						if (precision < axis.tickDecimals) {
-							return (precision ? formatted : formatted + ".") + ("" + factor).substr(1, axis.tickDecimals - precision);
-						}
-					}
+                    var factor = axis.tickDecimals ? Math.pow(10, axis.tickDecimals) : 1;
+                    var formatted = "" + Math.round(value * factor) / factor;
 
+                    // If tickDecimals was specified, ensure that we have exactly that
+                    // much precision; otherwise default to the value's own precision.
+
+                    if (axis.tickDecimals != null) {
+                        var decimal = formatted.indexOf(".");
+                        var decimalPrecision = decimal == -1 ? 0 : formatted.length - decimal - 1;
+                        if (decimalPrecision < axis.tickDecimals) {
+                            formatted = (decimalPrecision ? formatted : formatted + ".") + ("" + factor).substr(1, axis.tickDecimals - decimalPrecision);
+                        }
+                    }
+
+                    axis.tickDecimals = oldTickDecimals;
                     return formatted;
-                };
-            }
+                    };
+                }
 
-            if ($.isFunction(opts.tickFormatter))
-                axis.tickFormatter = function (v, axis) { return "" + opts.tickFormatter(v, axis); };
-
+                if ($.isFunction(opts.tickFormatter))
+                    axis.tickFormatter = function(v, axis, precision) {
+                        return "" + opts.tickFormatter(v, axis, precision);
+                    };
+            
             if (opts.alignTicksWithAxis != null) {
                 var otherAxis = (axis.direction == "x" ? xaxes : yaxes)[opts.alignTicksWithAxis - 1];
                 if (otherAxis && otherAxis.used && otherAxis != axis) {
@@ -2826,13 +2870,15 @@ Licensed under the MIT license.
             redrawTimeout = null;
 
         // returns the data item the mouse is over, or null if none is found
-        function findNearbyItem(mouseX, mouseY, seriesFilter) {
-            var maxDistance = options.grid.mouseActiveRadius,
+        function findNearbyItem(mouseX, mouseY, seriesFilter, distance) {
+            var maxDistance = distance,
                 smallestDistance = maxDistance * maxDistance + 1,
-                item = null, foundPoint = false, i, j, ps;
+                item = null,
+                foundPoint = false,
+                i, j, ps;
 
             for (i = series.length - 1; i >= 0; --i) {
-                if (!seriesFilter(series[i]))
+                if (!seriesFilter(i))
                     continue;
 
                 var s = series[i],
@@ -2854,7 +2900,8 @@ Licensed under the MIT license.
 
                 if (s.lines.show || s.points.show) {
                     for (j = 0; j < points.length; j += ps) {
-                        var x = points[j], y = points[j + 1];
+                        var x = points[j],
+                            y = points[j + 1];
                         if (x == null)
                             continue;
 
@@ -2884,30 +2931,32 @@ Licensed under the MIT license.
                     var barLeft, barRight;
 
                     switch (s.bars.align) {
-                        case "left":
-                            barLeft = 0;
-                            break;
-                        case "right":
-                            barLeft = -s.bars.barWidth;
-                            break;
-                        default:
-                            barLeft = -s.bars.barWidth / 2;
+                    case "left":
+                        barLeft = 0;
+                        break;
+                    case "right":
+                        barLeft = -s.bars.barWidth;
+                        break;
+                    default:
+                        barLeft = -s.bars.barWidth / 2;
                     }
 
                     barRight = barLeft + s.bars.barWidth;
 
                     for (j = 0; j < points.length; j += ps) {
-                        var x = points[j], y = points[j + 1], b = points[j + 2];
+                        var x = points[j],
+                            y = points[j + 1],
+                            b = points[j + 2];
                         if (x == null)
                             continue;
 
                         // for a bar graph, the cursor must be inside the bar
                         if (series[i].bars.horizontal ?
                             (mx <= Math.max(b, x) && mx >= Math.min(b, x) &&
-                             my >= y + barLeft && my <= y + barRight) :
+                                my >= y + barLeft && my <= y + barRight) :
                             (mx >= x + barLeft && mx <= x + barRight &&
-                             my >= Math.min(b, y) && my <= Math.max(b, y)))
-                                item = [i, j / ps];
+                                my >= Math.min(b, y) && my <= Math.max(b, y)))
+                            item = [i, j / ps];
                     }
                 }
             }
@@ -2917,14 +2966,17 @@ Licensed under the MIT license.
                 j = item[1];
                 ps = series[i].datapoints.pointsize;
 
-                return { datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
-                         dataIndex: j,
-                         series: series[i],
-                         seriesIndex: i };
+                return {
+                    datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
+                    dataIndex: j,
+                    series: series[i],
+                    seriesIndex: i
+                };
             }
 
             return null;
         }
+
 
         function onMouseMove(e) {
             if (options.grid.hoverable)

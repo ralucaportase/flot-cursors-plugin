@@ -514,7 +514,7 @@ Licensed under the MIT license.
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
             ctx.beginPath();
-			var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
+            var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
             var position = computeRowPosition(plot, cursor, labelRowIndex(cursor), rowCount(cursor));
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
@@ -526,7 +526,7 @@ Licensed under the MIT license.
     }
 
     function fillTextAligned(ctx, text, x, y, position, fontStyle, fontWeight, fontSize, fontFamily) {
-		var fontSizeInPx = Number(fontSize.substring(0, fontSize.length - 2));
+        var fontSizeInPx = Number(fontSize.substring(0, fontSize.length - 2));
         switch (position) {
             case 'left':
                 var textWidth = ctx.measureText(text).width;
@@ -595,6 +595,14 @@ Licensed under the MIT license.
         }
     }
 
+    function computeCursorsPrecision(plot, axis, canvasPosition){
+        var canvas2 = axis.direction === "x" ? canvasPosition + 1: canvasPosition - 1,
+            point1 = axis.c2p(canvasPosition),
+            point2 = axis.c2p(canvas2);
+            
+        return  plot.computeValuePrecision(point1, point2, axis.direction, 1);
+    }
+    
     function drawValues(plot, ctx, cursor) {
        if (typeof cursor.showValuesRelativeToSeries === 'number') {
             var dataset = plot.getData(),
@@ -602,20 +610,22 @@ Licensed under the MIT license.
                 xaxis = series.xaxis,
                 yaxis = series.yaxis,
                 htmlSpace = '&nbsp;',
-                xFormattedValue = xaxis.tickFormatter(xaxis.c2p(cursor.x), xaxis),
-			    spaceIndex = xFormattedValue.indexOf(htmlSpace),
-			    yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis);
+                xaxisPrecision = computeCursorsPrecision(plot, xaxis, cursor.x),
+                xFormattedValue = xaxis.tickFormatter(xaxis.c2p(cursor.x), xaxis, xaxisPrecision),
+                spaceIndex = xFormattedValue.indexOf(htmlSpace),
+                yaxisPrecision = computeCursorsPrecision(plot, yaxis, cursor.y),
+                yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis, yaxisPrecision);
 
-			spaceIndex = xFormattedValue.indexOf(htmlSpace);
+            spaceIndex = xFormattedValue.indexOf(htmlSpace);
             if(spaceIndex !== -1) { 
                 xFormattedValue = xFormattedValue.slice(0, spaceIndex);
             }
-            
-			spaceIndex = yFormattedValue.indexOf(htmlSpace);
+
+            spaceIndex = yFormattedValue.indexOf(htmlSpace);
             if(spaceIndex !== -1) {
                 yFormattedValue = yFormattedValue.slice(0, spaceIndex);
             }
-			
+ 
             var text = xFormattedValue + ', ' + yFormattedValue,
                 position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));
 
@@ -623,7 +633,7 @@ Licensed under the MIT license.
             ctx.textAlign = position.textAlign;
             ctx.textAlign = 'left';
             ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;             
-			ctx.fillText(text, position.x, position.y);
+            ctx.fillText(text, position.x, position.y);
         }
     }
 
