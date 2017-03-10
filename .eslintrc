@@ -1,0 +1,19 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "jquery": true,
+        "jasmine": false
+    },
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true
+        }
+    },
+    "rules": {
+		//0 for no check, 1 for warning and 2 for error
+
+		"no-tabs": 2					// disallow all tabs
+    }
+}

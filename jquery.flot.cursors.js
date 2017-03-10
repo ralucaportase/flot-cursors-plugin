@@ -455,26 +455,26 @@ Licensed under the MIT license.
         }
     }
 
-	/**
-	 * The text displayed next to the cursor can be stacked as rows and their positions can be calculated with this function.
-	 * The bottom one has the index = 0, and the top one has the index = count -1. Depending on the current cursor's possition
-	 * relative to the center of the plot, index and count, the positions will be computed like this:
-	 *
-	 *               |
-	 *           two | two
-	 *           one | one
-	 *          zero | zero
-	 *       --------+--------
-	 *           two | two
-	 *           one | one
-	 *          zero | zero
-	 *               |
-	 */
+    /**
+     * The text displayed next to the cursor can be stacked as rows and their positions can be calculated with this function.
+     * The bottom one has the index = 0, and the top one has the index = count -1. Depending on the current cursor's possition
+     * relative to the center of the plot, index and count, the positions will be computed like this:
+     *
+     *               |
+     *           two | two
+     *           one | one
+     *          zero | zero
+     *       --------+--------
+     *           two | two
+     *           one | one
+     *          zero | zero
+     *               |
+     */
     function computeRowPosition(plot, cursor, index, count) {
         var width = plot.width();
         var height = plot.height();
         var textAlign = 'left';
-		var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
+        var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
 
         var y = cursor.y;
         var x = cursor.x;
@@ -499,17 +499,17 @@ Licensed under the MIT license.
         };
     }
 
-	function rowCount(cursor) {
-		return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
-	}
+    function rowCount(cursor) {
+        return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
+    }
 
-	function labelRowIndex(cursor) {
-		return 0;
-	}
+    function labelRowIndex(cursor) {
+        return 0;
+    }
 
-	function valuesRowIndex(cursor) {
-		return cursor.showLabel ? 1 : 0;
-	}
+    function valuesRowIndex(cursor) {
+        return cursor.showLabel ? 1 : 0;
+    }
 
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {

@@ -111,7 +111,6 @@ describe('Flot cursors', function () {
         expect(firstCursor.lineWidth).toBe(1);
     });
 
-
     it('should be possible to create a cursor at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: []
@@ -508,17 +507,17 @@ describe('Flot cursors', function () {
                     showLabel: true,
                     showValuesRelativeToSeries: 0
                 }],
-			    xaxes: [{
+                xaxes: [{
                     min: 0,
                     max: 10,
                     ticks: 10,
-                    autoscale: "none"  
+                    autoscale: "none"
                 }],
                 yaxes: [{
                     min: 1,
                     max: 1.2,
                     ticks: 10,
-                    autoscale: "none"           
+                    autoscale: "none"
                 }]
             });
 
@@ -528,7 +527,7 @@ describe('Flot cursors', function () {
             expect(spy).toHaveBeenCalledWith('Blue cursor', jasmine.any(Number), jasmine.any(Number));
             expect(spy).toHaveBeenCalledWith('1.00, 1.1500', jasmine.any(Number), jasmine.any(Number));
         });
-        
+
         it('should display the cursor label in the same format as axis', function () {
             plot = $.plot("#placeholder", [sampledata], {
                 cursors: [{
@@ -545,13 +544,13 @@ describe('Flot cursors', function () {
                     min: 0,
                     max: 10,
                     autoscale: "none",
-                    tickFormatter: function(val) {return '<' + val + '>';}   
+                    tickFormatter: function(val) {return '<' + val + '>';}
                 }],
                 yaxes: [{
                     min: 100,
                     max: 110,
                     autoscale: "none",
-                    tickFormatter: function(val) {return '(' + val + ')';}           
+                    tickFormatter: function(val) {return '(' + val + ')';}
                 }]
             });
 
@@ -620,7 +619,7 @@ describe('Flot cursors', function () {
         it('should give the cursors unique names');
         it('should give the cursors created at runtime unique names');
     });
-	
+
     describe('Precision', function () {
 
         function spyOnFillText() {
@@ -653,7 +652,7 @@ describe('Flot cursors', function () {
 
             expect(spy).toHaveBeenCalledWith('1.000, 1.15000', jasmine.any(Number), jasmine.any(Number));
         });
-		
+
         it('should give the cursors a smaller precision in a litle graph', function () {
             var fixture = setFixtures('<div id="demo-container" style="width: 100px;height: 100px">').find('#demo-container').get(0);
 
@@ -678,6 +677,6 @@ describe('Flot cursors', function () {
 
             expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
         });
-    
+
     });
 });

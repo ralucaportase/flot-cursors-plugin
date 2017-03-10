@@ -108,7 +108,7 @@ describe("Cursors interaction", function () {
         expect(cursor.selected).not.toBe(true);
     });
 
-	it('should treat a mouseout event as a mouseup', function () {
+    it('should treat a mouseout event as a mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -144,8 +144,8 @@ describe("Cursors interaction", function () {
         expect(cursor.selected).toBe(false);
     });
 
-	it('should only listen to the relevant mouse buttons', function() {
-		plot = $.plot("#placeholder", [sampledata], {
+    it('should only listen to the relevant mouse buttons', function() {
+        plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
                     name: 'Blue cursor',
@@ -154,7 +154,7 @@ describe("Cursors interaction", function () {
                         relativeX: 0.5,
                         relativeY: 0.6
                     },
-					mouseButton: 'right',
+                    mouseButton: 'right',
                 }
             ]
         });
@@ -168,7 +168,7 @@ describe("Cursors interaction", function () {
         eventHolder.trigger(new $.Event('mousedown', {
             pageX: cursorX,
             pageY: cursorY,
-			button: 2
+            button: 2
         }));
 
         var cursor = plot.getCursors()[0];
@@ -177,19 +177,19 @@ describe("Cursors interaction", function () {
         eventHolder.trigger(new $.Event('mouseup', {
             pageX: cursorX,
             pageY: cursorY,
-			button: 2
+            button: 2
         }));
 
         expect(cursor.selected).toBe(false);
 
-		eventHolder.trigger(new $.Event('mousedown', {
+        eventHolder.trigger(new $.Event('mousedown', {
             pageX: cursorX,
             pageY: cursorY,
-			button: 1
+            button: 1
         }));
 
         expect(cursor.selected).toBe(false);
-	});
+    });
 
     it('should become selected on mouse down on cursor vertical line and unselected on mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
@@ -306,7 +306,7 @@ describe("Cursors interaction", function () {
         expect(cursor.y).toBe(plot.height() * 0.6 + 5);
     });
 
-	it('should not be possible to move a cursor with movable set to false', function () {
+    it('should not be possible to move a cursor with movable set to false', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
@@ -316,7 +316,7 @@ describe("Cursors interaction", function () {
                         relativeX: 0.5,
                         relativeY: 0.6
                     },
-					movable: false
+                    movable: false
                     }
                 ]
         });
@@ -937,7 +937,7 @@ describe("Cursors interaction", function () {
             expect($('#placeholder').css('cursor')).toBe('row-resize');
         });
 
-		it('should set the mouse pointer correctly when moving the cursor in one axis');
+        it('should set the mouse pointer correctly when moving the cursor in one axis');
 
         it('should set the mouse pointer of the holder div to default on chart shutdown', function () {
             plot = $.plot("#placeholder", [sampledata], {
