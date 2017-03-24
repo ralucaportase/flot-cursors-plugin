@@ -22,16 +22,6 @@ Licensed under the MIT license.
         labelPadding: 10
     };
 
-    // The possible locations for a cursor label
-    var cursorLabelLocationEnum = Object.freeze({
-        // This is the only label for a cursor
-        ONLY: 'only',
-        // There are two cursor labels and this is the top one
-        TOP: 'top',
-        // There are two cursor labels and this is the bottom one
-        BOTTOM: 'bottom'
-    });
-
     function init(plot) {
         var cursors = [];
         var update = [];
@@ -124,15 +114,16 @@ Licensed under the MIT license.
 
             cursors.forEach(function (cursor) {
                 if (cursor.selected) {
-                    if (!result)
+                    if (!result) {
                         result = cursor;
+                    }
                 }
             });
 
             return result;
         };
 
-        var selectCursor = function (cursors, cursor) {
+        /*var selectCursor = function (cursors, cursor) {
             cursors.forEach(function (c) {
                 if (c === cursor) {
                     c.selected = true;
@@ -140,7 +131,7 @@ Licensed under the MIT license.
                     c.selected = false;
                 }
             });
-        };
+        };*/
 
         var visibleCursors = function(cursors) {
             return cursors.filter(function (cursor) {
@@ -334,25 +325,24 @@ Licensed under the MIT license.
                 pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
                 return intersections;
             }
-            
-            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y , function(seriesIndex) {
-                        return seriesIndex === cursor.snapToPlot;
-                    }, Number.MAX_VALUE);
-                        
-            if(nearestPoint){
+
+            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y, function(seriesIndex) {
+                return seriesIndex === cursor.snapToPlot;
+            }, Number.MAX_VALUE);
+
+            if (nearestPoint) {
                 var dataset = plot.getData(),
-                    points = dataset[cursor.snapToPlot].datapoints.points,
                     ps = dataset[cursor.snapToPlot].datapoints.pointsize,
                     i = nearestPoint.dataIndex * ps;
-                    
+
                 intersections.points.push({
                     x: nearestPoint.datapoint[0],
                     y: nearestPoint.datapoint[1],
                     leftPoint: [i - ps, i - ps + 1],
-                    rightPoint: [i, i+1]
-                });        
+                    rightPoint: [i, i + 1]
+                });
             }
-                        
+
             return intersections;
         }
 
@@ -410,8 +400,9 @@ Licensed under the MIT license.
 
     function setPosition(plot, cursor, pos) {
         var o;
-        if (!pos)
+        if (!pos) {
             return;
+        }
 
         o = plot.p2c(pos);
         var rx = pos.relativeX * plot.width();
@@ -433,7 +424,7 @@ Licensed under the MIT license.
         }
     }
 
-  function maybeSnapToPlot(plot, cursor, intersections) {
+    function maybeSnapToPlot(plot, cursor, intersections) {
         if (cursor.snapToPlot !== undefined) {
             var point = intersections.points[0];
 
@@ -446,11 +437,11 @@ Licensed under the MIT license.
                     x: point.x,
                     y: point.y
                 });
-                
+
                 cursor.position.relativeX = relativeX;
                 cursor.position.relativeY = relativeY;
                 intersections.x = point.x; // update cursor position
-                intersections.y = point.y; 
+                intersections.y = point.y;
             }
         }
     }
@@ -514,7 +505,6 @@ Licensed under the MIT license.
     function drawLabel(plot, ctx, cursor) {
         if (cursor.showLabel) {
             ctx.beginPath();
-            var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
             var position = computeRowPosition(plot, cursor, labelRowIndex(cursor), rowCount(cursor));
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
@@ -527,19 +517,19 @@ Licensed under the MIT license.
 
     function fillTextAligned(ctx, text, x, y, position, fontStyle, fontWeight, fontSize, fontFamily) {
         var fontSizeInPx = Number(fontSize.substring(0, fontSize.length - 2));
+        var textWidth;
         switch (position) {
             case 'left':
-                var textWidth = ctx.measureText(text).width;
+                textWidth = ctx.measureText(text).width;
                 x = x - textWidth - constants.iRectSize;
-                y = y;
                 break;
             case 'bottom-left':
-                var textWidth = ctx.measureText(text).width;
+                textWidth = ctx.measureText(text).width;
                 x = x - textWidth - constants.iRectSize;
                 y = y + fontSizeInPx;
                 break;
             case 'top-left':
-                var textWidth = ctx.measureText(text).width;
+                textWidth = ctx.measureText(text).width;
                 x = x - textWidth - constants.iRectSize;
                 y = y - constants.iRectSize;
                 break;
@@ -549,7 +539,6 @@ Licensed under the MIT license.
                 break;
             case 'right':
                 x = x + constants.iRectSize;
-                y = y;
                 break;
             case 'bottom-right':
             default:
@@ -558,10 +547,9 @@ Licensed under the MIT license.
                 break;
         }
 
-        ctx.textBaseline="middle";
+        ctx.textBaseline = "middle";
         ctx.font = fontStyle + ' ' + fontWeight + ' ' + fontSize + ' ' + fontFamily;
         ctx.fillText(text, x, y);
-
     }
 
     function drawIntersections(plot, ctx, cursor) {
@@ -586,7 +574,7 @@ Licensed under the MIT license.
                 if (typeof cursor.formatIntersectionData === 'function') {
                     text = cursor.formatIntersectionData(point);
                 } else {
-                     text= point.y.toFixed(2);
+                    text = point.y.toFixed(2);
                 }
 
                 fillTextAligned(ctx, text, coord.left, coord.top, cursor.intersectionLabelPosition, cursor.fontStyle, cursor.fontWeight, cursor.fontSize, cursor.fontFamily);
@@ -595,16 +583,16 @@ Licensed under the MIT license.
         }
     }
 
-    function computeCursorsPrecision(plot, axis, canvasPosition){
-        var canvas2 = axis.direction === "x" ? canvasPosition + 1: canvasPosition - 1,
+    function computeCursorsPrecision(plot, axis, canvasPosition) {
+        var canvas2 = axis.direction === "x" ? canvasPosition + 1 : canvasPosition - 1,
             point1 = axis.c2p(canvasPosition),
             point2 = axis.c2p(canvas2);
-            
-        return  plot.computeValuePrecision(point1, point2, axis.direction, 1);
+
+        return plot.computeValuePrecision(point1, point2, axis.direction, 1);
     }
-    
+
     function drawValues(plot, ctx, cursor) {
-       if (typeof cursor.showValuesRelativeToSeries === 'number') {
+        if (typeof cursor.showValuesRelativeToSeries === 'number') {
             var dataset = plot.getData(),
                 series = dataset[cursor.showValuesRelativeToSeries],
                 xaxis = series.xaxis,
@@ -617,22 +605,22 @@ Licensed under the MIT license.
                 yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis, yaxisPrecision);
 
             spaceIndex = xFormattedValue.indexOf(htmlSpace);
-            if(spaceIndex !== -1) { 
+            if (spaceIndex !== -1) {
                 xFormattedValue = xFormattedValue.slice(0, spaceIndex);
             }
 
             spaceIndex = yFormattedValue.indexOf(htmlSpace);
-            if(spaceIndex !== -1) {
+            if (spaceIndex !== -1) {
                 yFormattedValue = yFormattedValue.slice(0, spaceIndex);
             }
- 
+
             var text = xFormattedValue + ', ' + yFormattedValue,
                 position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
             ctx.textAlign = 'left';
-            ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;             
+            ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
             ctx.fillText(text, position.x, position.y);
         }
     }
@@ -643,7 +631,8 @@ Licensed under the MIT license.
             return;
         }
         // keep line sharp
-        var adj = cursor.lineWidth % 2 ? 0.5 : 0;
+        var adj = cursor.lineWidth % 2 ? 0.5 : 0,
+            delta, numberOfSegments, i;
 
         ctx.strokeStyle = cursor.color;
         ctx.lineWidth = cursor.lineWidth;
@@ -657,9 +646,9 @@ Licensed under the MIT license.
                 ctx.moveTo(drawX, 0);
                 ctx.lineTo(drawX, plot.height());
             } else {
-                var numberOfSegments = cursor.dashes * 2 - 1;
-                var delta = plot.height() / numberOfSegments;
-                for (var i = 0; i < numberOfSegments; i += 2) {
+                numberOfSegments = cursor.dashes * 2 - 1;
+                delta = plot.height() / numberOfSegments;
+                for (i = 0; i < numberOfSegments; i += 2) {
                     ctx.moveTo(drawX, delta * i);
                     ctx.lineTo(drawX, delta * (i + 1));
                 }
@@ -672,9 +661,9 @@ Licensed under the MIT license.
                 ctx.moveTo(0, drawY);
                 ctx.lineTo(plot.width(), drawY);
             } else {
-                var numberOfSegments = cursor.dashes * 2 - 1;
-                var delta = plot.width() / numberOfSegments;
-                for (var i = 0; i < numberOfSegments; i += 2) {
+                numberOfSegments = cursor.dashes * 2 - 1;
+                delta = plot.width() / numberOfSegments;
+                for (i = 0; i < numberOfSegments; i += 2) {
                     ctx.moveTo(delta * i, drawY);
                     ctx.lineTo(delta * (i + 1), drawY);
                 }
@@ -689,10 +678,11 @@ Licensed under the MIT license.
         var adj = cursor.lineWidth % 2 ? 0.5 : 0;
         ctx.beginPath();
 
-        if (cursor.highlighted)
+        if (cursor.highlighted) {
             ctx.strokeStyle = 'orange';
-        else
+        } else {
             ctx.strokeStyle = cursor.color;
+        }
         if (cursor.symbol && plot.drawSymbol && plot.drawSymbol[cursor.symbol]) {
             //first draw a white background
             ctx.fillStyle = 'white';

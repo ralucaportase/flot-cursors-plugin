@@ -9,10 +9,10 @@ describe("Cursors interaction", function () {
     var placeholder;
 
     beforeEach(function () {
-      var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
+        var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
 
-      placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
-      placeholder.appendTo(fixture);
+        placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
+        placeholder.appendTo(fixture);
 
         jasmine.addMatchers({
             toBeAnyOf: function (util, customEqualityTesters) {
@@ -154,7 +154,7 @@ describe("Cursors interaction", function () {
                         relativeX: 0.5,
                         relativeY: 0.6
                     },
-                    mouseButton: 'right',
+                    mouseButton: 'right'
                 }
             ]
         });
@@ -273,8 +273,8 @@ describe("Cursors interaction", function () {
                         relativeX: 0.5,
                         relativeY: 0.6
                     }
-                    }
-                ]
+                }
+            ]
         });
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
@@ -317,8 +317,8 @@ describe("Cursors interaction", function () {
                         relativeY: 0.6
                     },
                     movable: false
-                    }
-                ]
+                }
+            ]
         });
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
@@ -745,8 +745,8 @@ describe("Cursors interaction", function () {
                 ]
             });
 
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 
@@ -773,8 +773,8 @@ describe("Cursors interaction", function () {
                 ]
             });
 
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
+            var cursorX = plot.offset().left + plot.width() * 0.5;
+            var cursorY = plot.offset().top + plot.height() * 0.6;
 
             jasmine.clock().tick(20);
 
@@ -785,7 +785,6 @@ describe("Cursors interaction", function () {
 
             expect($('#placeholder').css('cursor')).not.toBe('pointer');
         });
-
 
         it('should change the mouse pointer when moving from the cursor vertical line to the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {

@@ -6,7 +6,6 @@ describe("Cursors snapping", function () {
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
     var sampledata2 = [[0, 2], [1, 2.1], [2, 2.2]];
-    var emptydata = [];
 
     var plot;
     var placeholder;

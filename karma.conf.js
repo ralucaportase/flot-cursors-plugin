@@ -41,14 +41,14 @@ module.exports = function (config) {
 
         eslint: {
             stopOnError: true,
-            showWarnings: true,
+            showWarnings: false,
             engine: {
-                configFile: '.eslintrc',
-				emitError: true,
-				emitWarning: true
+                configFile: '.eslintrc.json',
+                emitError: true,
+                emitWarning: true
             }
         },
-		
+
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
