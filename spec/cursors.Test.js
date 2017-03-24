@@ -29,7 +29,7 @@ describe('Flot cursors', function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    color: 'blue',
+                    color: 'blue'
                 }
             ]
         });
@@ -44,7 +44,6 @@ describe('Flot cursors', function () {
             cursors: []
         });
 
-        var firstCursor = plot.getCursors()[0];
         expect(plot.getCursors().length).toBe(0);
     });
 
@@ -53,11 +52,11 @@ describe('Flot cursors', function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    color: 'blue',
+                    color: 'blue'
                 },
                 {
                     name: 'Red cursor',
-                    color: 'red',
+                    color: 'red'
                 }
             ]
         });
@@ -74,7 +73,7 @@ describe('Flot cursors', function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    color: 'blue',
+                    color: 'blue'
                 }
             ]
         });
@@ -88,7 +87,7 @@ describe('Flot cursors', function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    color: 'blue',
+                    color: 'blue'
                 }
             ]
         });
@@ -102,7 +101,7 @@ describe('Flot cursors', function () {
             cursors: [
                 {
                     name: 'Blue cursor',
-                    color: 'blue',
+                    color: 'blue'
                 }
             ]
         });
@@ -229,8 +228,8 @@ describe('Flot cursors', function () {
                         name: 'Blue cursor',
                         color: 'blue',
                         symbol: symbol
-                        }
-                    ]
+                    }
+                ]
             });
 
             arr.forEach(function (symbol) {
@@ -239,14 +238,12 @@ describe('Flot cursors', function () {
 
             jasmine.clock().tick(20);
 
-
             arr.forEach(function (s) {
                 if (s === symbol) {
                     expect(plot.drawSymbol[s]).toHaveBeenCalled();
                 } else {
                     expect(plot.drawSymbol[s]).not.toHaveBeenCalled();
                 }
-
             });
         });
     });
@@ -258,8 +255,8 @@ describe('Flot cursors', function () {
                     name: 'Blue cursor',
                     color: 'blue',
                     symbol: 'none'
-                    }
-                ]
+                }
+            ]
         });
 
         symbols.forEach(function (symbol) {
@@ -267,7 +264,6 @@ describe('Flot cursors', function () {
         });
 
         jasmine.clock().tick(20);
-
 
         symbols.forEach(function (s) {
             expect(plot.drawSymbol[s]).not.toHaveBeenCalled();
@@ -347,11 +343,10 @@ describe('Flot cursors', function () {
     it('should be possible to change the cursor visibility at runtime', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [{
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    show: true
-                }
-            ]
+                name: 'Blue cursor',
+                color: 'blue',
+                show: true
+            }]
         });
 
         var firstCursor = plot.getCursors()[0];
@@ -402,7 +397,7 @@ describe('Flot cursors', function () {
         jasmine.clock().tick(20);
 
         var fiveDashCallCount = spy.calls.count();
-        expect(oneDashCallCount + (5-1)*2).toEqual(fiveDashCallCount);
+        expect(oneDashCallCount + (5 - 1) * 2).toEqual(fiveDashCallCount);
     });
 
     describe('Labels', function () {
@@ -423,8 +418,7 @@ describe('Flot cursors', function () {
                             y: 1.15
                         },
                         showLabel: true
-                }
-            ]
+                    } ]
             });
 
             var spy = spyOnFillText();
@@ -444,8 +438,7 @@ describe('Flot cursors', function () {
                             y: 1.15
                         },
                         showLabel: false
-                }
-            ]
+                    } ]
             });
 
             var spy = spyOnFillText();
@@ -465,14 +458,14 @@ describe('Flot cursors', function () {
                             y: 1.15
                         },
                         showValuesRelativeToSeries: 0
-                }
-            ]
+                    }
+                ]
             });
 
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).toHaveBeenCalledWith('1.0000, 1.1500', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.000, 1.1500', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should not display the cursor values relative to a plot when told not to', function () {
@@ -485,8 +478,8 @@ describe('Flot cursors', function () {
                             x: 1,
                             y: 1.15
                         }
-                }
-            ]
+                    }
+                ]
             });
 
             var spy = spyOnFillText();
@@ -544,13 +537,13 @@ describe('Flot cursors', function () {
                     min: 0,
                     max: 10,
                     autoscale: "none",
-                    tickFormatter: function(val) {return '<' + val + '>';}
+                    tickFormatter: function(val) { return '<' + val + '>'; }
                 }],
                 yaxes: [{
                     min: 100,
                     max: 110,
                     autoscale: "none",
-                    tickFormatter: function(val) {return '(' + val + ')';}
+                    tickFormatter: function(val) { return '(' + val + ')'; }
                 }]
             });
 
@@ -621,7 +614,6 @@ describe('Flot cursors', function () {
     });
 
     describe('Precision', function () {
-
         function spyOnFillText() {
             var overlay = $('.flot-overlay')[0];
             var octx = overlay.getContext("2d");
@@ -643,14 +635,14 @@ describe('Flot cursors', function () {
                             y: 1.15
                         },
                         showValuesRelativeToSeries: 0
-                }
-            ]
+                    }
+                ]
             });
 
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).toHaveBeenCalledWith('1.000, 1.15000', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.000, 1.1500', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should give the cursors a smaller precision in a litle graph', function () {
@@ -668,8 +660,8 @@ describe('Flot cursors', function () {
                             y: 1.15
                         },
                         showValuesRelativeToSeries: 0
-                }
-            ]
+                    }
+                ]
             });
 
             var spy = spyOnFillText();
@@ -677,6 +669,5 @@ describe('Flot cursors', function () {
 
             expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
         });
-
     });
 });

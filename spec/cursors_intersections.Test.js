@@ -41,7 +41,7 @@ describe("Cursors intersections", function () {
                     x: 1,
                     y: 0
                 },
-                snapToPlot: 0 
+                snapToPlot: 0
             }]
         });
 
@@ -65,7 +65,7 @@ describe("Cursors intersections", function () {
                     y: 0
                 },
                 show: false,
-                snapToPlot: 0 
+                snapToPlot: 0
             }]
         });
 
@@ -95,7 +95,7 @@ describe("Cursors intersections", function () {
                     y: 0
                 },
                 showIntersections: [0],
-                snapToPlot: 0 
+                snapToPlot: 0
             }]
         });
 
@@ -129,7 +129,7 @@ describe("Cursors intersections", function () {
                     x: 0.5,
                     y: 0
                 },
-                snapToPlot: 0 
+                snapToPlot: 0
             }]
         });
 

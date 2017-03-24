@@ -59,8 +59,8 @@ describe('Cursors Position', function () {
                         relativeX: -30,
                         relativeY: -40
                     }
-                    }
-                ]
+                }
+            ]
         });
 
         jasmine.clock().tick(20);
@@ -104,48 +104,50 @@ describe('Cursors Position', function () {
             data: sampledata,
             xaxis: 1,
             yaxis: 1
-            }, {
+        },
+        {
             data: sampledata3,
             xaxis: 2,
             yaxis: 2
-            }], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    mode: 'xy',
-                    color: 'blue',
-                    position: {
-                        x: 1,
-                        y: 1.1
-                    }
+        }],
+            {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        mode: 'xy',
+                        color: 'blue',
+                        position: {
+                            x: 1,
+                            y: 1.1
+                        }
                     },
-                {
-                    name: 'Red cursor',
-                    mode: 'xy',
-                    color: 'red',
-                    position: {
-                        x2: 11,
-                        y2: 20
-                    }
+                    {
+                        name: 'Red cursor',
+                        mode: 'xy',
+                        color: 'red',
+                        position: {
+                            x2: 11,
+                            y2: 20
+                        }
                     }
                 ],
-            xaxes: [
-                {
-                    position: 'bottom'
+                xaxes: [
+                    {
+                        position: 'bottom'
                     },
-                {
-                    position: 'top'
+                    {
+                        position: 'top'
                     }
                 ],
-            yaxes: [
-                {
-                    position: 'left'
+                yaxes: [
+                    {
+                        position: 'left'
                     },
-                {
-                    position: 'right'
+                    {
+                        position: 'right'
                     }
                 ]
-        });
+            });
 
         jasmine.clock().tick(20);
 
@@ -184,11 +186,6 @@ describe('Cursors Position', function () {
                         }
                     }
                 ]
-            });
-
-            var pos1 = plot.c2p({
-                x: 3,
-                y: 1.5
             });
 
             expect(true).toBe(false);
