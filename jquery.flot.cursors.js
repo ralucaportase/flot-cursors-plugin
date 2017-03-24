@@ -123,16 +123,6 @@ Licensed under the MIT license.
             return result;
         };
 
-        /*var selectCursor = function (cursors, cursor) {
-            cursors.forEach(function (c) {
-                if (c === cursor) {
-                    c.selected = true;
-                } else {
-                    c.selected = false;
-                }
-            });
-        };*/
-
         var visibleCursors = function(cursors) {
             return cursors.filter(function (cursor) {
                 return cursor.show;

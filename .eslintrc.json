@@ -6,8 +6,7 @@
       "impliedStrict": true,
       "jsx": true
     },
-    "sourceType": "module",
-    "ignore-pattern": "node_modules/*"
+    "sourceType": "module"
   },
 
   "env": {
