@@ -52,7 +52,9 @@ Licensed under the MIT license.
                 mouseButton: 'all',
                 dashes: 1,
                 intersectionColor: 'darkgray',
-                intersectionLabelPosition: 'bottom-right'
+                intersectionLabelPosition: 'bottom-right',
+                mouseRelativeX: 0.5,
+                mouseRelativeY: 0.5
             });
         }
 
@@ -68,8 +70,11 @@ Licensed under the MIT license.
 
         plot.addCursor = function addCursor(options) {
             var currentCursor = createCursor(options);
+            currentCursor.mouseRelativeX = currentCursor.position.relativeX || 0.5;
+            currentCursor.mouseRelativeY = currentCursor.position.relativeY || 0.5;
 
             setPosition(plot, currentCursor, options.position);
+
             cursors.push(currentCursor);
 
             plot.triggerRedrawOverlay();
@@ -104,10 +109,6 @@ Licensed under the MIT license.
 
             return [];
         };
-
-        function onMouseOut(e) {
-            onMouseUp(e);
-        }
 
         var selectedCursor = function (cursors) {
             var result;
@@ -210,6 +211,7 @@ Licensed under the MIT license.
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
             var currentlySelectedCursor = selectedCursor(cursors);
 
             if (currentlySelectedCursor) {
@@ -220,11 +222,13 @@ Licensed under the MIT license.
                 currentlySelectedCursor.selected = false;
                 if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = mouseX;
+                    currentlySelectedCursor.mouseRelativeX = mouseX / plot.width();
                     currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
                 }
 
                 if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = mouseY;
+                    currentlySelectedCursor.mouseRelativeY = mouseY / plot.height();
                     currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
                 }
 
@@ -244,11 +248,13 @@ Licensed under the MIT license.
                 if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = mouseX;
                     currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
+                    currentlySelectedCursor.mouseRelativeX = mouseX / plot.width();
                 }
 
                 if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = mouseY;
                     currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
+                    currentlySelectedCursor.mouseRelativeY = mouseY / plot.height();
                 }
 
                 plot.triggerRedrawOverlay();
@@ -293,7 +299,6 @@ Licensed under the MIT license.
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
             eventHolder.mousedown(onMouseDown);
             eventHolder.mouseup(onMouseUp);
-            eventHolder.mouseout(onMouseOut);
             eventHolder.mousemove(onMouseMove);
         });
 
@@ -316,9 +321,11 @@ Licensed under the MIT license.
                 return intersections;
             }
 
-            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y, function(seriesIndex) {
-                return seriesIndex === cursor.snapToPlot;
-            }, Number.MAX_VALUE);
+            var cursorMouseX = cursor.mouseRelativeX * plot.width(),
+                cursorMouseY = cursor.mouseRelativeY * plot.height(),
+                nearestPoint = plot.findNearbyItem(cursorMouseX, cursorMouseY, function(seriesIndex) {
+                    return seriesIndex === cursor.snapToPlot;
+                }, Number.MAX_VALUE);
 
             if (nearestPoint) {
                 var dataset = plot.getData(),
@@ -373,7 +380,6 @@ Licensed under the MIT license.
         plot.hooks.shutdown.push(function (plot, eventHolder) {
             eventHolder.unbind('mousedown', onMouseDown);
             eventHolder.unbind('mouseup', onMouseUp);
-            eventHolder.unbind('mouseout', onMouseOut);
             eventHolder.unbind('mousemove', onMouseMove);
             eventHolder.unbind('cursorupdates');
             plot.getPlaceholder().css('cursor', 'default');
@@ -609,7 +615,6 @@ Licensed under the MIT license.
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
-            ctx.textAlign = 'left';
             ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
             ctx.fillText(text, position.x, position.y);
         }

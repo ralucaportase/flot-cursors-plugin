@@ -108,7 +108,7 @@ describe("Cursors interaction", function () {
         expect(cursor.selected).not.toBe(true);
     });
 
-    it('should treat a mouseout event as a mouseup', function () {
+    xit('should treat a mouseout event as a mouseup', function () {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [
                 {
