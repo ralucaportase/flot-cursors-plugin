@@ -321,9 +321,9 @@ Licensed under the MIT license.
                 return intersections;
             }
 
-            var cursorMouseX = cursor.mouseRelativeX * plot.width(),
-                cursorMouseY = cursor.mouseRelativeY * plot.height(),
-                nearestPoint = plot.findNearbyItem(cursorMouseX, cursorMouseY, function(seriesIndex) {
+            var cursorLastMouseX = cursor.mouseRelativeX * plot.width(),
+                cursorLastMouseY = cursor.mouseRelativeY * plot.height(),
+                nearestPoint = plot.findNearbyItem(cursorLastMouseX, cursorLastMouseY, function(seriesIndex) {
                     return seriesIndex === cursor.snapToPlot;
                 }, Number.MAX_VALUE);
 
