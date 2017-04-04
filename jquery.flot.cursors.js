@@ -325,7 +325,9 @@ Licensed under the MIT license.
                 cursorLastMouseY = cursor.mouseRelativeY * plot.height(),
                 nearestPoint = plot.findNearbyItem(cursorLastMouseX, cursorLastMouseY, function(seriesIndex) {
                     return seriesIndex === cursor.snapToPlot;
-                }, Number.MAX_VALUE);
+                }, Number.MAX_VALUE, function(x, y) {
+                    return x * x + y * y * 0.025;
+                });
 
             if (nearestPoint) {
                 var dataset = plot.getData(),
