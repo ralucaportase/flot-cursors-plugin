@@ -108,42 +108,6 @@ describe("Cursors interaction", function () {
         expect(cursor.selected).not.toBe(true);
     });
 
-    xit('should treat a mouseout event as a mouseup', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
-
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
-
-        jasmine.clock().tick(20);
-
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
-
-        var cursor = plot.getCursors()[0];
-        expect(cursor.selected).toBe(true);
-
-        eventHolder.trigger(new $.Event('mouseout', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
-
-        expect(cursor.selected).toBe(false);
-    });
-
     it('should only listen to the relevant mouse buttons', function() {
         plot = $.plot("#placeholder", [sampledata], {
             cursors: [

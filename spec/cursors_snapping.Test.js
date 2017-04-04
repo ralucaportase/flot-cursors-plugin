@@ -203,4 +203,37 @@ describe("Cursors snapping", function () {
         expect(cursor.x).toBe(pos.left);
         expect(cursor.y).toBe(pos.top);
     });
+
+    it('should snap on the closest position on mouse up', function() {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 0.2,
+                        relativeY: 0.1
+                    }
+                }
+            ]
+        });
+
+        var cursorX = plot.offset().left + plot.width() * 0.5,
+            cursorY = plot.offset().top + plot.height() * 0.6,
+            cursor = plot.getCursors()[0];
+
+        cursor.selected = true;
+        cursor.dragmode = 'xy';
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mouseup', {
+            pageX: cursorX,
+            pageY: cursorY
+        }));
+
+        expect(cursor.position.relativeX).toBe(0.5);
+        expect(cursor.position.relativeY).toBe(0.6);
+    })
 });
