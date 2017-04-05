@@ -113,7 +113,7 @@ Licensed under the MIT license.
             return [];
         };
 
-        plot.computePositionTextValue = computePositionTextValue;
+        plot.formatCursorPosition = formatCursorPosition;
 
         var selectedCursor = function (cursors) {
             var result;
@@ -594,7 +594,7 @@ Licensed under the MIT license.
         return plot.computeValuePrecision(point1, point2, axis.direction, 1);
     }
 
-    function computePositionTextValue(plot, cursor) {
+    function formatCursorPosition(plot, cursor) {
         if (typeof cursor.showValuesRelativeToSeries === 'number') {
             var dataset = plot.getData(),
                 series = dataset[cursor.showValuesRelativeToSeries],
@@ -626,7 +626,7 @@ Licensed under the MIT license.
 
     function drawValues(plot, ctx, cursor) {
         if (typeof cursor.showValuesRelativeToSeries === 'number') {
-            var positionTextValues = computePositionTextValue(plot, cursor),
+            var positionTextValues = formatCursorPosition(plot, cursor),
                 text = positionTextValues.xTextValue + ", " + positionTextValues.yTextValue,
                 position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));
 
