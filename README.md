@@ -23,10 +23,6 @@ The plugin supports these options:
                 relativeX or x or x2 or x3 ..: number,
                 relativeY or y or y2 or y3 ..: number
             },
-            mousePosition: {
-                relativeX: number,
-                relativeY: number
-            },
             show: true or false,
             showLabel: true or false,
             snapToPlot: number,
@@ -127,7 +123,7 @@ The plugin adds some public methods to the plot:
 * plot.formatCursorPosition(plot, cursor)
 
     return the formatted text values of the position of cursor as an 
-	object { xTextValue, yTextValue }
+    object { xTextValue, yTextValue }
 
 Everytime one or more cursors changes state a *cursorupdates* event is emitted on the chart container.
 These events are emitted in one of these situations:
