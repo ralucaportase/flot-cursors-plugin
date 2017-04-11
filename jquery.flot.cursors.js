@@ -33,6 +33,10 @@ Licensed under the MIT license.
                     relativeX: 0.5,
                     relativeY: 0.5
                 },
+                mousePosition: {
+                    relativeX: 0.5,
+                    relativeY: 0.5
+                },
                 x: 0,
                 y: 0,
                 show: true,
@@ -69,7 +73,11 @@ Licensed under the MIT license.
         plot.addCursor = function addCursor(options) {
             var currentCursor = createCursor(options);
 
+            currentCursor.mousePosition.relativeX = currentCursor.position.relativeX || 0.5;
+            currentCursor.mousePosition.relativeY = currentCursor.position.relativeY || 0.5;
+
             setPosition(plot, currentCursor, options.position);
+
             cursors.push(currentCursor);
 
             plot.triggerRedrawOverlay();
@@ -105,9 +113,7 @@ Licensed under the MIT license.
             return [];
         };
 
-        function onMouseOut(e) {
-            onMouseUp(e);
-        }
+        plot.formatCursorPosition = formatCursorPosition;
 
         var selectedCursor = function (cursors) {
             var result;
@@ -210,6 +216,7 @@ Licensed under the MIT license.
             var offset = plot.offset();
             var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
             var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+
             var currentlySelectedCursor = selectedCursor(cursors);
 
             if (currentlySelectedCursor) {
@@ -220,11 +227,13 @@ Licensed under the MIT license.
                 currentlySelectedCursor.selected = false;
                 if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = mouseX;
+                    currentlySelectedCursor.mousePosition.relativeX = mouseX / plot.width();
                     currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
                 }
 
                 if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = mouseY;
+                    currentlySelectedCursor.mousePosition.relativeY = mouseY / plot.height();
                     currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
                 }
 
@@ -244,11 +253,13 @@ Licensed under the MIT license.
                 if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = mouseX;
                     currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
+                    currentlySelectedCursor.mousePosition.relativeX = mouseX / plot.width();
                 }
 
                 if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = mouseY;
                     currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
+                    currentlySelectedCursor.mousePosition.relativeY = mouseY / plot.height();
                 }
 
                 plot.triggerRedrawOverlay();
@@ -293,7 +304,6 @@ Licensed under the MIT license.
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
             eventHolder.mousedown(onMouseDown);
             eventHolder.mouseup(onMouseUp);
-            eventHolder.mouseout(onMouseOut);
             eventHolder.mousemove(onMouseMove);
         });
 
@@ -316,9 +326,13 @@ Licensed under the MIT license.
                 return intersections;
             }
 
-            var nearestPoint = plot.findNearbyItem(cursor.x, cursor.y, function(seriesIndex) {
-                return seriesIndex === cursor.snapToPlot;
-            }, Number.MAX_VALUE);
+            var cursorLastMouseX = cursor.mousePosition.relativeX * plot.width(),
+                cursorLastMouseY = cursor.mousePosition.relativeY * plot.height(),
+                nearestPoint = plot.findNearbyItem(cursorLastMouseX, cursorLastMouseY, function(seriesIndex) {
+                    return seriesIndex === cursor.snapToPlot;
+                }, Number.MAX_VALUE, function(x, y) {
+                    return x * x + y * y * 0.025;
+                });
 
             if (nearestPoint) {
                 var dataset = plot.getData(),
@@ -373,7 +387,6 @@ Licensed under the MIT license.
         plot.hooks.shutdown.push(function (plot, eventHolder) {
             eventHolder.unbind('mousedown', onMouseDown);
             eventHolder.unbind('mouseup', onMouseUp);
-            eventHolder.unbind('mouseout', onMouseOut);
             eventHolder.unbind('mousemove', onMouseMove);
             eventHolder.unbind('cursorupdates');
             plot.getPlaceholder().css('cursor', 'default');
@@ -581,7 +594,7 @@ Licensed under the MIT license.
         return plot.computeValuePrecision(point1, point2, axis.direction, 1);
     }
 
-    function drawValues(plot, ctx, cursor) {
+    function formatCursorPosition(plot, cursor) {
         if (typeof cursor.showValuesRelativeToSeries === 'number') {
             var dataset = plot.getData(),
                 series = dataset[cursor.showValuesRelativeToSeries],
@@ -604,12 +617,21 @@ Licensed under the MIT license.
                 yFormattedValue = yFormattedValue.slice(0, spaceIndex);
             }
 
-            var text = xFormattedValue + ', ' + yFormattedValue,
+            return {
+                xTextValue: xFormattedValue,
+                yTextValue: yFormattedValue
+            }
+        }
+    }
+
+    function drawValues(plot, ctx, cursor) {
+        if (typeof cursor.showValuesRelativeToSeries === 'number') {
+            var positionTextValues = formatCursorPosition(plot, cursor),
+                text = positionTextValues.xTextValue + ", " + positionTextValues.yTextValue,
                 position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));
 
             ctx.fillStyle = cursor.color;
             ctx.textAlign = position.textAlign;
-            ctx.textAlign = 'left';
             ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
             ctx.fillText(text, position.x, position.y);
         }
