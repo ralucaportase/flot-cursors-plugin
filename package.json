@@ -4,8 +4,8 @@
   "description": "Cursors for flot charting",
   "main": "jquery.flot.cursors.js",
   "scripts": {
-    "test": "node node_modules/karma/bin/karma start --single-run",
-    "coverage": "node node_modules/karma/bin/karma start --single-run --coverage",
+    "test": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1",
+    "coverage": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1 --coverage --browsers=Chrome",
     "preversion": "npm test"
   },
   "repository": {
