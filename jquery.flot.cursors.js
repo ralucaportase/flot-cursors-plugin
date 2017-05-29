@@ -369,6 +369,7 @@ Licensed under the MIT license.
                     ctx.save();
                     ctx.translate(plotOffset.left, plotOffset.top);
 
+                    determineAndSetTextQuadrant(plot, ctx, cursor);
                     drawVerticalAndHorizontalLines(plot, ctx, cursor);
                     drawLabel(plot, ctx, cursor);
                     drawIntersections(plot, ctx, cursor);
@@ -449,6 +450,45 @@ Licensed under the MIT license.
         }
     }
 
+    function determineAndSetTextQuadrant(plot, ctx, cursor) {
+        var width = plot.width(),
+            height = plot.height(),
+            y = cursor.y,
+            x = cursor.x,
+            rowsWidth = 0,
+            rowsHeight = 0,
+            count = rowCount(cursor),
+            fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2)),
+            lowerLimit = 0.05,
+            higherLimit = 1 - lowerLimit;
+
+        ctx.font = cursor.fontStyle + ' ' + cursor.fontWeight + ' ' + cursor.fontSize + ' ' + cursor.fontFamily;
+        if (cursor.showLabel) {
+            rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
+        }
+        if (typeof cursor.showValuesRelativeToSeries === 'number') {
+            rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
+        }
+
+        if (cursor.halign === 'right' && x + rowsWidth > width * higherLimit) {
+            cursor.halign = 'left';
+        } else if (cursor.halign === 'left' && x - rowsWidth < width * lowerLimit) {
+            cursor.halign = 'right';
+        } else if (!cursor.halign) {
+            cursor.halign = 'right';
+        }
+
+        rowsHeight = count * (fontSizeInPx + constants.labelPadding);
+
+        if (cursor.valign === 'below' && y + rowsHeight > height * higherLimit) {
+            cursor.valign = 'above';
+        } else if (cursor.valign === 'above' && y - rowsHeight < height * lowerLimit) {
+            cursor.valign = 'below';
+        } else if (!cursor.valign) {
+            cursor.valign = 'below';
+        }
+    }
+
     /**
      * The text displayed next to the cursor can be stacked as rows and their positions can be calculated with this function.
      * The bottom one has the index = 0, and the top one has the index = count -1. Depending on the current cursor's possition
@@ -465,22 +505,20 @@ Licensed under the MIT license.
      *               |
      */
     function computeRowPosition(plot, cursor, index, count) {
-        var width = plot.width();
-        var height = plot.height();
         var textAlign = 'left';
         var fontSizeInPx = Number(cursor.fontSize.substring(0, cursor.fontSize.length - 2));
 
         var y = cursor.y;
         var x = cursor.x;
 
-        if (x > (width / 2)) {
+        if (cursor.halign === 'left') {
             x -= constants.labelPadding;
             textAlign = 'right';
         } else {
             x += constants.labelPadding;
         }
 
-        if (y > (height / 2)) {
+        if (cursor.valign === 'above') {
             y -= constants.labelPadding * (count - index) + fontSizeInPx * (count - 1 - index);
         } else {
             y += constants.labelPadding * (index + 1) + fontSizeInPx * (index + 1);
