@@ -382,7 +382,9 @@ Licensed under the MIT license.
                 }
             });
 
-            plot.getPlaceholder().trigger('cursorupdates', [update]);
+            if (update.length > 0) {
+                plot.getPlaceholder().trigger('cursorupdates', [update]);
+            }
         });
 
         plot.hooks.shutdown.push(function (plot, eventHolder) {
