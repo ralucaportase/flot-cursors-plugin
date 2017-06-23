@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/ni-kismet/flot-cursors-plugin.svg?branch=master)](https://travis-ci.org/ni-kismet/flot-cursors-plugin) [![Coverage Status](https://coveralls.io/repos/github/ni-kismet/flot-cursors-plugin/badge.svg?branch=master)](https://coveralls.io/github/ni-kismet/flot-cursors-plugin?branch=master)
-
-flot.cursors
+flot.cursors [![Build Status](https://travis-ci.org/ni-kismet/flot-cursors-plugin.svg?branch=master)](https://travis-ci.org/ni-kismet/flot-cursors-plugin) [![Coverage Status](https://coveralls.io/repos/github/ni-kismet/flot-cursors-plugin/badge.svg?branch=master)](https://coveralls.io/github/ni-kismet/flot-cursors-plugin?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/ni-kismet/flot-cursors-plugin.svg)](https://greenkeeper.io/)
 ============
 
 This is a plugin for engineering-flot to create cursors. Cursors are used to measure various values on the graphs and charts. Multiple cursors are supported.
