@@ -34,8 +34,8 @@ Licensed under the MIT license.
                     relativeY: 0.5
                 },
                 mousePosition: {
-                    relativeX: 0.5,
-                    relativeY: 0.5
+                    relativeX: undefined,
+                    relativeY: undefined
                 },
                 x: 0,
                 y: 0,
@@ -56,7 +56,8 @@ Licensed under the MIT license.
                 mouseButton: 'all',
                 dashes: 1,
                 intersectionColor: 'darkgray',
-                intersectionLabelPosition: 'bottom-right'
+                intersectionLabelPosition: 'bottom-right',
+                snapToPlot: undefined
             });
         }
 
@@ -72,9 +73,6 @@ Licensed under the MIT license.
 
         plot.addCursor = function addCursor(options) {
             var currentCursor = createCursor(options);
-
-            currentCursor.mousePosition.relativeX = currentCursor.position.relativeX || 0.5;
-            currentCursor.mousePosition.relativeY = currentCursor.position.relativeY || 0.5;
 
             setPosition(plot, currentCursor, options.position);
 
@@ -329,14 +327,14 @@ Licensed under the MIT license.
             var cursorLastMouseX = cursor.mousePosition.relativeX * plot.width(),
                 cursorLastMouseY = cursor.mousePosition.relativeY * plot.height(),
                 nearestPoint = plot.findNearbyItem(cursorLastMouseX, cursorLastMouseY, function(seriesIndex) {
-                    return seriesIndex === cursor.snapToPlot;
+                    return cursor.snapToPlot === -1 || seriesIndex === cursor.snapToPlot;
                 }, Number.MAX_VALUE, function(x, y) {
                     return x * x + y * y * 0.025;
                 });
 
             if (nearestPoint) {
                 var dataset = plot.getData(),
-                    ps = dataset[cursor.snapToPlot].datapoints.pointsize,
+                    ps = dataset[nearestPoint.seriesIndex].datapoints.pointsize,
                     i = nearestPoint.dataIndex * ps;
 
                 intersections.points.push({
@@ -351,12 +349,22 @@ Licensed under the MIT license.
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
+            var isMousePositionInitilized = function(mousePosition) {
+                return mousePosition.relativeX !== undefined && mousePosition.relativeY !== undefined;
+            };
+
             update = [];
 
             cursors.forEach(function (cursor) {
                 var intersections;
 
                 setPosition(plot, cursor, cursor.position);
+
+                if (!isMousePositionInitilized(cursor.mousePosition)) {
+                    cursor.mousePosition.relativeX = cursor.x / plot.width();
+                    cursor.mousePosition.relativeY = cursor.y / plot.height();
+                }
+
                 intersections = findIntersections(plot, cursor);
                 maybeSnapToPlot(plot, cursor, intersections);
                 cursor.intersections = intersections;

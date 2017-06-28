@@ -100,54 +100,34 @@ describe('Cursors Position', function () {
     });
 
     it('should be possible to position the cursor relative to any of the axes when having multiple ones', function () {
-        plot = $.plot("#placeholder", [{
-            data: sampledata,
-            xaxis: 1,
-            yaxis: 1
-        },
+        plot = $.plot("#placeholder", [
+            { data: sampledata, xaxis: 1, yaxis: 1 },
+            { data: sampledata3, xaxis: 2, yaxis: 2 }
+        ],
         {
-            data: sampledata3,
-            xaxis: 2,
-            yaxis: 2
-        }],
-            {
-                cursors: [
-                    {
-                        name: 'Blue cursor',
-                        mode: 'xy',
-                        color: 'blue',
-                        position: {
-                            x: 1,
-                            y: 1.1
-                        }
-                    },
-                    {
-                        name: 'Red cursor',
-                        mode: 'xy',
-                        color: 'red',
-                        position: {
-                            x2: 11,
-                            y2: 20
-                        }
-                    }
-                ],
-                xaxes: [
-                    {
-                        position: 'bottom'
-                    },
-                    {
-                        position: 'top'
-                    }
-                ],
-                yaxes: [
-                    {
-                        position: 'left'
-                    },
-                    {
-                        position: 'right'
-                    }
-                ]
-            });
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    mode: 'xy',
+                    color: 'blue',
+                    position: { x: 1, y: 1.1 }
+                },
+                {
+                    name: 'Red cursor',
+                    mode: 'xy',
+                    color: 'red',
+                    position: { x2: 11, y2: 20 }
+                }
+            ],
+            xaxes: [
+                { position: 'bottom' },
+                { position: 'top' }
+            ],
+            yaxes: [
+                { position: 'left' },
+                { position: 'right' }
+            ]
+        });
 
         jasmine.clock().tick(20);
 
@@ -171,28 +151,5 @@ describe('Cursors Position', function () {
         expect(cursors[0].y).toBe(expectedY1);
         expect(cursors[1].x).toBe(expectedX2);
         expect(cursors[1].y).toBe(expectedY2);
-    });
-
-    describe('Reading', function () {
-        xit('should be possible to determine the position of the cursor relative to an axis', function () {
-            plot = $.plot("#placeholder", [sampledata2], {
-                cursors: [
-                    {
-                        name: 'Blue cursor',
-                        color: 'blue',
-                        position: {
-                            relativeX: 3,
-                            relativeY: 1.5
-                        }
-                    }
-                ]
-            });
-
-            expect(true).toBe(false);
-        });
-
-        xit('should be possible to determine the position of the cursor relative to multiple axes', function () {
-
-        });
     });
 });

@@ -23,7 +23,7 @@ The plugin supports these options:
             },
             show: true or false,
             showLabel: true or false,
-            snapToPlot: number,
+            snapToPlot: undefined, -1, 0 or positive number
             symbol: 'cross', 'triangle' ...,
             movable: true or false,
             mouseButton: 'all' or 'left' or 'right' or 'middle',
@@ -57,7 +57,7 @@ The plugin supports these options:
 
 **showValuesRelativeToSeries** if present and is numeric the coordinate of cursor (relative to the specified series of data) will be displayed next to the cursor manipulator.
 
-**snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor will be free.
+**snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor will be free. If set to -1 then the cursor will snap to any plot.
 
 **symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape. Set to 'none' to draw no symbol.
 
@@ -113,14 +113,14 @@ The plugin adds some public methods to the plot:
 * plot.setCursor(cursor , options)
 
     changes one or more cursor properties.
-	
+
 * plot.getIntersections(cursor)
 
     returns the intersections of the cursor with plots 	
-	
+
 * plot.formatCursorPosition(plot, cursor)
 
-    return the formatted text values of the position of cursor as an 
+    return the formatted text values of the position of cursor as an
     object { xTextValue, yTextValue }
 
 Everytime one or more cursors changes state a *cursorupdates* event is emitted on the chart container.

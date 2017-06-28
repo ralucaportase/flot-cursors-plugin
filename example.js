@@ -12,7 +12,7 @@ $(function () {
         sin = [];
         cos = [];
         offset += 0.025;
-        for (var i = 0; i < 14; i += 0.1) {
+        for (var i = 0; i < 14; i += 0.01) {
             sin.push([i, Math.sin(i + offset)]);
             cos.push([i, Math.cos(i + offset)]);
         }
@@ -74,7 +74,7 @@ $(function () {
                 mode: 'xy',
                 color: 'blue',
                 showIntersections: true,
-                snapToPlot: 1,
+                snapToPlot: -1,
                 symbol: 'diamond',
                 position: {
                     relativeX: 0.5,
