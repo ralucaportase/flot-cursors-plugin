@@ -457,7 +457,7 @@ describe('Flot cursors', function () {
                             x: 1.0,
                             y: 1.15
                         },
-                        showValuesRelativeToSeries: 0
+                        snapToPlot: 0
                     }
                 ]
             });
@@ -465,7 +465,7 @@ describe('Flot cursors', function () {
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).toHaveBeenCalledWith('1.000, 1.1500', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('1.000, 1.1000', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should not display the cursor values relative to a plot when told not to', function () {
@@ -485,7 +485,7 @@ describe('Flot cursors', function () {
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).not.toHaveBeenCalledWith('1.0000, 1.15000', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalled();
         });
 
         it('should display both the cursor label and values when told so', function () {
@@ -498,7 +498,7 @@ describe('Flot cursors', function () {
                         y: 1.15
                     },
                     showLabel: true,
-                    showValuesRelativeToSeries: 0
+                    showValues: true
                 }],
                 xaxes: [{
                     min: 0,
@@ -531,7 +531,7 @@ describe('Flot cursors', function () {
                         relativeY: 0.5
                     },
                     showLabel: true,
-                    showValuesRelativeToSeries: 0
+                    showValues: true
                 }],
                 xaxes: [{
                     min: 0,
@@ -568,7 +568,7 @@ describe('Flot cursors', function () {
                                     y: pos[2]
                                 },
                                 showLabel: true,
-                                showValuesRelativeToSeries: 0
+                                showValues: true
                             }
                         ]
                     });
@@ -634,7 +634,7 @@ describe('Flot cursors', function () {
                             x: 1,
                             y: 1.15
                         },
-                        showValuesRelativeToSeries: 0
+                        showValues: true
                     }
                 ]
             });
@@ -659,7 +659,7 @@ describe('Flot cursors', function () {
                             x: 1,
                             y: 1.15
                         },
-                        showValuesRelativeToSeries: 0
+                        showValues: true
                     }
                 ]
             });

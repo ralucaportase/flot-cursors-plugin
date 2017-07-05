@@ -87,8 +87,8 @@ $(function () {
                 color: 'green',
                 showIntersections: true,
                 symbol: 'cross',
-                showValuesRelativeToSeries: 0,
                 showLabel: true,
+                showValues: true,
                 fontSize: '10px',
                 fontStyle: 'italic',
                 position: {

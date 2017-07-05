@@ -45,7 +45,7 @@ Licensed under the MIT license.
                 mode: 'xy',
                 showIntersections: false,
                 showLabel: false,
-                showValuesRelativeToSeries: undefined,
+                showValues: true,
                 color: 'gray',
                 fontSize: '10px',
                 fontFamily: 'sans-serif',
@@ -57,7 +57,9 @@ Licensed under the MIT license.
                 dashes: 1,
                 intersectionColor: 'darkgray',
                 intersectionLabelPosition: 'bottom-right',
-                snapToPlot: undefined
+                snapToPlot: undefined,
+                defaultxaxis: 0,
+                defaultyaxis: 0
             });
         }
 
@@ -341,7 +343,8 @@ Licensed under the MIT license.
                     x: nearestPoint.datapoint[0],
                     y: nearestPoint.datapoint[1],
                     leftPoint: [i - ps, i - ps + 1],
-                    rightPoint: [i, i + 1]
+                    rightPoint: [i, i + 1],
+                    seriesIndex: nearestPoint.seriesIndex
                 });
             }
 
@@ -476,7 +479,7 @@ Licensed under the MIT license.
         if (cursor.showLabel) {
             rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
         }
-        if (typeof cursor.showValuesRelativeToSeries === 'number') {
+        if (cursor.showValues) {
             rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
         }
 
@@ -542,7 +545,7 @@ Licensed under the MIT license.
     }
 
     function rowCount(cursor) {
-        return (typeof cursor.showValuesRelativeToSeries === 'number' ? 1 : 0) + (cursor.showLabel ? 1 : 0);
+        return (cursor.showLabel ? 1 : 0) + (cursor.showValues ? 1 : 0);
     }
 
     function labelRowIndex(cursor) {
@@ -642,12 +645,40 @@ Licensed under the MIT license.
         return plot.computeValuePrecision(point1, point2, axis.direction, 1);
     }
 
+    function findXAxis(plot, cursor) {
+        var dataset = plot.getData(),
+            xaxes = plot.getXAxes();
+        if (cursor.snapToPlot === undefined) {
+            return xaxes[cursor.defaultxaxis];
+        } else {
+            if (cursor.intersections.points[0]) {
+                var series = dataset[cursor.intersections.points[0].seriesIndex];
+                return series.xaxis;
+            } else {
+                return xaxes[cursor.defaultxaxis];
+            }
+        }
+    }
+
+    function findYAxis(plot, cursor) {
+        var dataset = plot.getData(),
+            yaxes = plot.getYAxes();
+        if (cursor.snapToPlot === undefined) {
+            return yaxes[cursor.defaultxaxis];
+        } else {
+            if (cursor.intersections.points[0]) {
+                var series = dataset[cursor.intersections.points[0].seriesIndex];
+                return series.yaxis;
+            } else {
+                return yaxes[cursor.defaultxaxis];
+            }
+        }
+    }
+
     function formatCursorPosition(plot, cursor) {
-        if (typeof cursor.showValuesRelativeToSeries === 'number') {
-            var dataset = plot.getData(),
-                series = dataset[cursor.showValuesRelativeToSeries],
-                xaxis = series.xaxis,
-                yaxis = series.yaxis,
+        if (cursor.showValues) {
+            var xaxis = findXAxis(plot, cursor),
+                yaxis = findYAxis(plot, cursor),
                 htmlSpace = '&nbsp;',
                 xaxisPrecision = computeCursorsPrecision(plot, xaxis, cursor.x),
                 xFormattedValue = xaxis.tickFormatter(xaxis.c2p(cursor.x), xaxis, xaxisPrecision),
@@ -673,7 +704,7 @@ Licensed under the MIT license.
     }
 
     function drawValues(plot, ctx, cursor) {
-        if (typeof cursor.showValuesRelativeToSeries === 'number') {
+        if (cursor.showValues) {
             var positionTextValues = formatCursorPosition(plot, cursor),
                 text = positionTextValues.xTextValue + ", " + positionTextValues.yTextValue,
                 position = computeRowPosition(plot, cursor, valuesRowIndex(cursor), rowCount(cursor));

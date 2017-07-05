@@ -160,7 +160,4 @@ describe("Cursors intersections", function () {
         expect(intersections.points[0].x).toBe(plot.getData()[0].datapoints.points[0]);
         expect(intersections.points[0].y).toBe(plot.getData()[0].datapoints.points[1]);
     });
-
-    it('should set the color of intersections according to the setting');
-    it('should draw the label in the correct position');
 });

@@ -8,6 +8,8 @@ describe("Cursors snapping", function () {
     var sampledata2 = [[0, 2], [1, 2.1], [2, 2.2]];
     var sampledatav2 = [[0, 1], [1, 2.1], [2, 1.2]];
     var sampledata2v2 = [[0, 2], [1, 0.9], [2, 2.2]];
+    var outOfViewData = [[-2, -11], [-1, -10]];
+    var outOfViewDatav2 = [[12, 11], [11, 10]];
 
     var plot;
     var placeholder;
@@ -150,6 +152,96 @@ describe("Cursors snapping", function () {
 
         expect(cursor.x).toBe(pos.left);
         expect(cursor.y).toBe(pos.top);
+    });
+
+    it('should be able to limit the snap to range of the plot area', function () {
+        plot = $.plot("#placeholder", [outOfViewData], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { x: 5, y: 5 },
+                    snapToPlot: 0
+                }
+            ],
+            xaxis: { autoscale: 'none', min: 0, max: 10 },
+            yaxis: { autoscale: 'none', min: 0, max: 10 }
+        });
+
+        var updateChart = function () {
+            plot.setData([outOfViewDatav2]);
+            plot.setupGrid();
+            plot.draw();
+        };
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        var pos = plot.p2c({ x: 0, y: 0 });
+
+        expect(cursor.x).toBe(pos.left);
+        expect(cursor.y).toBe(pos.top);
+
+        updateChart();
+        jasmine.clock().tick(20);
+
+        pos = plot.p2c({ x: 10, y: 10 });
+
+        expect(cursor.x).toBe(pos.left);
+        expect(cursor.y).toBe(pos.top);
+    });
+
+    it('should not snap when there is no data', function () {
+        plot = $.plot("#placeholder", [[]], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { x: 5, y: 5 },
+                    snapToPlot: -1
+                }
+            ],
+            xaxis: { autoscale: 'none', min: 0, max: 10 },
+            yaxis: { autoscale: 'none', min: 0, max: 10 }
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        var pos = plot.p2c({ x: 5, y: 5 });
+
+        expect(cursor.x).toBe(pos.left);
+        expect(cursor.y).toBe(pos.top);
+    });
+
+    it('should not snap when there is no data and requested to snap to a specific plot', function () {
+        plot = $.plot("#placeholder", [[]], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { relativeX: 0.5, relativeY: 0.6 },
+                    snapToPlot: 0,
+                    defaultxaxis: 1,
+                    defaultyaxis: 1
+                }
+            ],
+            xaxes: [
+                { autoscale: 'none', min: 0, max: 10 },
+                { autoscale: 'none', min: 0, max: 100, show: true }
+            ],
+            yaxes: [
+                { autoscale: 'none', min: 0, max: 10 },
+                { autoscale: 'none', min: 0, max: 100, show: true }
+            ]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+
+        expect(cursor.x).toBeCloseTo(plot.getXAxes()[1].p2c(50), 2);
+        expect(cursor.y).toBeCloseTo(plot.getYAxes()[1].p2c(40), 2);
     });
 
     it('should be able to snap to any plot when the cursor is created with coords relative to canvas', function () {
@@ -327,5 +419,5 @@ describe("Cursors snapping", function () {
 
         expect(cursor.position.relativeX).toBe(0.5);
         expect(cursor.position.relativeY).toBe(0.6);
-    })
+    });
 });
