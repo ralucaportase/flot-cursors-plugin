@@ -25,8 +25,8 @@ The plugin supports these options:
             showLabel: true or false,
             showValues: true or false,
             snapToPlot: undefined, -1, 0 or positive number,
-            defaultxaxis: 0,
-            defaultyaxis: 0,
+            defaultxaxis: 1,
+            defaultyaxis: 1,
             symbol: 'cross', 'triangle' ...,
             movable: true or false,
             mouseButton: 'all' or 'left' or 'right' or 'middle',
@@ -62,9 +62,9 @@ The plugin supports these options:
 
 **snapToPlot** specifies a plot to which the cursor will snap. If not specified (or undefined) the cursor will be free. If set to -1 then the cursor will snap to any plot.
 
-**defaultxaxis**: the x axis to follow when the cursor is snapping to no plot
+**defaultxaxis**: the one-based index of the x axis to follow when the cursor is snapping to no plot
 
-**defaultyaxis**: the y axis to follow when the cursor is snapping to no plot
+**defaultyaxis**: the one-based index of the y axis to follow when the cursor is snapping to no plot
 
 **symbol** a shape ('cross', 'triangle' ...). The cursor manipulator will have this shape. Set to 'none' to draw no symbol.
 

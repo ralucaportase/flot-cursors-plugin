@@ -58,8 +58,8 @@ Licensed under the MIT license.
                 intersectionColor: 'darkgray',
                 intersectionLabelPosition: 'bottom-right',
                 snapToPlot: undefined,
-                defaultxaxis: 0,
-                defaultyaxis: 0
+                defaultxaxis: 1,
+                defaultyaxis: 1
             });
         }
 
@@ -647,30 +647,32 @@ Licensed under the MIT license.
 
     function findXAxis(plot, cursor) {
         var dataset = plot.getData(),
-            xaxes = plot.getXAxes();
+            xaxes = plot.getXAxes(),
+            zeroBasedIndex = cursor.defaultxaxis - 1;
         if (cursor.snapToPlot === undefined) {
-            return xaxes[cursor.defaultxaxis];
+            return xaxes[zeroBasedIndex];
         } else {
             if (cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
                 return series.xaxis;
             } else {
-                return xaxes[cursor.defaultxaxis];
+                return xaxes[zeroBasedIndex];
             }
         }
     }
 
     function findYAxis(plot, cursor) {
         var dataset = plot.getData(),
-            yaxes = plot.getYAxes();
+            yaxes = plot.getYAxes(),
+            zeroBasedIndex = cursor.defaultxaxis - 1;
         if (cursor.snapToPlot === undefined) {
-            return yaxes[cursor.defaultxaxis];
+            return yaxes[zeroBasedIndex];
         } else {
             if (cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
                 return series.yaxis;
             } else {
-                return yaxes[cursor.defaultxaxis];
+                return yaxes[zeroBasedIndex];
             }
         }
     }

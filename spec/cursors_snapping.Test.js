@@ -222,8 +222,8 @@ describe("Cursors snapping", function () {
                     color: 'blue',
                     position: { relativeX: 0.5, relativeY: 0.6 },
                     snapToPlot: 0,
-                    defaultxaxis: 1,
-                    defaultyaxis: 1
+                    defaultxaxis: 2,
+                    defaultyaxis: 2
                 }
             ],
             xaxes: [
