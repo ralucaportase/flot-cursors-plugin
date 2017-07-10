@@ -308,23 +308,10 @@ Licensed under the MIT license.
         });
 
         function findIntersections(plot, cursor) {
-            var pos = plot.c2p({
-                left: cursor.x,
-                top: cursor.y
-            });
-
             var intersections = {
                 cursor: cursor.name,
-                x: pos.x,
-                y: pos.y,
                 points: []
             };
-
-            var axes = plot.getAxes();
-            if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-                pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
-                return intersections;
-            }
 
             var cursorLastMouseX = cursor.mousePosition.relativeX * plot.width(),
                 cursorLastMouseY = cursor.mousePosition.relativeY * plot.height(),
@@ -664,7 +651,7 @@ Licensed under the MIT license.
     function findYAxis(plot, cursor) {
         var dataset = plot.getData(),
             yaxes = plot.getYAxes(),
-            zeroBasedIndex = cursor.defaultxaxis - 1;
+            zeroBasedIndex = cursor.defaultyaxis - 1;
         if (cursor.snapToPlot === undefined) {
             return yaxes[zeroBasedIndex];
         } else {
