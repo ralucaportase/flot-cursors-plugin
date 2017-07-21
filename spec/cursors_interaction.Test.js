@@ -934,152 +934,157 @@ describe("Cursors interaction", function () {
         });
     });
 
-    describe('Label location', function () {
-        var cursor, spy;
+    [true, false].forEach(function(longName) {
+        var name = longName ? 'Long name' : '.',
+            describeName = longName ? 'Long name and values location' : 'Short name and values location';
 
-        beforeEach(function() {
-            plot = $.plot("#placeholder", [sampledata], {
-                cursors: [
-                    {
-                        name: 'Blue cursor',
-                        color: 'blue',
-                        position: {
-                            relativeX: 0.5,
-                            relativeY: 0.6
-                        },
-                        showLabel: true,
-                        fontSize: '30px'
-                    }
-                ]
+        describe(describeName, function () {
+            var cursor, spy;
+
+            beforeEach(function() {
+                plot = $.plot("#placeholder", [sampledata], {
+                    cursors: [
+                        {
+                            name: name,
+                            color: 'blue',
+                            position: {
+                                relativeX: 0.5,
+                                relativeY: 0.6
+                            },
+                            showLabel: true,
+                            fontSize: '30px'
+                        }
+                    ]
+                });
+                cursor = plot.getCursors()[0];
+                spy = spyOnFillText();
+                jasmine.clock().tick(20);
             });
-            cursor = plot.getCursors()[0];
-            spy = spyOnFillText();
-            jasmine.clock().tick(20);
+
+            it('should display the labels above the cursor`s position after it got to close to the bottom margin of the plot', function () {
+                mouseDown(0.5, 0.6);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.9);
+                expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.7);
+                expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.5);
+                expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.3);
+                expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
+
+                mouseUp(0.5, 0.3);
+            });
+
+            it('should display the labels below the cursor`s position after it got to close to the top margin of the plot', function () {
+                mouseDown(0.5, 0.6);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.1);
+                expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.3);
+                expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.5);
+                expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.7);
+                expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
+
+                mouseUp(0.5, 0.3);
+            });
+
+            it('should display the labels to the left of the cursor`s position after it got to close to the right margin of the plot', function () {
+                mouseDown(0.5, 0.6);
+
+                spy.calls.reset();
+                mouseMove(0.9, 0.6);
+                expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.7, 0.6);
+                expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.6);
+                expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.3, 0.6);
+                expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
+
+                mouseUp(0.3, 0.6);
+            });
+
+            it('should display the labels to the right of the cursor`s position after it got to close to the left margin of the plot', function () {
+                mouseDown(0.5, 0.6);
+
+                spy.calls.reset();
+                mouseMove(0.1, 0.6);
+                expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.3, 0.6);
+                expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.5, 0.6);
+                expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
+
+                spy.calls.reset();
+                mouseMove(0.7, 0.6);
+                expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
+
+                mouseUp(0.3, 0.6);
+            });
+
+            function spyOnFillText() {
+                var overlay = $('.flot-overlay')[0];
+                var octx = overlay.getContext("2d");
+                return spyOn(octx, 'fillText').and.callThrough();
+            }
+
+            function mouseDown(rx, ry) {
+                var cursorX = plot.offset().left + plot.width() * rx,
+                    cursorY = plot.offset().top + plot.height() * ry,
+                    eventHolder = $('#placeholder').find('.flot-overlay');
+                eventHolder.trigger(new $.Event('mousedown', {
+                    pageX: cursorX,
+                    pageY: cursorY
+                }));
+            }
+
+            function mouseMove(rx, ry) {
+                var cursorX = plot.offset().left + plot.width() * rx,
+                    cursorY = plot.offset().top + plot.height() * ry,
+                    eventHolder = $('#placeholder').find('.flot-overlay');
+                eventHolder.trigger(new $.Event('mousemove', {
+                    pageX: cursorX,
+                    pageY: cursorY
+                }));
+                jasmine.clock().tick(20);
+            }
+
+            function mouseUp(rx, ry) {
+                var cursorX = plot.offset().left + plot.width() * rx,
+                    cursorY = plot.offset().top + plot.height() * ry,
+                    eventHolder = $('#placeholder').find('.flot-overlay');
+                eventHolder.trigger(new $.Event('mouseup', {
+                    pageX: cursorX,
+                    pageY: cursorY
+                }));
+            }
         });
-
-        it('should display the labels above the cursor`s position after it got to close to the bottom margin of the plot', function () {
-            mouseDown(0.5, 0.6);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.9);
-            expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.7);
-            expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.5);
-            expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.3);
-            expect(spy.calls.first().args[2]).toBeLessThan(cursor.y);
-
-            mouseUp(0.5, 0.3);
-        });
-
-        it('should display the labels below the cursor`s position after it got to close to the top margin of the plot', function () {
-            mouseDown(0.5, 0.6);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.1);
-            expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.3);
-            expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.5);
-            expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.7);
-            expect(spy.calls.first().args[2]).toBeGreaterThan(cursor.y);
-
-            mouseUp(0.5, 0.3);
-        });
-
-        it('should display the labels to the left of the cursor`s position after it got to close to the right margin of the plot', function () {
-            mouseDown(0.5, 0.6);
-
-            spy.calls.reset();
-            mouseMove(0.9, 0.6);
-            expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.7, 0.6);
-            expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.6);
-            expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.3, 0.6);
-            expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
-
-            mouseUp(0.3, 0.6);
-        });
-
-        it('should display the labels to the right of the cursor`s position after it got to close to the left margin of the plot', function () {
-            mouseDown(0.5, 0.6);
-
-            spy.calls.reset();
-            mouseMove(0.1, 0.6);
-            expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.3, 0.6);
-            expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.5, 0.6);
-            expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
-
-            spy.calls.reset();
-            mouseMove(0.7, 0.6);
-            expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
-
-            mouseUp(0.3, 0.6);
-        });
-
-        function spyOnFillText() {
-            var overlay = $('.flot-overlay')[0];
-            var octx = overlay.getContext("2d");
-            return spyOn(octx, 'fillText').and.callThrough();
-        }
-
-        function mouseDown(rx, ry) {
-            var cursorX = plot.offset().left + plot.width() * rx,
-                cursorY = plot.offset().top + plot.height() * ry,
-                eventHolder = $('#placeholder').find('.flot-overlay');
-            eventHolder.trigger(new $.Event('mousedown', {
-                pageX: cursorX,
-                pageY: cursorY
-            }));
-        }
-
-        function mouseMove(rx, ry) {
-            var cursorX = plot.offset().left + plot.width() * rx,
-                cursorY = plot.offset().top + plot.height() * ry,
-                eventHolder = $('#placeholder').find('.flot-overlay');
-            eventHolder.trigger(new $.Event('mousemove', {
-                pageX: cursorX,
-                pageY: cursorY
-            }));
-            jasmine.clock().tick(20);
-        }
-
-        function mouseUp(rx, ry) {
-            var cursorX = plot.offset().left + plot.width() * rx,
-                cursorY = plot.offset().top + plot.height() * ry,
-                eventHolder = $('#placeholder').find('.flot-overlay');
-            eventHolder.trigger(new $.Event('mouseup', {
-                pageX: cursorX,
-                pageY: cursorY
-            }));
-        }
     });
 });

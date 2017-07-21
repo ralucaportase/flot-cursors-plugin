@@ -526,31 +526,26 @@ describe('Flot cursors', function () {
                 cursors: [{
                     name: 'Blue cursor',
                     color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.5
-                    },
+                    position: { relativeX: 0.5, relativeY: 0.5 },
                     showLabel: true,
-                    showValues: true
+                    showValues: true,
+                    snapToPlot: undefined,
+                    defaultxaxis: 1,
+                    defaultyaxis: 2
                 }],
-                xaxes: [{
-                    min: 0,
-                    max: 10,
-                    autoscale: "none",
-                    tickFormatter: function(val) { return '<' + val + '>'; }
-                }],
-                yaxes: [{
-                    min: 100,
-                    max: 110,
-                    autoscale: "none",
-                    tickFormatter: function(val) { return '(' + val + ')'; }
-                }]
+                xaxes: [
+                    { min: 0, max: 10, autoscale: "none", tickFormatter: function(val) { return '<' + val + '>'; } }
+                ],
+                yaxes: [
+                    { min: 100, max: 110, autoscale: "none", tickFormatter: function(val) { return '(' + val + ')'; } },
+                    { min: 100, max: 110, autoscale: "none", tickFormatter: function(val) { return '{' + val + '}'; } }
+                ]
             });
 
             var spy = spyOnFillText();
             jasmine.clock().tick(20);
 
-            expect(spy).toHaveBeenCalledWith('<5>, (105)', jasmine.any(Number), jasmine.any(Number));
+            expect(spy).toHaveBeenCalledWith('<5>, {105}', jasmine.any(Number), jasmine.any(Number));
         });
 
         it('should be able to change the font size');

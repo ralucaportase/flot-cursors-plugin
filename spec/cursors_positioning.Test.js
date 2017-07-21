@@ -116,7 +116,9 @@ describe('Cursors Position', function () {
                     name: 'Red cursor',
                     mode: 'xy',
                     color: 'red',
-                    position: { x2: 11, y2: 20 }
+                    position: { x: 11, y: 20 },
+                    defaultxaxis: 2,
+                    defaultyaxis: 2
                 }
             ],
             xaxes: [

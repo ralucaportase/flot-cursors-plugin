@@ -403,14 +403,18 @@ Licensed under the MIT license.
     }
 
     function setPosition(plot, cursor, pos) {
-        var o;
         if (!pos) {
             return;
         }
 
-        o = plot.p2c(pos);
-        var rx = pos.relativeX * plot.width();
-        var ry = pos.relativeY * plot.height();
+        var xaxis = findXAxis(plot, cursor),
+            yaxis = findYAxis(plot, cursor),
+            o = {
+                left: xaxis.p2c ? xaxis.p2c(pos.x) : undefined,
+                top: yaxis.p2c ? yaxis.p2c(pos.y) : undefined
+            },
+            rx = pos.relativeX * plot.width(),
+            ry = pos.relativeY * plot.height();
 
         if ((pos.relativeX !== undefined)) {
             cursor.x = Math.max(0, Math.min(rx, plot.width()));
@@ -429,13 +433,13 @@ Licensed under the MIT license.
     }
 
     function maybeSnapToPlot(plot, cursor, intersections) {
-        if (cursor.snapToPlot !== undefined) {
+        if (cursor.snapToPlot >= -1) {
             var point = intersections.points[0];
 
             if (point) {
-                var axes = plot.getAxes(),
-                    relativeX = axes.xaxis.p2c(point.x) / plot.width(),
-                    relativeY = axes.yaxis.p2c(point.y) / plot.height();
+                var plotData = plot.getData()[point.seriesIndex],
+                    relativeX = plotData.xaxis.p2c(point.x) / plot.width(),
+                    relativeY = plotData.yaxis.p2c(point.y) / plot.height();
 
                 setPosition(plot, cursor, {
                     x: point.x,
@@ -467,7 +471,9 @@ Licensed under the MIT license.
             rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
         }
         if (cursor.showValues) {
-            rowsWidth = Math.max(rowsWidth, ctx.measureText(cursor.name).width);
+            var positionTextValues = formatCursorPosition(plot, cursor),
+                text = positionTextValues.xTextValue + ", " + positionTextValues.yTextValue;
+            rowsWidth = Math.max(rowsWidth, ctx.measureText(text).width);
         }
 
         if (cursor.halign === 'right' && x + rowsWidth > width * higherLimit) {
@@ -636,15 +642,15 @@ Licensed under the MIT license.
         var dataset = plot.getData(),
             xaxes = plot.getXAxes(),
             zeroBasedIndex = cursor.defaultxaxis - 1;
-        if (cursor.snapToPlot === undefined) {
-            return xaxes[zeroBasedIndex];
-        } else {
-            if (cursor.intersections.points[0]) {
+        if (cursor.snapToPlot >= -1) {
+            if (cursor.intersections && cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
                 return series.xaxis;
             } else {
                 return xaxes[zeroBasedIndex];
             }
+        } else {
+            return xaxes[zeroBasedIndex];
         }
     }
 
@@ -652,43 +658,41 @@ Licensed under the MIT license.
         var dataset = plot.getData(),
             yaxes = plot.getYAxes(),
             zeroBasedIndex = cursor.defaultyaxis - 1;
-        if (cursor.snapToPlot === undefined) {
-            return yaxes[zeroBasedIndex];
-        } else {
-            if (cursor.intersections.points[0]) {
+        if (cursor.snapToPlot >= -1) {
+            if (cursor.intersections && cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
                 return series.yaxis;
             } else {
                 return yaxes[zeroBasedIndex];
             }
+        } else {
+            return yaxes[zeroBasedIndex];
         }
     }
 
     function formatCursorPosition(plot, cursor) {
-        if (cursor.showValues) {
-            var xaxis = findXAxis(plot, cursor),
-                yaxis = findYAxis(plot, cursor),
-                htmlSpace = '&nbsp;',
-                xaxisPrecision = computeCursorsPrecision(plot, xaxis, cursor.x),
-                xFormattedValue = xaxis.tickFormatter(xaxis.c2p(cursor.x), xaxis, xaxisPrecision),
-                spaceIndex = xFormattedValue.indexOf(htmlSpace),
-                yaxisPrecision = computeCursorsPrecision(plot, yaxis, cursor.y),
-                yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis, yaxisPrecision);
+        var xaxis = findXAxis(plot, cursor),
+            yaxis = findYAxis(plot, cursor),
+            htmlSpace = '&nbsp;',
+            xaxisPrecision = computeCursorsPrecision(plot, xaxis, cursor.x),
+            xFormattedValue = xaxis.tickFormatter(xaxis.c2p(cursor.x), xaxis, xaxisPrecision),
+            spaceIndex = xFormattedValue.indexOf(htmlSpace),
+            yaxisPrecision = computeCursorsPrecision(plot, yaxis, cursor.y),
+            yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis, yaxisPrecision);
 
-            spaceIndex = xFormattedValue.indexOf(htmlSpace);
-            if (spaceIndex !== -1) {
-                xFormattedValue = xFormattedValue.slice(0, spaceIndex);
-            }
+        spaceIndex = xFormattedValue.indexOf(htmlSpace);
+        if (spaceIndex !== -1) {
+            xFormattedValue = xFormattedValue.slice(0, spaceIndex);
+        }
 
-            spaceIndex = yFormattedValue.indexOf(htmlSpace);
-            if (spaceIndex !== -1) {
-                yFormattedValue = yFormattedValue.slice(0, spaceIndex);
-            }
+        spaceIndex = yFormattedValue.indexOf(htmlSpace);
+        if (spaceIndex !== -1) {
+            yFormattedValue = yFormattedValue.slice(0, spaceIndex);
+        }
 
-            return {
-                xTextValue: xFormattedValue,
-                yTextValue: yFormattedValue
-            }
+        return {
+            xTextValue: xFormattedValue,
+            yTextValue: yFormattedValue
         }
     }
 

@@ -214,6 +214,36 @@ describe("Cursors snapping", function () {
         expect(cursor.y).toBe(pos.top);
     });
 
+    it('should use the default x and y axes when there is no data to snap to', function () {
+        plot = $.plot("#placeholder", [[]], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { relativeX: 0.5, relativeY: 0.5 },
+                    snapToPlot: -1,
+                    defaultxaxis: 2,
+                    defaultyaxis: 2
+                }
+            ],
+            xaxes: [
+                { autoscale: 'none', min: 0, max: 10 },
+                { autoscale: 'none', min: 0, max: 100, show: true }
+            ],
+            yaxes: [
+                { autoscale: 'none', min: 0, max: 10 },
+                { autoscale: 'none', min: 0, max: 100, show: true }
+            ]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+
+        expect(cursor.x).toBe(plot.getXAxes()[1].p2c(50));
+        expect(cursor.y).toBe(plot.getYAxes()[1].p2c(50));
+    });
+
     it('should not snap when there is no data and requested to snap to a specific plot', function () {
         plot = $.plot("#placeholder", [[]], {
             cursors: [
@@ -242,6 +272,30 @@ describe("Cursors snapping", function () {
 
         expect(cursor.x).toBeCloseTo(plot.getXAxes()[1].p2c(50), 2);
         expect(cursor.y).toBeCloseTo(plot.getYAxes()[1].p2c(40), 2);
+    });
+
+    [undefined, NaN, -2].forEach(function (value) {
+        it('should not snap when snapToPlot is ' + value, function () {
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: { relativeX: 0.5, relativeY: 0.5 },
+                        snapToPlot: value
+                    }
+                ],
+                xaxis: { autoscale: 'none', min: 0, max: 10 },
+                yaxis: { autoscale: 'none', min: 0, max: 10 }
+            });
+
+            jasmine.clock().tick(20);
+
+            var cursor = plot.getCursors()[0];
+
+            expect(cursor.x).toBeCloseTo(plot.getXAxes()[0].p2c(5), 2);
+            expect(cursor.y).toBeCloseTo(plot.getYAxes()[0].p2c(5), 2);
+        });
     });
 
     it('should be able to snap to any plot when the cursor is created with coords relative to canvas', function () {
