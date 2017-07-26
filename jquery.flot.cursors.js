@@ -30,15 +30,17 @@ Licensed under the MIT license.
             return mixin(options, {
                 name: options.name || ('unnamed ' + cursors.length),
                 position: options.position || {
-                    relativeX: 0.5,
-                    relativeY: 0.5
+                    relativeX: 0.5, // relative to the with of the drawing area
+                    relativeY: 0.5, // relative to the height of the drawing area
+                    x: undefined, // plot value
+                    y: undefined // plot value
                 },
                 mousePosition: {
                     relativeX: undefined,
                     relativeY: undefined
                 },
-                x: 0,
-                y: 0,
+                x: 0, // canvas point
+                y: 0, // canvas point
                 show: true,
                 selected: false,
                 highlighted: false,
@@ -76,7 +78,7 @@ Licensed under the MIT license.
         plot.addCursor = function addCursor(options) {
             var currentCursor = createCursor(options);
 
-            setPosition(plot, currentCursor, options.position);
+            setPosition(plot, currentCursor, currentCursor.position);
 
             cursors.push(currentCursor);
 
@@ -339,17 +341,22 @@ Licensed under the MIT license.
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
-            var isMousePositionInitilized = function(mousePosition) {
-                return mousePosition.relativeX !== undefined && mousePosition.relativeY !== undefined;
-            };
+            var isPositionInitialized = function(position) {
+                    return position.x !== undefined && position.y !== undefined &&
+                        position.relativeX !== undefined && position.relativeY !== undefined;
+                },
+                isMousePositionInitilized = function(mousePosition) {
+                    return mousePosition.relativeX !== undefined && mousePosition.relativeY !== undefined;
+                };
 
             update = [];
 
             cursors.forEach(function (cursor) {
                 var intersections;
 
-                setPosition(plot, cursor, cursor.position);
-
+                if (!isPositionInitialized(cursor.position)) {
+                    setPosition(plot, cursor, cursor.position);
+                }
                 if (!isMousePositionInitilized(cursor.mousePosition)) {
                     cursor.mousePosition.relativeX = cursor.x / plot.width();
                     cursor.mousePosition.relativeY = cursor.y / plot.height();
@@ -402,34 +409,23 @@ Licensed under the MIT license.
         return destination;
     }
 
+    /**
+        Calculate and set the canvas coords based on relative coords or plot values.
+        When both provided then the relative coords will be took into account
+        and the plot values ignored.
+     */
     function setPosition(plot, cursor, pos) {
-        if (!pos) {
-            return;
-        }
-
         var xaxis = findXAxis(plot, cursor),
             yaxis = findYAxis(plot, cursor),
-            o = {
-                left: xaxis.p2c ? xaxis.p2c(pos.x) : undefined,
-                top: yaxis.p2c ? yaxis.p2c(pos.y) : undefined
-            },
-            rx = pos.relativeX * plot.width(),
-            ry = pos.relativeY * plot.height();
+            x = pos.relativeX !== undefined
+                ? pos.relativeX * plot.width()
+                : (xaxis.p2c ? xaxis.p2c(pos.x) : undefined),
+            y = pos.relativeX !== undefined
+                ? pos.relativeY * plot.height()
+                : (yaxis.p2c ? yaxis.p2c(pos.y) : undefined);
 
-        if ((pos.relativeX !== undefined)) {
-            cursor.x = Math.max(0, Math.min(rx, plot.width()));
-            if (pos.relativeY === undefined) {
-                cursor.y = Math.max(0, Math.min(o.top, plot.height()));
-            } else {
-                cursor.y = Math.max(0, Math.min(ry, plot.height()));
-            }
-        } else if (pos.relativeY !== undefined) {
-            cursor.x = Math.max(0, Math.min(o.left, plot.width()));
-            cursor.y = Math.max(0, Math.min(ry), plot.height());
-        } else {
-            cursor.x = Math.max(0, Math.min(o.left, plot.width()));
-            cursor.y = Math.max(0, Math.min(o.top, plot.height()));
-        }
+        cursor.x = Math.max(0, Math.min(x, plot.width()));
+        cursor.y = Math.max(0, Math.min(y, plot.height()));
     }
 
     function maybeSnapToPlot(plot, cursor, intersections) {
@@ -645,7 +641,7 @@ Licensed under the MIT license.
         if (cursor.snapToPlot >= -1) {
             if (cursor.intersections && cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
-                return series.xaxis;
+                return series ? series.xaxis : xaxes[zeroBasedIndex];
             } else {
                 return xaxes[zeroBasedIndex];
             }
@@ -661,7 +657,7 @@ Licensed under the MIT license.
         if (cursor.snapToPlot >= -1) {
             if (cursor.intersections && cursor.intersections.points[0]) {
                 var series = dataset[cursor.intersections.points[0].seriesIndex];
-                return series.yaxis;
+                return series ? series.yaxis : yaxes[zeroBasedIndex];
             } else {
                 return yaxes[zeroBasedIndex];
             }
