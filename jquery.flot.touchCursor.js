@@ -25,7 +25,6 @@ Licensed under the MIT license.
     function init(plot) {
         var cursors = [];
         var update = [];
-        var detectedPinch = false, onCursor = false, initialMouseX, initialMouseY;
 
         function createCursor(options) {
             return mixin(options, {
@@ -86,7 +85,7 @@ Licensed under the MIT license.
             plot.triggerRedrawOverlay();
         };
 
-        plot.redrawCursorMove = function redrawCursorMove(cursor) {
+        plot.removeCursor = function removeCursor(cursor) {
             var index = cursors.indexOf(cursor);
 
             if (index !== -1) {
@@ -155,71 +154,71 @@ Licensed under the MIT license.
         };
 
         function onDragStart(e) {
-            var touchX, touchY;
+            e.stopPropagation();
+            e.preventDefault();
+            var offset = plot.offset();
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
-            detectedPinch = isDoubleTouch(e);
-            touchX = getXCoordinate(e.touches[0].pageX);
-            touchY = getYCoordinate(e.touches[0].pageY);
+            var currentlySelectedCursor = selectedCursor(cursors);
 
-            if (isSingleTouch(e)) {
-                drawCursorStart(touchX, touchY);
-            }
-        }
+            if (currentlySelectedCursor) {
+                // unselect the cursor and move it to the current position
+                currentlySelectedCursor.selected = false;
+                plot.getPlaceholder().css('cursor', 'default');
+                currentlySelectedCursor.x = mouseX;
+                currentlySelectedCursor.y = mouseY;
+                currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
+                currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
 
-        function onDrag(e) {
-            var touchX, touchY;
+                plot.triggerRedrawOverlay();
+            } else {
+                // find nearby cursor and unlock it
+                var targetCursor;
+                var dragmode;
 
-            if (isSingleTouch(e) && detectedPinch) {
-                if (onCursor) {
-                    touchX = getXCoordinate(e.touches[0].pageX);
-                    touchY = getYCoordinate(e.touches[0].pageY);
-                } else {
-                    touchX = getXCoordinate(initialMouseX);
-                    touchY = getYCoordinate(initialMouseY);
+                visibleCursors(cursors).forEach(function (cursor) {
+                    if (!cursor.movable) {
+                        return;
+                    }
+                    if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'y';
+                    }
+                    if (mouseOverCursorVerticalLine(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'x';
+                    }
+                    if (mouseOverCursorManipulator(e, plot, cursor)) {
+                        targetCursor = cursor;
+                        dragmode = 'xy';
+                    }
+                });
+
+                if (targetCursor) {
+                    if (!correctMouseButton(targetCursor, e.button)) {
+                        return;
+                    }
+                    targetCursor.selected = true;
+                    targetCursor.dragmode = dragmode;
+                    // changed for InsightCM -max
+                    if (targetCursor.mode === 'x') {
+                        plot.getPlaceholder().css('cursor', 'ew-resize');
+                    } else if (targetCursor.mode === 'y') {
+                        plot.getPlaceholder().css('cursor', 'ns-resize');
+                    } else {
+                        plot.getPlaceholder().css('cursor', 'move');
+                    }
+                    plot.getPlaceholder().css('cursor', 'move');
+                    plot.triggerRedrawOverlay();
+                    e.stopImmediatePropagation();
                 }
-            } else if (isDoubleTouch(e) || (isSingleTouch(e) && !detectedPinch)) {
-                if (selectedCursor(cursors)) {
-                    initialMouseX = e.touches[0].pageX;
-                    initialMouseY = e.touches[0].pageY;
-                }
-                touchX = getXCoordinate(e.touches[0].pageX);
-                touchY = getYCoordinate(e.touches[0].pageY);
             }
-
-            drawCursorMove(touchX, touchY);
         }
 
         function onDragEnd(e) {
-            var currentlySelectedCursor = selectedCursor(cursors);
-
-            if (isSingleTouch(e) && detectedPinch) {
-                visibleCursors(cursors).forEach(function (cursor) {
-                    if ((mouseOverCursorManipulator(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) ||
-                        (mouseOverCursorVerticalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) ||
-                        (mouseOverCursorHorizontalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor))) {
-                        onCursor = true;
-                    }
-                });
-            }
-
-            if (currentlySelectedCursor && noTouchActive(e)) {
-                currentlySelectedCursor.selected = false;
-                onCursor = false;
-            }
-        }
-
-        function onMouseDown(e) {
             var offset = plot.offset();
-            var mouseX = getXCoordinate(e.pageX);
-            var mouseY = getYCoordinaten(e.pageY);
-
-            drawCursorStart(mouseX, mouseY);
-        }
-
-        function onMouseUp(e) {
-            var offset = plot.offset();
-            var mouseX = getXCoordinate(e.pageX);
-            var mouseY = getYCoordinate(e.pageY);
+            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
             var currentlySelectedCursor = selectedCursor(cursors);
 
@@ -246,12 +245,64 @@ Licensed under the MIT license.
             }
         }
 
-        function onMouseMove(e) {
+        function onDrag(e) {
             var offset = plot.offset();
-            var mouseX = getXCoordinate(e.pageX);
-            var mouseY = getYCoordinate(e.pageY);
+            var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+            var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
+            var currentlySelectedCursor = selectedCursor(cursors);
 
-            drawCursorMove(mouseX, mouseY);
+            if (currentlySelectedCursor) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
+                    currentlySelectedCursor.x = mouseX;
+                    currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
+                    currentlySelectedCursor.mousePosition.relativeX = mouseX / plot.width();
+                }
+
+                if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
+                    currentlySelectedCursor.y = mouseY;
+                    currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
+                    currentlySelectedCursor.mousePosition.relativeY = mouseY / plot.height();
+                }
+
+                plot.triggerRedrawOverlay();
+                e.stopImmediatePropagation();
+            } else {
+                visibleCursors(cursors).forEach(function (cursor) {
+                    if (!cursor.movable) {
+                        return;
+                    }
+                    if (mouseOverCursorManipulator(e, plot, cursor)) {
+                        if (!cursor.highlighted) {
+                            cursor.highlighted = true;
+                            plot.triggerRedrawOverlay();
+                        }
+
+                        plot.getPlaceholder().css('cursor', 'pointer');
+                    } else if (mouseOverCursorVerticalLine(e, plot, cursor)) {
+                        if (!cursor.highlighted) {
+                            cursor.highlighted = true;
+                            plot.triggerRedrawOverlay();
+                        }
+
+                        plot.getPlaceholder().css('cursor', 'col-resize');
+                    } else if (mouseOverCursorHorizontalLine(e, plot, cursor)) {
+                        if (!cursor.highlighted) {
+                            cursor.highlighted = true;
+                            plot.triggerRedrawOverlay();
+                        }
+
+                        plot.getPlaceholder().css('cursor', 'row-resize');
+                    } else {
+                        if (cursor.highlighted) {
+                            cursor.highlighted = false;
+                            plot.getPlaceholder().css('cursor', 'default');
+                            plot.triggerRedrawOverlay();
+                        }
+                    }
+                });
+            }
         }
 
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
@@ -261,10 +312,6 @@ Licensed under the MIT license.
                 eventHolder[0].addEventListener("touchmove", onDrag, false);
                 eventHolder[0].addEventListener("touchend", onDragEnd, false);
             }
-
-            eventHolder.mousedown(onMouseDown);
-            eventHolder.mouseup(onMouseUp);
-            eventHolder.mousemove(onMouseMove);
         });
 
         function findIntersections(plot, cursor) {
@@ -296,139 +343,6 @@ Licensed under the MIT license.
             }
 
             return intersections;
-        }
-
-        function drawCursorMove(x, y) {
-            var currentlySelectedCursor = selectedCursor(cursors);
-
-            if (currentlySelectedCursor) {
-                if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
-                    currentlySelectedCursor.x = x;
-                    currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
-                    currentlySelectedCursor.mousePosition.relativeX = mouseX / plot.width();
-                }
-
-                if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
-                    currentlySelectedCursor.y = y;
-                    currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
-                    currentlySelectedCursor.mousePosition.relativeY = mouseY / plot.height();
-                }
-
-                plot.triggerRedrawOverlay();
-                e.stopImmediatePropagation();
-            } else {
-                visibleCursors(cursors).forEach(function (cursor) {
-                    if (!cursor.movable) {
-                        return;
-                    }
-                    if (mouseOverCursorManipulator(e.pageX, e.pageY, plot, cursor)) {
-                        if (!cursor.highlighted) {
-                            cursor.highlighted = true;
-                            plot.triggerRedrawOverlay();
-                        }
-
-                        plot.getPlaceholder().css('cursor', 'pointer');
-                    } else if (mouseOverCursorVerticalLine(e.pageX, e.pageY, plot, cursor)) {
-                        if (!cursor.highlighted) {
-                            cursor.highlighted = true;
-                            plot.triggerRedrawOverlay();
-                        }
-
-                        plot.getPlaceholder().css('cursor', 'col-resize');
-                    } else if (mouseOverCursorHorizontalLine(e.pageX, e.pageY, plot, cursor)) {
-                        if (!cursor.highlighted) {
-                            cursor.highlighted = true;
-                            plot.triggerRedrawOverlay();
-                        }
-
-                        plot.getPlaceholder().css('cursor', 'row-resize');
-                    } else {
-                        if (cursor.highlighted) {
-                            cursor.highlighted = false;
-                            plot.getPlaceholder().css('cursor', 'default');
-                            plot.triggerRedrawOverlay();
-                        }
-                    }
-                });
-            }
-        }
-
-        function drawCursorStart(x, y) {
-
-            var currentlySelectedCursor = selectedCursor(cursors);
-            if (currentlySelectedCursor) {
-                // unselect the cursor and move it to the current position
-                currentlySelectedCursor.selected = false;
-                plot.getPlaceholder().css('cursor', 'default');
-                currentlySelectedCursor.x = x;
-                currentlySelectedCursor.y = y;
-                currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
-                currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
-
-                plot.triggerRedrawOverlay();
-            } else {
-                // find nearby cursor and unlock it
-                var targetCursor;
-                var dragmode;
-
-                visibleCursors(cursors).forEach(function (cursor) {
-                    if (!cursor.movable) {
-                        return;
-                    }
-                    if (mouseOverCursorHorizontalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
-                        targetCursor = cursor;
-                        dragmode = 'y';
-                    }
-                    if (mouseOverCursorVerticalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
-                        targetCursor = cursor;
-                        dragmode = 'x';
-                    }
-                    if (mouseOverCursorManipulator(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
-                        targetCursor = cursor;
-                        dragmode = 'xy';
-                    }
-                });
-
-                if (targetCursor) {
-                    if (!correctMouseButton(targetCursor, e.button)) {
-                        return;
-                    }
-                    targetCursor.selected = true;
-                    targetCursor.dragmode = dragmode;
-                    // changed for InsightCM -max
-                    if (targetCursor.mode === 'x') {
-                        plot.getPlaceholder().css('cursor', 'ew-resize');
-                    } else if (targetCursor.mode === 'y') {
-                        plot.getPlaceholder().css('cursor', 'ns-resize');
-                    } else {
-                        plot.getPlaceholder().css('cursor', 'move');
-                    }
-                    plot.getPlaceholder().css('cursor', 'move');
-                    plot.triggerRedrawOverlay();
-                }
-            }
-        }
-
-        function getXCoordinate(eX) {
-            var offset = plot.offset();
-            return Math.max(0, Math.min(eX - offset.left, plot.width()));
-        }
-
-        function getYCoordinate(eY) {
-            var offset = plot.offset();
-            return Math.max(0, Math.min(eY - offset.top, plot.height()));
-        }
-
-        function isDoubleTouch(e) {
-            return (e.touches && e.touches.length === 2);
-        }
-
-        function isSingleTouch(e) {
-            return (e.touches && e.touches.length === 1);
-        }
-
-        function noTouchActive(e) {
-            return (e.touches && e.touches.length === 0);
         }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
@@ -487,9 +401,6 @@ Licensed under the MIT license.
             eventHolder.unbind('touchstart', onDragStart);
             eventHolder.unbind('touchend', onDragEnd);
             eventHolder.unbind('touchmove', onDrag);
-            eventHolder.unbind('mousedown', onMouseDown);
-            eventHolder.unbind('mouseup', onMouseUp);
-            eventHolder.unbind('mousemove', onMouseMove);
             eventHolder.unbind('cursorupdates');
             plot.getPlaceholder().css('cursor', 'default');
         });
@@ -882,10 +793,10 @@ Licensed under the MIT license.
         return (cursor.mode.indexOf('y') !== -1);
     }
 
-    function mouseOverCursorManipulator(x, y, plot, cursor) {
+    function mouseOverCursorManipulator(e, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = geYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
         var grabRadius = constants.symbolSize + constants.mouseGrabMargin;
 
         return ((mouseX > cursor.x - grabRadius) && (mouseX < cursor.x + grabRadius) &&
@@ -893,19 +804,19 @@ Licensed under the MIT license.
             (cursor.symbol !== 'none');
     }
 
-    function mouseOverCursorVerticalLine(x, y, plot, cursor) {
+    function mouseOverCursorVerticalLine(e, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = getYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
         return (hasVerticalLine(cursor) && (mouseX > cursor.x - constants.mouseGrabMargin) &&
             (mouseX < cursor.x + constants.mouseGrabMargin) && (mouseY > 0) && (mouseY < plot.height()));
     }
 
-    function mouseOverCursorHorizontalLine(x, y, plot, cursor) {
+    function mouseOverCursorHorizontalLine(e, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = getYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(e.pageX - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(e.pageY - offset.top, plot.height()));
 
         return (hasHorizontalLine(cursor) && (mouseY > cursor.y - constants.mouseGrabMargin) &&
             (mouseY < cursor.y + constants.mouseGrabMargin) && (mouseX > 0) && (mouseX < plot.width()));
