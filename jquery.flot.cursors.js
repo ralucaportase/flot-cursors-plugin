@@ -86,7 +86,7 @@ Licensed under the MIT license.
             plot.triggerRedrawOverlay();
         };
 
-        plot.redrawCursorMove = function redrawCursorMove(cursor) {
+        plot.removeCursor = function removeCursor(cursor) {
             var index = cursors.indexOf(cursor);
 
             if (index !== -1) {
@@ -156,19 +156,19 @@ Licensed under the MIT license.
 
         function onDragStart(e) {
             var touchX, touchY;
-
+            e.preventDefault();
             detectedPinch = isDoubleTouch(e);
             touchX = getXCoordinate(e.touches[0].pageX);
             touchY = getYCoordinate(e.touches[0].pageY);
 
             if (isSingleTouch(e)) {
-                drawCursorStart(touchX, touchY);
+                drawCursorStart(e, touchX, touchY, e.touches[0].pageX, e.touches[0].pageY);
             }
         }
 
         function onDrag(e) {
             var touchX, touchY;
-
+            e.preventDefault();
             if (isSingleTouch(e) && detectedPinch) {
                 if (onCursor) {
                     touchX = getXCoordinate(e.touches[0].pageX);
@@ -186,7 +186,7 @@ Licensed under the MIT license.
                 touchY = getYCoordinate(e.touches[0].pageY);
             }
 
-            drawCursorMove(touchX, touchY);
+            drawCursorMove(e, touchX, touchY, e.touches[0].pageX, e.touches[0].pageY);
         }
 
         function onDragEnd(e) {
@@ -209,15 +209,13 @@ Licensed under the MIT license.
         }
 
         function onMouseDown(e) {
-            var offset = plot.offset();
             var mouseX = getXCoordinate(e.pageX);
-            var mouseY = getYCoordinaten(e.pageY);
+            var mouseY = getYCoordinate(e.pageY);
 
-            drawCursorStart(mouseX, mouseY);
+            drawCursorStart(e, mouseX, mouseY, e.pageX, e.pageY);
         }
 
         function onMouseUp(e) {
-            var offset = plot.offset();
             var mouseX = getXCoordinate(e.pageX);
             var mouseY = getYCoordinate(e.pageY);
 
@@ -247,11 +245,10 @@ Licensed under the MIT license.
         }
 
         function onMouseMove(e) {
-            var offset = plot.offset();
             var mouseX = getXCoordinate(e.pageX);
             var mouseY = getYCoordinate(e.pageY);
 
-            drawCursorMove(mouseX, mouseY);
+            drawCursorMove(e, mouseX, mouseY, e.pageX, e.pageY);
         }
 
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
@@ -298,20 +295,20 @@ Licensed under the MIT license.
             return intersections;
         }
 
-        function drawCursorMove(x, y) {
+        function drawCursorMove(e, x, y, pageX, pageY) {
             var currentlySelectedCursor = selectedCursor(cursors);
 
             if (currentlySelectedCursor) {
                 if (currentlySelectedCursor.dragmode.indexOf('x') !== -1) {
                     currentlySelectedCursor.x = x;
                     currentlySelectedCursor.position.relativeX = currentlySelectedCursor.x / plot.width();
-                    currentlySelectedCursor.mousePosition.relativeX = mouseX / plot.width();
+                    currentlySelectedCursor.mousePosition.relativeX = x / plot.width();
                 }
 
                 if (currentlySelectedCursor.dragmode.indexOf('y') !== -1) {
                     currentlySelectedCursor.y = y;
                     currentlySelectedCursor.position.relativeY = currentlySelectedCursor.y / plot.height();
-                    currentlySelectedCursor.mousePosition.relativeY = mouseY / plot.height();
+                    currentlySelectedCursor.mousePosition.relativeY = y / plot.height();
                 }
 
                 plot.triggerRedrawOverlay();
@@ -321,21 +318,21 @@ Licensed under the MIT license.
                     if (!cursor.movable) {
                         return;
                     }
-                    if (mouseOverCursorManipulator(e.pageX, e.pageY, plot, cursor)) {
+                    if (mouseOverCursorManipulator(pageX, pageY, plot, cursor)) {
                         if (!cursor.highlighted) {
                             cursor.highlighted = true;
                             plot.triggerRedrawOverlay();
                         }
 
                         plot.getPlaceholder().css('cursor', 'pointer');
-                    } else if (mouseOverCursorVerticalLine(e.pageX, e.pageY, plot, cursor)) {
+                    } else if (mouseOverCursorVerticalLine(pageX, pageY, plot, cursor)) {
                         if (!cursor.highlighted) {
                             cursor.highlighted = true;
                             plot.triggerRedrawOverlay();
                         }
 
                         plot.getPlaceholder().css('cursor', 'col-resize');
-                    } else if (mouseOverCursorHorizontalLine(e.pageX, e.pageY, plot, cursor)) {
+                    } else if (mouseOverCursorHorizontalLine(pageX, pageY, plot, cursor)) {
                         if (!cursor.highlighted) {
                             cursor.highlighted = true;
                             plot.triggerRedrawOverlay();
@@ -353,8 +350,7 @@ Licensed under the MIT license.
             }
         }
 
-        function drawCursorStart(x, y) {
-
+        function drawCursorStart(e, x, y, pageX, pageY) {
             var currentlySelectedCursor = selectedCursor(cursors);
             if (currentlySelectedCursor) {
                 // unselect the cursor and move it to the current position
@@ -375,15 +371,15 @@ Licensed under the MIT license.
                     if (!cursor.movable) {
                         return;
                     }
-                    if (mouseOverCursorHorizontalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
+                    if (mouseOverCursorHorizontalLine(pageX, pageY, plot, cursor)) {
                         targetCursor = cursor;
                         dragmode = 'y';
                     }
-                    if (mouseOverCursorVerticalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
+                    if (mouseOverCursorVerticalLine(pageX, pageY, plot, cursor)) {
                         targetCursor = cursor;
                         dragmode = 'x';
                     }
-                    if (mouseOverCursorManipulator(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) {
+                    if (mouseOverCursorManipulator(pageX, pageY, plot, cursor)) {
                         targetCursor = cursor;
                         dragmode = 'xy';
                     }
@@ -405,6 +401,7 @@ Licensed under the MIT license.
                     }
                     plot.getPlaceholder().css('cursor', 'move');
                     plot.triggerRedrawOverlay();
+                    e.stopImmediatePropagation();
                 }
             }
         }
@@ -884,8 +881,8 @@ Licensed under the MIT license.
 
     function mouseOverCursorManipulator(x, y, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = geYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(x - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(y - offset.top, plot.height()));
         var grabRadius = constants.symbolSize + constants.mouseGrabMargin;
 
         return ((mouseX > cursor.x - grabRadius) && (mouseX < cursor.x + grabRadius) &&
@@ -895,8 +892,8 @@ Licensed under the MIT license.
 
     function mouseOverCursorVerticalLine(x, y, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = getYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(x - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(y - offset.top, plot.height()));
 
         return (hasVerticalLine(cursor) && (mouseX > cursor.x - constants.mouseGrabMargin) &&
             (mouseX < cursor.x + constants.mouseGrabMargin) && (mouseY > 0) && (mouseY < plot.height()));
@@ -904,8 +901,8 @@ Licensed under the MIT license.
 
     function mouseOverCursorHorizontalLine(x, y, plot, cursor) {
         var offset = plot.offset();
-        var mouseX = getXCoordinate(x);
-        var mouseY = getYCoordinate(y);
+        var mouseX = Math.max(0, Math.min(x - offset.left, plot.width()));
+        var mouseY = Math.max(0, Math.min(y - offset.top, plot.height()));
 
         return (hasHorizontalLine(cursor) && (mouseY > cursor.y - constants.mouseGrabMargin) &&
             (mouseY < cursor.y + constants.mouseGrabMargin) && (mouseX > 0) && (mouseX < plot.width()));
