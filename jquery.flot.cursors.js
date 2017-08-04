@@ -25,8 +25,6 @@ Licensed under the MIT license.
     function init(plot) {
         var cursors = [];
         var update = [];
-        //var onCursor = false;
-        // initialMouseX, initialMouseY;
 
         function createCursor(options) {
             return mixin(options, {
@@ -247,11 +245,11 @@ Licensed under the MIT license.
         }
 
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
-            eventHolder[0].addEventListener("panstart", pan.start, false);
-            eventHolder[0].addEventListener("pandrag", pan.drag, false);
-            eventHolder[0].addEventListener("panend", pan.end, false);
-            eventHolder[0].addEventListener("pinchdrag", pinch.drag, false);
-            eventHolder[0].addEventListener("pinchend", pinch.end, false);
+            eventHolder[0].addEventListener('panstart', pan.start, false);
+            eventHolder[0].addEventListener('pandrag', pan.drag, false);
+            eventHolder[0].addEventListener('panend', pan.end, false);
+            eventHolder[0].addEventListener('pinchdrag', pinch.drag, false);
+            eventHolder[0].addEventListener('pinchend', pinch.end, false);
 
             eventHolder.mousedown(onMouseDown);
             eventHolder.mouseup(onMouseUp);
@@ -408,18 +406,6 @@ Licensed under the MIT license.
             return Math.max(0, Math.min(eY - offset.top, plot.height()));
         }
 
-        // function isDoubleTouch(e) {
-        //     return (e.touches && e.touches.length === 2);
-        // }
-        //
-        // function isSingleTouch(e) {
-        //     return (e.touches && e.touches.length === 1);
-        // }
-
-        // function noTouchActive(e) {
-        //     return (e.touches && e.touches.length === 0);
-        // }
-
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             var isPositionInitialized = function(position) {
                     return position.x !== undefined && position.y !== undefined &&
@@ -473,12 +459,12 @@ Licensed under the MIT license.
         });
 
         plot.hooks.shutdown.push(function (plot, eventHolder) {
-            eventHolder.unbind("panstart", pan.start);
-            eventHolder.unbind("pandrag", pan.drag);
-            eventHolder.unbind("panend", pan.end);
-            eventHolder.unbind("pinchstart", pinch.start);
-            eventHolder.unbind("pinchdrag", pinch.drag);
-            eventHolder.unbind("pinchend", pinch.end);
+            eventHolder.unbind('panstart', pan.start);
+            eventHolder.unbind('pandrag', pan.drag);
+            eventHolder.unbind('panend', pan.end);
+            eventHolder.unbind('pinchstart', pinch.start);
+            eventHolder.unbind('pinchdrag', pinch.drag);
+            eventHolder.unbind('pinchend', pinch.end);
             eventHolder.unbind('mousedown', onMouseDown);
             eventHolder.unbind('mouseup', onMouseUp);
             eventHolder.unbind('mousemove', onMouseMove);
