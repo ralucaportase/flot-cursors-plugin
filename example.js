@@ -13,8 +13,8 @@ $(function () {
         cos = [];
         offset += 0.025;
         for (var i = 0; i < 8; i += 0.01) {
-            sin.push([i, Math.sin(i + offset)]);
-            cos.push([i, Math.cos(i + offset)]);
+            sin.push([i, 1 + Math.sin(i + offset)]);
+            cos.push([i, 1 + Math.cos(i + offset)]);
         }
     }
 
@@ -33,6 +33,7 @@ $(function () {
                     data: cos,
                     label: "cos(x)"
                 }
+
             ]);
 
             plot.setupGrid();
@@ -104,7 +105,15 @@ $(function () {
         },
         yaxis: {
             min: -1.2,
-            max: 1.2
+            max: 1.2,
+            autoscale: 'exact'
+        },
+        zoom: {
+            interactive: true
+        },
+        pan: {
+            interactive: true,
+            enableTouch: true
         }
     });
 
