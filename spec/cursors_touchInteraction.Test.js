@@ -14,31 +14,10 @@ describe("Touch cursors interaction", function () {
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
 
-        jasmine.addMatchers({
-            toBeAnyOf: function (util, customEqualityTesters) {
-                return {
-                    compare: function (actual, expected) {
-                        var res = false;
-                        for (var i = 0, l = expected.length; i < l; i++) {
-                            if (actual === expected[i]) {
-                                res = true;
-                                break;
-                            }
-                        }
-                        return {
-                            pass: res
-                        };
-                    }
-                };
-            }
-        });
-
         jasmine.clock().install();
     });
 
     afterEach(function () {
-        plot.shutdown();
-        $('#placeholder').empty();
         jasmine.clock().uninstall();
     });
 
