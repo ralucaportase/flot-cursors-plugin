@@ -25,7 +25,8 @@ Licensed under the MIT license.
     function init(plot) {
         var cursors = [];
         var update = [];
-        var detectedPinch = false, onCursor = false, initialMouseX, initialMouseY;
+        //var onCursor = false;
+        // initialMouseX, initialMouseY;
 
         function createCursor(options) {
             return mixin(options, {
@@ -154,57 +155,51 @@ Licensed under the MIT license.
             }
         };
 
-        function onDragStart(e) {
-            var touchX, touchY;
-            e.preventDefault();
-            detectedPinch = isDoubleTouch(e);
-            touchX = getXCoordinate(e.touches[0].pageX);
-            touchY = getYCoordinate(e.touches[0].pageY);
+        var pan = {
+            start: function (e) {
+                var touchX, touchY;
+                touchX = getXCoordinate(e.detail.touches[0].pageX);
+                touchY = getYCoordinate(e.detail.touches[0].pageY);
+                drawCursorStart(e, touchX, touchY, e.detail.touches[0].pageX, e.detail.touches[0].pageY)
+            },
 
-            if (isSingleTouch(e)) {
-                drawCursorStart(e, touchX, touchY, e.touches[0].pageX, e.touches[0].pageY);
-            }
-        }
+            drag: function(e) {
+                var touchX, touchY;
+                touchX = getXCoordinate(e.detail.touches[0].pageX);
+                touchY = getYCoordinate(e.detail.touches[0].pageY);
 
-        function onDrag(e) {
-            var touchX, touchY;
-            e.preventDefault();
-            if (isSingleTouch(e) && detectedPinch) {
-                if (onCursor) {
-                    touchX = getXCoordinate(e.touches[0].pageX);
-                    touchY = getYCoordinate(e.touches[0].pageY);
-                } else {
-                    touchX = getXCoordinate(initialMouseX);
-                    touchY = getYCoordinate(initialMouseY);
+                drawCursorMove(e, touchX, touchY, e.detail.touches[0].pageX, e.detail.touches[0].pageY);
+            },
+
+            end: function(e) {
+                var currentlySelectedCursor = selectedCursor(cursors);
+                if (currentlySelectedCursor) {
+                    currentlySelectedCursor.selected = false;
                 }
-            } else if (isDoubleTouch(e) || (isSingleTouch(e) && !detectedPinch)) {
-                if (selectedCursor(cursors)) {
-                    initialMouseX = e.touches[0].pageX;
-                    initialMouseY = e.touches[0].pageY;
+            }
+        };
+
+        var pinch = {
+            start: function(e) {
+                var touchX, touchY;
+                touchX = getXCoordinate(e.detail.touches[0].pageX);
+                touchY = getYCoordinate(e.detail.touches[0].pageY);
+                drawCursorStart(e, touchX, touchY, e.detail.touches[0].pageX, e.detail.touches[0].pageY)
+            },
+
+            drag: function(e) {
+                var touchX, touchY;
+                touchX = getXCoordinate(e.detail.touches[0].pageX);
+                touchY = getYCoordinate(e.detail.touches[0].pageY);
+
+                drawCursorMove(e, touchX, touchY, e.detail.touches[0].pageX, e.detail.touches[0].pageY);
+            },
+
+            end: function(e) {
+                var currentlySelectedCursor = selectedCursor(cursors);
+                if (currentlySelectedCursor) {
+                    currentlySelectedCursor.selected = false;
                 }
-                touchX = getXCoordinate(e.touches[0].pageX);
-                touchY = getYCoordinate(e.touches[0].pageY);
-            }
-
-            drawCursorMove(e, touchX, touchY, e.touches[0].pageX, e.touches[0].pageY);
-        }
-
-        function onDragEnd(e) {
-            var currentlySelectedCursor = selectedCursor(cursors);
-
-            if (isSingleTouch(e) && detectedPinch) {
-                visibleCursors(cursors).forEach(function (cursor) {
-                    if ((mouseOverCursorManipulator(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) ||
-                        (mouseOverCursorVerticalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor)) ||
-                        (mouseOverCursorHorizontalLine(e.touches[0].pageX, e.touches[0].pageY, plot, cursor))) {
-                        onCursor = true;
-                    }
-                });
-            }
-
-            if (currentlySelectedCursor && noTouchActive(e)) {
-                currentlySelectedCursor.selected = false;
-                onCursor = false;
             }
         }
 
@@ -252,12 +247,11 @@ Licensed under the MIT license.
         }
 
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
-            var o = plot.getOptions();
-            if (o.pan !== undefined && o.pan.interactive) {
-                eventHolder[0].addEventListener("touchstart", onDragStart, false);
-                eventHolder[0].addEventListener("touchmove", onDrag, false);
-                eventHolder[0].addEventListener("touchend", onDragEnd, false);
-            }
+            eventHolder[0].addEventListener("panstart", pan.start, false);
+            eventHolder[0].addEventListener("pandrag", pan.drag, false);
+            eventHolder[0].addEventListener("panend", pan.end, false);
+            eventHolder[0].addEventListener("pinchdrag", pinch.drag, false);
+            eventHolder[0].addEventListener("pinchend", pinch.end, false);
 
             eventHolder.mousedown(onMouseDown);
             eventHolder.mouseup(onMouseUp);
@@ -353,8 +347,6 @@ Licensed under the MIT license.
         function drawCursorStart(e, x, y, pageX, pageY) {
             var currentlySelectedCursor = selectedCursor(cursors);
             if (currentlySelectedCursor) {
-                // unselect the cursor and move it to the current position
-                currentlySelectedCursor.selected = false;
                 plot.getPlaceholder().css('cursor', 'default');
                 currentlySelectedCursor.x = x;
                 currentlySelectedCursor.y = y;
@@ -416,17 +408,17 @@ Licensed under the MIT license.
             return Math.max(0, Math.min(eY - offset.top, plot.height()));
         }
 
-        function isDoubleTouch(e) {
-            return (e.touches && e.touches.length === 2);
-        }
+        // function isDoubleTouch(e) {
+        //     return (e.touches && e.touches.length === 2);
+        // }
+        //
+        // function isSingleTouch(e) {
+        //     return (e.touches && e.touches.length === 1);
+        // }
 
-        function isSingleTouch(e) {
-            return (e.touches && e.touches.length === 1);
-        }
-
-        function noTouchActive(e) {
-            return (e.touches && e.touches.length === 0);
-        }
+        // function noTouchActive(e) {
+        //     return (e.touches && e.touches.length === 0);
+        // }
 
         plot.hooks.drawOverlay.push(function (plot, ctx) {
             var isPositionInitialized = function(position) {
@@ -481,9 +473,12 @@ Licensed under the MIT license.
         });
 
         plot.hooks.shutdown.push(function (plot, eventHolder) {
-            eventHolder.unbind('touchstart', onDragStart);
-            eventHolder.unbind('touchend', onDragEnd);
-            eventHolder.unbind('touchmove', onDrag);
+            eventHolder.unbind("panstart", pan.start);
+            eventHolder.unbind("pandrag", pan.drag);
+            eventHolder.unbind("panend", pan.end);
+            eventHolder.unbind("pinchstart", pinch.start);
+            eventHolder.unbind("pinchdrag", pinch.drag);
+            eventHolder.unbind("pinchend", pinch.end);
             eventHolder.unbind('mousedown', onMouseDown);
             eventHolder.unbind('mouseup', onMouseUp);
             eventHolder.unbind('mousemove', onMouseMove);
