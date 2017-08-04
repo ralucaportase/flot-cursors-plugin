@@ -12,9 +12,9 @@ $(function () {
         sin = [];
         cos = [];
         offset += 0.025;
-        for (var i = 0; i < 8; i += 0.1) {
-            sin.push([i, Math.sin(i + offset)]);
-            cos.push([i, Math.cos(i + offset)]);
+        for (var i = 0; i < 8; i += 0.01) {
+            sin.push([i, 1 + Math.sin(i + offset)]);
+            cos.push([i, 1 + Math.cos(i + offset)]);
         }
     }
 
@@ -54,9 +54,6 @@ $(function () {
     ], {
         series: {
             lines: {
-                show: true
-            },
-            points: {
                 show: true
             }
         },
