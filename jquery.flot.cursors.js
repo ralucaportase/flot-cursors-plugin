@@ -248,6 +248,7 @@ Licensed under the MIT license.
             eventHolder[0].addEventListener('panstart', pan.start, false);
             eventHolder[0].addEventListener('pandrag', pan.drag, false);
             eventHolder[0].addEventListener('panend', pan.end, false);
+            eventHolder[0].addEventListener('pinchstart', pinch.start, false);
             eventHolder[0].addEventListener('pinchdrag', pinch.drag, false);
             eventHolder[0].addEventListener('pinchend', pinch.end, false);
 

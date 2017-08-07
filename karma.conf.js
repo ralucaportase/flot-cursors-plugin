@@ -13,7 +13,10 @@ module.exports = function (config) {
     var sources = [
         'jquery.js',
         'node_modules/engineering-flot/dist/jquery.flot.js',
-        'node_modules/engineering-flot/jquery.flot.symbol.js'
+        'node_modules/engineering-flot/jquery.flot.symbol.js',
+        'node_modules/engineering-flot/jquery.flot.touch.js',
+        'node_modules/engineering-flot/jquery.flot.touchNavigate.js',
+        'node_modules/engineering-flot/jquery.flot.navigate.js'
     ].concat(coverage_sources);
 
     var settings = {
