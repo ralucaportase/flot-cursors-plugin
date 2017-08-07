@@ -668,4 +668,109 @@ describe("Touch cursors interaction", function () {
         expect(plot.getYAxes()[0].min).not.toBe(ymin);
         expect(plot.getYAxes()[0].max).not.toBe(ymax);
     });
+
+    it('should pan visible cursors when receiving real touch events', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 0.5,
+                        relativeY: 0.6
+                    }
+                }
+            ],
+            pan: {
+                enableTouch: true
+            }
+        });
+
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchstart');
+
+        cursorX += 13;
+        cursorY += 5;
+
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchmove');
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchend');
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
+        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
+    });
+
+    it('should not pan invisible cursors when receiving real touch events', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: {
+                        relativeX: 0.5,
+                        relativeY: 0.6
+                    },
+                    show: false
+                }
+            ],
+            pan: {
+                interactive: true,
+                enableTouch: true
+            }
+        });
+        var xmin = plot.getXAxes()[0].min,
+            ymin = plot.getYAxes()[0].min,
+            xmax = plot.getXAxes()[0].max,
+            ymax = plot.getYAxes()[0].max;
+
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchstart');
+
+        cursorX += 100;
+        cursorY += 200;
+
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchmove');
+        sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchend');
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.x).toBe(plot.width() * 0.5);
+        expect(cursor.y).toBe(plot.height() * 0.6);
+
+        expect(plot.getXAxes()[0].min).not.toBe(xmin);
+        expect(plot.getXAxes()[0].max).not.toBe(xmax);
+        expect(plot.getYAxes()[0].min).not.toBe(ymin);
+        expect(plot.getYAxes()[0].max).not.toBe(ymax);
+    });
+
+    function sendTouchEvent(x, y, element, eventType) {
+        var touchObj = {
+            target: element,
+            pageX: x,
+            pageY: y
+        };
+
+        var event;
+        if (typeof UIEvent === "function") {
+            event = new UIEvent(eventType)
+        } else {
+            event = document.createEvent('UIEvent');
+            event.initUIEvent(eventType, true, true);
+        }
+
+        event.touches = [touchObj];
+        event.targetTouches = [];
+        event.changedTouches = [touchObj];
+
+        element.dispatchEvent(event);
+    }
 });
