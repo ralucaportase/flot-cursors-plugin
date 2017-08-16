@@ -694,6 +694,77 @@ describe("Cursors interaction", function () {
         expect(cursor.highlighted).not.toBe(true);
     });
 
+    it('should prevent default action and stop propagation of the event when moving a cursor', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { relativeX: 0.5, relativeY: 0.6 }
+                }
+            ]
+        });
+
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay'), event;
+        event = new $.Event('mousedown', { pageX: cursorX, pageY: cursorY });
+        eventHolder.trigger(event);
+        jasmine.clock().tick(20);
+        expect(event.isDefaultPrevented()).toBeTruthy();
+        expect(event.isImmediatePropagationStopped()).toBeTruthy();
+
+        cursorX += 13;
+        cursorY += 5;
+
+        event = new $.Event('mousemove', { pageX: cursorX, pageY: cursorY });
+        eventHolder.trigger(event);
+        jasmine.clock().tick(20);
+        expect(event.isDefaultPrevented()).toBeTruthy();
+        expect(event.isImmediatePropagationStopped()).toBeTruthy();
+
+        event = new $.Event('mouseup', { pageX: cursorX, pageY: cursorY });
+        eventHolder.trigger(event);
+        jasmine.clock().tick(20);
+        expect(event.isDefaultPrevented()).toBeTruthy();
+        expect(event.isImmediatePropagationStopped()).toBeTruthy();
+    });
+
+    it('should not move the cursor anymore after the mouse button was released outside the plot area', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [
+                {
+                    name: 'Blue cursor',
+                    color: 'blue',
+                    position: { relativeX: 0.5, relativeY: 0.6 }
+                }
+            ]
+        });
+
+        var cursorX = plot.offset().left + plot.width() * 0.5;
+        var cursorY = plot.offset().top + plot.height() * 0.6;
+
+        jasmine.clock().tick(20);
+
+        var eventHolder = $('#placeholder').find('.flot-overlay');
+        eventHolder.trigger(new $.Event('mousedown', { pageX: cursorX, pageY: cursorY }));
+        jasmine.clock().tick(20);
+        eventHolder.trigger(new $.Event('mousemove', { pageX: cursorX + 10000, pageY: cursorY + 10000 }));
+        jasmine.clock().tick(20);
+        $(document).trigger(new $.Event('mouseup', { pageX: cursorX + 10000, pageY: cursorY + 10000 }));
+        jasmine.clock().tick(20);
+        eventHolder.trigger(new $.Event('mousemove', { pageX: cursorX + 13, pageY: cursorY + 5, buttons: 0 }));
+        jasmine.clock().tick(20);
+
+        var cursor = plot.getCursors()[0];
+        expect(cursor.selected).toBe(false);
+        expect(cursor.y).not.toBe(plot.height() * 0.5 + 13);
+        expect(cursor.y).not.toBe(plot.height() * 0.6 + 5);
+    });
+
     describe('Mouse pointer', function () {
         it('should change the mouse pointer on mouse over the cursor manipulator', function () {
             plot = $.plot("#placeholder", [sampledata], {
