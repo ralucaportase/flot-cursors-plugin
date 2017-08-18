@@ -1,6 +1,6 @@
 {
   "name": "flot-cursors-plugin",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Cursors for flot charting",
   "main": "jquery.flot.cursors.js",
   "scripts": {
