@@ -759,11 +759,11 @@ Licensed under the MIT license.
             yaxisPrecision = computeCursorsPrecision(plot, yaxis, cursor.y),
             yFormattedValue = yaxis.tickFormatter(yaxis.c2p(cursor.y), yaxis, yaxisPrecision, plot);
 
-        xFormattedValue = xFormattedValue.split(htmlNewline).join(" ");
-        xFormattedValue = xFormattedValue.split(htmlSpace).join(" ");
+        xFormattedValue = xFormattedValue.replace(htmlNewline, " ");
+        xFormattedValue = xFormattedValue.replace(htmlSpace, " ");
 
-        yFormattedValue = yFormattedValue.split(htmlNewline).join(" ");
-        yFormattedValue = yFormattedValue.split(htmlSpace).join(" ");
+        yFormattedValue = yFormattedValue.replace(htmlNewline, " ");
+        yFormattedValue = yFormattedValue.replace(htmlSpace, " ");
 
         return {
             xTextValue: xFormattedValue,
