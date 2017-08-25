@@ -9,7 +9,7 @@ describe("Touch cursors interaction", function () {
     var placeholder;
 
     beforeEach(function () {
-        var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
+        var fixture = setFixtures('<div id="demo-container" style="width: 600px;height: 400px">').find('#demo-container').get(0);
 
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
@@ -736,8 +736,8 @@ describe("Touch cursors interaction", function () {
         var eventHolder = $('#placeholder').find('.flot-overlay');
         sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchstart');
 
-        cursorX += 100;
-        cursorY += 200;
+        cursorX += 50;
+        cursorY += 60;
 
         sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchmove');
         sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchend');

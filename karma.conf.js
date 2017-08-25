@@ -12,6 +12,8 @@ module.exports = function (config) {
 
     var sources = [
         'jquery.js',
+        'node_modules/engineering-flot/lib/jquery.event.drag.js',
+        'node_modules/engineering-flot/lib/jquery.mousewheel.js',
         'node_modules/engineering-flot/dist/jquery.flot.js',
         'node_modules/engineering-flot/jquery.flot.symbol.js',
         'node_modules/engineering-flot/jquery.flot.touch.js',
