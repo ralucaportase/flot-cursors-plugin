@@ -176,8 +176,8 @@ describe("Touch cursors interaction", function () {
         eventHolder[0].dispatchEvent(new CustomEvent('panend', { detail: e }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
-        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
+        expect(cursor.x).toBeCloseTo(plot.width() * 0.5 + 13, 2);
+        expect(cursor.y).toBeCloseTo(plot.height() * 0.6 + 5, 2);
     });
 
     it('should not be possible to touch drag a cursor with movable set to false', function () {
@@ -415,8 +415,8 @@ describe("Touch cursors interaction", function () {
         eventHolder[0].dispatchEvent(new CustomEvent('panend', { detail: e }));
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
-        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
+        expect(cursor.x).toBeCloseTo(plot.width() * 0.5 + 13);
+        expect(cursor.y).toBeCloseTo(plot.height() * 0.6 + 5);
     });
 
     it('should be highlighted on touch drag of the cursor manipulator', function () {
@@ -701,8 +701,8 @@ describe("Touch cursors interaction", function () {
         sendTouchEvent(cursorX, cursorY, eventHolder[0], 'touchend');
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(plot.width() * 0.5 + 13);
-        expect(cursor.y).toBe(plot.height() * 0.6 + 5);
+        expect(cursor.x).toBeCloseTo(plot.width() * 0.5 + 13);
+        expect(cursor.y).toBeCloseTo(plot.height() * 0.6 + 5);
     });
 
     it('should not pan invisible cursors when receiving real touch events', function () {

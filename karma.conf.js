@@ -18,7 +18,8 @@ module.exports = function (config) {
         'node_modules/engineering-flot/jquery.flot.symbol.js',
         'node_modules/engineering-flot/jquery.flot.touch.js',
         'node_modules/engineering-flot/jquery.flot.touchNavigate.js',
-        'node_modules/engineering-flot/jquery.flot.navigate.js'
+        'node_modules/engineering-flot/jquery.flot.navigate.js',
+        'node_modules/webcharts-development-settings/testsUtils/utils/*.js'
     ].concat(coverage_sources);
 
     var settings = {
@@ -46,7 +47,7 @@ module.exports = function (config) {
         },
 
         eslint: {
-            stopOnError: true,
+            stopOnError: config.stopOnEsLintError ? true : false,
             showWarnings: false,
             engine: {
                 configFile: 'node_modules/webcharts-development-settings/.eslintrc.json',
@@ -80,7 +81,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome'],
+        browsers: ['PhantomJS', 'Firefox', 'Chrome'],
 
 
         // Continuous Integration mode

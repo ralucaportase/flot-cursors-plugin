@@ -5,8 +5,7 @@ describe("Cursors interaction", function () {
     'use strict';
 
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
-    var plot;
-    var placeholder;
+    var placeholder, plot, eventHolder, cursor, cursorX, cursorY, simulate = window.simulate;
 
     beforeEach(function () {
         var fixture = setFixtures('<div id="demo-container" style="width: 800px;height: 600px">').find('#demo-container').get(0);
@@ -48,32 +47,23 @@ describe("Cursors interaction", function () {
                 {
                     name: 'Blue cursor',
                     color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
+                    position: { relativeX: 0.5, relativeY: 0.6 }
                 }
             ]
         });
-
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
-
         jasmine.clock().tick(20);
 
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
+        cursor = plot.getCursors()[0];
+        eventHolder = plot.getEventHolder();
+        cursorX = plot.getPlotOffset().left + plot.width() * 0.5;
+        cursorY = plot.getPlotOffset().top + plot.height() * 0.6;
 
-        var cursor = plot.getCursors()[0];
+        simulate.mouseDown(eventHolder, cursorX, cursorY);
+        jasmine.clock().tick(20);
         expect(cursor.selected).toBe(true);
 
-        eventHolder.trigger(new $.Event('mouseup', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
+        simulate.mouseUp(eventHolder, cursorX, cursorY);
+        jasmine.clock().tick(20);
 
         expect(cursor.selected).toBe(false);
     });
@@ -84,27 +74,19 @@ describe("Cursors interaction", function () {
                 {
                     name: 'Blue cursor',
                     color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    },
+                    position: { relativeX: 0.5, relativeY: 0.6 },
                     show: false
                 }
             ]
         });
-
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
-
         jasmine.clock().tick(20);
 
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
+        cursor = plot.getCursors()[0];
+        eventHolder = plot.getEventHolder();
+        cursorX = plot.getPlotOffset().left + plot.width() * 0.5;
+        cursorY = plot.getPlotOffset().top + plot.height() * 0.6;
 
-        var cursor = plot.getCursors()[0];
+        simulate.mouseDown(eventHolder, cursorX, cursorY);
         expect(cursor.selected).not.toBe(true);
     });
 
@@ -114,44 +96,25 @@ describe("Cursors interaction", function () {
                 {
                     name: 'Blue cursor',
                     color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    },
+                    position: { relativeX: 0.5, relativeY: 0.6 },
                     mouseButton: 'right'
                 }
             ]
         });
-
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
-
         jasmine.clock().tick(20);
 
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY,
-            button: 2
-        }));
+        cursor = plot.getCursors()[0];
+        eventHolder = plot.getEventHolder();
+        cursorX = plot.getPlotOffset().left + plot.width() * 0.5;
+        cursorY = plot.getPlotOffset().top + plot.height() * 0.6;
 
-        var cursor = plot.getCursors()[0];
+        simulate.mouseDown(eventHolder, cursorX, cursorY, 2);
         expect(cursor.selected).toBe(true);
 
-        eventHolder.trigger(new $.Event('mouseup', {
-            pageX: cursorX,
-            pageY: cursorY,
-            button: 2
-        }));
-
+        simulate.mouseUp(eventHolder, cursorX, cursorY, 2);
         expect(cursor.selected).toBe(false);
 
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY,
-            button: 1
-        }));
-
+        simulate.mouseDown(eventHolder, cursorX, cursorY, 1);
         expect(cursor.selected).toBe(false);
     });
 
@@ -168,26 +131,17 @@ describe("Cursors interaction", function () {
                 }
             ]
         });
-
-        var cursorX = plot.offset().left + plot.width() * 0.5;
-        var cursorY = plot.offset().top + plot.height() * 0.2;
-
         jasmine.clock().tick(20);
 
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
+        eventHolder = plot.getEventHolder();
+        cursor = plot.getCursors()[0];
+        cursorX = plot.getPlotOffset().left + plot.width() * 0.5;
+        cursorY = plot.getPlotOffset().top + plot.height() * 0.2;
 
-        var cursor = plot.getCursors()[0];
+        simulate.mouseDown(eventHolder, cursorX, cursorY);
         expect(cursor.selected).toBe(true);
 
-        eventHolder.trigger(new $.Event('mouseup', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
-
+        simulate.mouseUp(eventHolder, cursorX, cursorY);
         expect(cursor.selected).toBe(false);
     });
 
@@ -197,33 +151,21 @@ describe("Cursors interaction", function () {
                 {
                     name: 'Blue cursor',
                     color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
+                    position: { relativeX: 0.5, relativeY: 0.6 }
                 }
             ]
         });
-
-        var cursorX = plot.offset().left + plot.width() * 0.3;
-        var cursorY = plot.offset().top + plot.height() * 0.6;
-
         jasmine.clock().tick(20);
 
-        var eventHolder = $('#placeholder').find('.flot-overlay');
-        eventHolder.trigger(new $.Event('mousedown', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
+        eventHolder = plot.getEventHolder();
+        cursor = plot.getCursors()[0];
+        cursorX = plot.getPlotOffset().left + plot.width() * 0.3;
+        cursorY = plot.getPlotOffset().top + plot.height() * 0.6;
 
-        var cursor = plot.getCursors()[0];
+        simulate.mouseDown(eventHolder, cursorX, cursorY);
         expect(cursor.selected).toBe(true);
 
-        eventHolder.trigger(new $.Event('mouseup', {
-            pageX: cursorX,
-            pageY: cursorY
-        }));
-
+        simulate.mouseUp(eventHolder, cursorX, cursorY);
         expect(cursor.selected).toBe(false);
     });
 
@@ -1092,7 +1034,7 @@ describe("Cursors interaction", function () {
                 expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
 
                 spy.calls.reset();
-                mouseMove(0.3, 0.6);
+                mouseMove(0.35, 0.6);
                 expect(spy.calls.first().args[1]).toBeLessThan(cursor.x);
 
                 mouseUp(0.3, 0.6);
@@ -1114,7 +1056,7 @@ describe("Cursors interaction", function () {
                 expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
 
                 spy.calls.reset();
-                mouseMove(0.7, 0.6);
+                mouseMove(0.65, 0.6);
                 expect(spy.calls.first().args[1]).toBeGreaterThan(cursor.x);
 
                 mouseUp(0.3, 0.6);

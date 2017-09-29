@@ -240,8 +240,8 @@ describe("Cursors snapping", function () {
 
         var cursor = plot.getCursors()[0];
 
-        expect(cursor.x).toBe(plot.getXAxes()[1].p2c(50));
-        expect(cursor.y).toBe(plot.getYAxes()[1].p2c(50));
+        expect(cursor.x).toBeCloseTo(plot.getXAxes()[1].p2c(50), 2);
+        expect(cursor.y).toBeCloseTo(plot.getYAxes()[1].p2c(50), 2);
     });
 
     it('should not snap when there is no data and requested to snap to a specific plot', function () {
