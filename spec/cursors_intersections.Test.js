@@ -160,4 +160,50 @@ describe("Cursors intersections", function () {
         expect(intersections.points[0].x).toBe(plot.getData()[0].datapoints.points[0]);
         expect(intersections.points[0].y).toBe(plot.getData()[0].datapoints.points[1]);
     });
+
+    it('should interpolate the intersections properly with linear scales', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [{
+                name: 'Blue cursor',
+                color: 'blue',
+                snapToPlot: -1,
+                position: {
+                    x: 0.5,
+                    y: 0
+                },
+                interpolate: true
+            }]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+        var intersections = plot.getIntersections(cursors[0]);
+        var expectedY = sampledata[0][1] + (sampledata[1][1] - sampledata[0][1]) / 2;
+
+        expect(intersections.points[0].x).toBe(0.5);
+        expect(intersections.points[0].y).toBe(expectedY);
+    });
+
+    it('should not return any point of interpolation if it does not snap to any existing plots', function () {
+        plot = $.plot("#placeholder", [sampledata], {
+            cursors: [{
+                name: 'Blue cursor',
+                color: 'blue',
+                snapToPlot: 2,
+                position: {
+                    x: 0.5,
+                    y: 0
+                },
+                interpolate: true
+            }]
+        });
+
+        jasmine.clock().tick(20);
+
+        var cursors = plot.getCursors();
+        var intersections = plot.getIntersections(cursors[0]);
+
+        expect(intersections.points.length).toBe(0);
+    });
 });

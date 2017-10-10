@@ -7,6 +7,7 @@ describe("Touch cursors interaction", function () {
     var sampledata = [[0, 1], [1, 1.1], [2, 1.2]];
     var plot;
     var placeholder;
+    var options
 
     beforeEach(function () {
         var fixture = setFixtures('<div id="demo-container" style="width: 600px;height: 400px">').find('#demo-container').get(0);
@@ -14,15 +15,7 @@ describe("Touch cursors interaction", function () {
         placeholder = $('<div id="placeholder" style="width: 100%;height: 100%">');
         placeholder.appendTo(fixture);
 
-        jasmine.clock().install();
-    });
-
-    afterEach(function () {
-        jasmine.clock().uninstall();
-    });
-
-    it('should become selected on panstart on cursor manipulator and unselected on panend', function () {
-        plot = $.plot("#placeholder", [sampledata], {
+        options = {
             cursors: [
                 {
                     name: 'Blue cursor',
@@ -32,8 +25,20 @@ describe("Touch cursors interaction", function () {
                         relativeY: 0.6
                     }
                 }
-            ]
-        });
+            ],
+            zoom: { active: true },
+            pan: { active: true }
+        };
+
+        jasmine.clock().install();
+    });
+
+    afterEach(function () {
+        jasmine.clock().uninstall();
+    });
+
+    it('should become selected on panstart on cursor manipulator and unselected on panend', function () {
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -82,18 +87,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should become selected on panstart on cursor vertical line and unselected on panend', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.2;
@@ -113,18 +107,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should become selected on panstart on cursor horizontal line and unselected on panend', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.3;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -144,18 +127,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should be possible to pan cursors from the cursor manipulator', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -338,18 +310,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should be constrained on the bottom side by the chart margin when touch dragging', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -375,18 +336,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should be possible to touch drag the cursors from the cursor manipulator while the chart updates', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -420,18 +370,7 @@ describe("Touch cursors interaction", function () {
     });
 
     it('should be highlighted on touch drag of the cursor manipulator', function () {
-        plot = $.plot("#placeholder", [sampledata], {
-            cursors: [
-                {
-                    name: 'Blue cursor',
-                    color: 'blue',
-                    position: {
-                        relativeX: 0.5,
-                        relativeY: 0.6
-                    }
-                }
-            ]
-        });
+        plot = $.plot("#placeholder", [sampledata], options);
 
         var cursorX = plot.offset().left + plot.width() * 0.5;
         var cursorY = plot.offset().top + plot.height() * 0.6;
@@ -488,7 +427,8 @@ describe("Touch cursors interaction", function () {
             ],
             pan: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
 
@@ -534,11 +474,13 @@ describe("Touch cursors interaction", function () {
             ],
             pan: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             },
             zoom: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
 
@@ -586,7 +528,8 @@ describe("Touch cursors interaction", function () {
             ],
             pan: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
 
@@ -632,11 +575,13 @@ describe("Touch cursors interaction", function () {
             ],
             pan: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             },
             zoom: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
 
@@ -682,7 +627,8 @@ describe("Touch cursors interaction", function () {
                 }
             ],
             pan: {
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
 
@@ -720,7 +666,8 @@ describe("Touch cursors interaction", function () {
             ],
             pan: {
                 interactive: true,
-                enableTouch: true
+                enableTouch: true,
+                active: true
             }
         });
         var xmin = plot.getXAxes()[0].min,
