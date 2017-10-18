@@ -11,16 +11,14 @@ $(function () {
     function updateData() {
         sin = [];
         cos = [];
-        offset += 0.025;
-        for (var i = 0; i < 8; i += 0.01) {
+        offset += 0.02;
+        for (var i = 0; i < 8; i += 0.4) {
             sin.push([i, 1 + Math.sin(i + offset)]);
             cos.push([i, 1 + Math.cos(i + offset)]);
         }
     }
 
     function updateChart() {
-        setTimeout(updateChart, 16);
-
         if ($('#checkbox').prop('checked')) {
             updateData();
 
@@ -39,83 +37,104 @@ $(function () {
             plot.setupGrid();
             plot.draw();
         }
+
+        setTimeout(updateChart, 16);
     }
 
-    updateData();
-    plot = $.plot("#placeholder", [
-        {
-            data: sin,
-            label: "sin(x)"
-        },
-        {
-            data: cos,
-            label: "cos(x)"
-        }
-    ], {
-        series: {
-            lines: {
-                show: true
-            }
-        },
-        cursors: [
-            {
-                name: 'Red cursor',
-                mode: 'x',
-                color: 'red',
-                showIntersections: false,
-                showLabel: true,
-                symbol: 'triangle',
-                position: {
-                    relativeX: 0.75,
-                    relativeY: 0.5
-                }
-            },
-            {
-                name: 'Blue cursor',
-                mode: 'xy',
-                color: 'blue',
-                showIntersections: false,
-                snapToPlot: -1,
-                symbol: 'diamond',
-                position: {
-                    relativeX: 0.5,
-                    relativeY: 0.5
-                }
-            },
-            {
-                name: 'Green cursor',
-                mode: 'y',
-                color: 'green',
-                showIntersections: false,
-                symbol: 'cross',
-                showLabel: true,
-                showValues: true,
-                fontSize: '10px',
-                fontStyle: 'italic',
-                position: {
-                    relativeX: 0.25,
-                    relativeY: 0.25
-                }
-            }
-        ],
-        grid: {
-            hoverable: true,
-            clickable: true,
-            autoHighlight: false
-        },
-        yaxis: {
-            min: -1.2,
-            max: 1.2,
-            autoscale: 'exact'
-        },
-        zoom: {
-            interactive: true
-        },
-        pan: {
-            interactive: true,
-            enableTouch: true
+    $('#interpolate_checkbox').click(function(){
+        if($(this).is(':checked')){
+            createPlot(true);
+        } else {
+            createPlot(false);
         }
     });
+
+    updateData();
+    createPlot();
+
+    function createPlot(interpolate) {
+
+      plot = $.plot("#placeholder", [
+          {
+              data: sin,
+              label: "sin(x)"
+          },
+          {
+              data: cos,
+              label: "cos(x)"
+          }
+      ], {
+          series: {
+              lines: {
+                  show: true
+              },
+              points: {
+                  show: true
+              }
+          },
+          cursors: [
+              {
+                  name: 'Red cursor',
+                  mode: 'x',
+                  color: 'red',
+                  showIntersections: false,
+                  showLabel: true,
+                  symbol: 'triangle',
+                  position: {
+                      relativeX: 0.75,
+                      relativeY: 0.5
+                  }
+              },
+              {
+                  name: 'Blue cursor',
+                  mode: 'xy',
+                  color: 'blue',
+                  showIntersections: false,
+                  snapToPlot: -1,
+                  symbol: 'diamond',
+                  position: {
+                      relativeX: 0.5,
+                      relativeY: 0.5
+                  },
+                  interpolate: interpolate
+              },
+              {
+                  name: 'Green cursor',
+                  mode: 'y',
+                  color: 'green',
+                  showIntersections: false,
+                  symbol: 'cross',
+                  showLabel: true,
+                  showValues: true,
+                  fontSize: '10px',
+                  fontStyle: 'italic',
+                  position: {
+                      relativeX: 0.25,
+                      relativeY: 0.25
+                  }
+              }
+          ],
+          grid: {
+              hoverable: true,
+              clickable: true,
+              autoHighlight: false
+          },
+          yaxis: {
+              min: 0,
+              max: 2,
+              autoscale: 'none',
+              showTickLabels: 'all'
+          },
+          zoom: {
+              interactive: true
+          },
+          pan: {
+              interactive: true,
+              enableTouch: true
+          }
+      });
+    }
+
 
     $("#placeholder").bind("cursorupdates", function (event, cursordata) {
         $('#hoverdata').empty();
