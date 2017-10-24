@@ -30,8 +30,8 @@ describe("Cursors snapping", function () {
 
     it('should not snap to a plot by default', function () {
         plot = $.plot("#placeholder", [sampledata], {
-            xaxis: { autoscale: 'none', min: 0, max: 2 },
-            yaxis: { autoscale: 'none', min: 0, max: 2 },
+            xaxis: { autoScale: 'none', min: 0, max: 2 },
+            yaxis: { autoScale: 'none', min: 0, max: 2 },
             cursors: [
                 {
                     name: 'Blue cursor',
@@ -164,8 +164,8 @@ describe("Cursors snapping", function () {
                     snapToPlot: 0
                 }
             ],
-            xaxis: { autoscale: 'none', min: 0, max: 10 },
-            yaxis: { autoscale: 'none', min: 0, max: 10 }
+            xaxis: { autoScale: 'none', min: 0, max: 10 },
+            yaxis: { autoScale: 'none', min: 0, max: 10 }
         });
 
         var updateChart = function () {
@@ -201,8 +201,8 @@ describe("Cursors snapping", function () {
                     snapToPlot: -1
                 }
             ],
-            xaxis: { autoscale: 'none', min: 0, max: 10 },
-            yaxis: { autoscale: 'none', min: 0, max: 10 }
+            xaxis: { autoScale: 'none', min: 0, max: 10 },
+            yaxis: { autoScale: 'none', min: 0, max: 10 }
         });
 
         jasmine.clock().tick(20);
@@ -227,12 +227,12 @@ describe("Cursors snapping", function () {
                 }
             ],
             xaxes: [
-                { autoscale: 'none', min: 0, max: 10 },
-                { autoscale: 'none', min: 0, max: 100, show: true }
+                { autoScale: 'none', min: 0, max: 10 },
+                { autoScale: 'none', min: 0, max: 100, show: true }
             ],
             yaxes: [
-                { autoscale: 'none', min: 0, max: 10 },
-                { autoscale: 'none', min: 0, max: 100, show: true }
+                { autoScale: 'none', min: 0, max: 10 },
+                { autoScale: 'none', min: 0, max: 100, show: true }
             ]
         });
 
@@ -257,12 +257,12 @@ describe("Cursors snapping", function () {
                 }
             ],
             xaxes: [
-                { autoscale: 'none', min: 0, max: 10 },
-                { autoscale: 'none', min: 0, max: 100, show: true }
+                { autoScale: 'none', min: 0, max: 10 },
+                { autoScale: 'none', min: 0, max: 100, show: true }
             ],
             yaxes: [
-                { autoscale: 'none', min: 0, max: 10 },
-                { autoscale: 'none', min: 0, max: 100, show: true }
+                { autoScale: 'none', min: 0, max: 10 },
+                { autoScale: 'none', min: 0, max: 100, show: true }
             ]
         });
 
@@ -285,8 +285,8 @@ describe("Cursors snapping", function () {
                         snapToPlot: value
                     }
                 ],
-                xaxis: { autoscale: 'none', min: 0, max: 10 },
-                yaxis: { autoscale: 'none', min: 0, max: 10 }
+                xaxis: { autoScale: 'none', min: 0, max: 10 },
+                yaxis: { autoScale: 'none', min: 0, max: 10 }
             });
 
             jasmine.clock().tick(20);

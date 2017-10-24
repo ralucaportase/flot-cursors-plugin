@@ -504,13 +504,13 @@ describe('Flot cursors', function () {
                     min: 0,
                     max: 10,
                     ticks: 10,
-                    autoscale: "none"
+                    autoScale: "none"
                 }],
                 yaxes: [{
                     min: 1,
                     max: 1.2,
                     ticks: 10,
-                    autoscale: "none"
+                    autoScale: "none"
                 }]
             });
 
@@ -534,11 +534,11 @@ describe('Flot cursors', function () {
                     defaultyaxis: 2
                 }],
                 xaxes: [
-                    { min: 0, max: 10, autoscale: "none", tickFormatter: function(val) { return '<' + val + '>'; } }
+                    { min: 0, max: 10, autoScale: "none", tickFormatter: function(val) { return '<' + val + '>'; } }
                 ],
                 yaxes: [
-                    { min: 100, max: 110, autoscale: "none", tickFormatter: function(val) { return '(' + val + ')'; } },
-                    { min: 100, max: 110, autoscale: "none", tickFormatter: function(val) { return '{' + val + '}'; } }
+                    { min: 100, max: 110, autoScale: "none", tickFormatter: function(val) { return '(' + val + ')'; } },
+                    { min: 100, max: 110, autoScale: "none", tickFormatter: function(val) { return '{' + val + '}'; } }
                 ]
             });
 
@@ -547,8 +547,6 @@ describe('Flot cursors', function () {
 
             expect(spy).toHaveBeenCalledWith('<5>, {105}', jasmine.any(Number), jasmine.any(Number));
         });
-
-        it('should be able to change the font size');
 
         [['top right', 1.5, 1.2], ['top left', 0.5, 1.2], ['bottom right', 1.5, 1.0], ['top left', 0.5, 1.0]].forEach(function (pos) {
             describe('When cursor placed in the ' + pos[0] + ' of the plot', function () {
@@ -663,6 +661,81 @@ describe('Flot cursors', function () {
             jasmine.clock().tick(20);
 
             expect(spy).toHaveBeenCalledWith('1.00, 1.150', jasmine.any(Number), jasmine.any(Number));
+        });
+    });
+
+    describe('cursorupdates', function() {
+        it("should be called when a cursor is added", function() {
+            plot = $.plot(placeholder, [sampledata], {});
+
+            var spy = jasmine.createSpy('spy');
+            placeholder.on('cursorupdates', spy);
+
+            plot.addCursor({
+                name: 'Blue cursor',
+                mode: 'xy',
+                color: 'blue',
+                position: {
+                    relativeX: 0.5,
+                    relativeY: 0.5
+                }
+            });
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it("should be called with the cursors name", function() {
+            var spy = jasmine.createSpy('spy');
+            placeholder.on('cursorupdates', spy);
+
+            var cursor,
+                oncursorupdates = function (event, cursordata) {
+                    cursor = cursordata[0];
+                };
+            placeholder.bind("cursorupdates", oncursorupdates);
+
+            plot = $.plot(placeholder, [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: { relativeX: 0.5, relativeY: 0.5 }
+                    }
+                ]
+            });
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalled();
+            expect(cursor.cursor).toEqual('Blue cursor');
+        });
+
+        it("should return the cursors intersection", function() {
+            var spy = jasmine.createSpy('spy');
+            placeholder.on('cursorupdates', spy);
+            var cursorX, cursorY;
+
+            placeholder.bind("cursorupdates", function (event, cursordata) {
+                cursorX = cursordata[0].x;
+                cursorY = cursordata[0].y;
+            });
+
+            plot = $.plot("#placeholder", [sampledata], {
+                cursors: [
+                    {
+                        name: 'Blue cursor',
+                        color: 'blue',
+                        position: { relativeX: 0.5, relativeY: 0.5 },
+                        snapToPlot: -1
+                    }
+                ]
+            });
+
+            jasmine.clock().tick(20);
+
+            expect(spy).toHaveBeenCalled();
+            expect(cursorX).toBeCloseTo(1, 8);
+            expect(cursorY).toBeCloseTo(1.1, 8);
         });
     });
 });

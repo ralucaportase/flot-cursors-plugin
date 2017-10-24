@@ -14,12 +14,8 @@ module.exports = function (config) {
         'jquery.js',
         'node_modules/engineering-flot/lib/jquery.event.drag.js',
         'node_modules/engineering-flot/lib/jquery.mousewheel.js',
-        'node_modules/engineering-flot/dist/jquery.flot.js',
-        'node_modules/engineering-flot/jquery.flot.symbol.js',
-        'node_modules/engineering-flot/jquery.flot.touch.js',
-        'node_modules/engineering-flot/jquery.flot.touchNavigate.js',
-        'node_modules/engineering-flot/jquery.flot.navigate.js',
-        'node_modules/webcharts-development-settings/testsUtils/utils/*.js'
+        'node_modules/engineering-flot/dist/es5/jquery.flot.js',
+        'node_modules/webcharts-development-settings/testsUtils/*.js'
     ].concat(coverage_sources);
 
     var settings = {

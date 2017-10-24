@@ -264,8 +264,8 @@ describe("Touch cursors interaction", function () {
         jasmine.clock().tick(20);
 
         var cursor = plot.getCursors()[0];
-        expect(cursor.x).toBe(plot.width());
-        expect(cursor.y).toBe(plot.height() * 0.6);
+        expect(cursor.x).toBeCloseTo(plot.width());
+        expect(cursor.y).toBeCloseTo(plot.height() * 0.6);
     });
 
     it('should be constrained on the top side by the chart margin when touch dragging', function () {
