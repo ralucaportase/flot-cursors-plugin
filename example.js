@@ -96,7 +96,8 @@ $(function () {
                       relativeX: 0.5,
                       relativeY: 0.5
                   },
-                  interpolate: interpolate
+                  interpolate: interpolate,
+                  showThumbs: true
               },
               {
                   name: 'Green cursor',

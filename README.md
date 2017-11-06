@@ -41,7 +41,8 @@ The plugin supports these options:
             fontFamily: string,
             fontStyle: string,
             fontWeight: string,
-            formatIntersectionData: null or function(point)
+            formatIntersectionData: null or function(point),
+            showThumbs: true or false
         },
         <more cursors if needed>
     ]
@@ -106,6 +107,7 @@ The plugin supports these options:
     rightPoint: the closest datapoint on the right of the intersection
  }
 ```
+**showThumbs** if true, shows the cursor thumbs. Default: false
 
 Public Methods and events
 -------------------------

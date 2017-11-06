@@ -1,20 +1,12 @@
-# Change Log
+# Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) 
-and this project adheres to [Semantic Versioning](http://semver.org/).
+## [1.0.1]
 
-## [Unreleased]
-### Added
-- CSS support.
+### Changes ###
+- single file distribution in dist.es5/jquery.flot.cursors.js
+- support for cursor thumbs
+- add jquery.thumb.plugin for SVG thumb element movement
 
-### Removed
-- fontSize, fontFamily, fontStyle, and fontWeight properties.
 
-## [0.2.0] - 2016-09-26
-### Added
-- New properties are available for customizing a cursor: fontFamily, fontStyle,
-and fontWeight.
-
-### Changed
-- The data type of the fontSize property was changed from numeric to string.
+[1.0.1]: https://github.com/ni-kismet/flot-cursors-plugin/compare/v1.0.0...v1.0.1

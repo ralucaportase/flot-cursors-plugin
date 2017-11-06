@@ -6,7 +6,19 @@ var module;
 module.exports = function (config) {
     'use strict';
 
+    var browsersMatrix = {
+            'win': ['Firefox', 'Chrome', 'Edge'],
+            'linux': ['Firefox', 'Chrome'],
+            'mac': ['Safari', 'Firefox', 'Chrome']
+        },
+        isWin = /^win/.test(process.platform),
+        isLinux = /^linux/.test(process.platform),
+        isMac = /^darwin/.test(process.platform),
+        currentOSType = isWin ? 'win' : (isLinux ? 'linux' : 'mac'),
+        currentOSBrowsers = browsersMatrix[currentOSType];
+
     var coverage_sources = [
+        'jquery.thumb.plugin.js',
         'jquery.flot.cursors.js'
     ];
 
@@ -39,6 +51,7 @@ module.exports = function (config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'jquery.flot.cursors.js': ['eslint'],
+            'jquery.thumb.plugin.js': ['eslint'],
             'spec/*.Test.js': ['eslint']
         },
 
@@ -77,7 +90,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['PhantomJS', 'Firefox', 'Chrome'],
+        browsers: currentOSBrowsers,
 
 
         // Continuous Integration mode

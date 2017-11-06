@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>SVG Navigation Example</title>
+    <script language="javascript" type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.thumb.plugin.js"></script>
+
+    <style>
+        .draggable {
+            fill: #581845
+        }
+        .nonDraggable {
+            fill: #9ACD32
+        }
+        .vertical {
+            fill: #C70039
+        }
+        .horizontal {
+            fill: #FFC300
+        }
+    </style>
+
+    <script  type="text/javascript">
+        $(function() {
+            //create layer and thumbs
+            var verticalConstraint = function (mouseX, mouseY, currentX, currentY) {
+                return [currentX, mouseY];
+            }
+
+            var horizontalConstraint = function (mouseX, mouseY, currentX, currentY) {
+                return [mouseX, currentY];
+            }
+
+            var svgRoot = $.thumb.createSVGLayer();
+            $.thumb.createThumb(20, 150, 150, svgRoot, verticalConstraint);
+            $.thumb.createThumb(20, 400, 400, svgRoot, horizontalConstraint);
+            $.thumb.createThumb(20, 150, 400, svgRoot);
+            $.thumb.createThumb(20, 400, 150, svgRoot);
+
+            //set class attributes for styles
+            $("circle")[0].setAttribute('class', 'draggable vertical');
+            $("circle")[1].setAttribute('class', 'draggable horizontal');
+            $("circle")[2].setAttribute('class', 'nonDraggable');
+        });
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <h2>SVG draggable elements example</h2>
+    </div>
+    <div>
+        This examples ilustrates 4 thumbs: a static green thumb,
+      and 3 thumbs that can be moved based on mouse movement or touch gestures.
+      <br>
+      The dark red thumb can be moved only on vertical, meanwhile the dark orange
+      can be moved only on horizontal.
+    </div
+</body>
+
+</html>

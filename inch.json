@@ -1,6 +1,7 @@
 {
   "files": {
     "included": [
+      "jquery.thumb.plugin.js",
       "jquery.flot.cursors.js"
     ],
     "excluded": [
